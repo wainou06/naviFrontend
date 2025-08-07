@@ -21,7 +21,7 @@ const ItemEdit = () => {
       images: [], // 새로 추가할 이미지만 저장
    })
 
-   const [imagePreviews, setImagePreviews] = useState([])
+   const [imageList, setImageList] = useState([]) // { id, url, isExisting, file? }
    const [formErrors, setFormErrors] = useState({})
    const [deleteImages, setDeleteImages] = useState([])
 
@@ -39,11 +39,25 @@ const ItemEdit = () => {
             content: currentItem.itemDetail,
             status: currentItem.itemSellStatus?.toLowerCase(),
             keywords: currentItem.keywords || [],
-            images: [], // 새로 추가할 이미지만 저장
+            images: [],
          })
 
-         const previews = currentItem.imgs?.map((img) => `${import.meta.env.VITE_APP_API_URL.replace(/\/$/, '')}/${img.imgUrl.replace(/\\/g, '/')}`)
-         setImagePreviews(previews || [])
+         // 기존 이미지들을 imageList에 설정
+         const existingImages =
+            currentItem.imgs?.map((img, index) => ({
+               id: img.id,
+               url: (() => {
+                  const rawPath = img.imgUrl.replace(/\\/g, '/')
+                  const cleanPath = rawPath.startsWith('/') ? rawPath.slice(1) : rawPath
+                  const baseURL = import.meta.env.VITE_APP_API_URL.replace(/\/$/, '')
+                  return `${baseURL}/${cleanPath}`
+               })(),
+               isExisting: true,
+               originalData: img, // 원본 이미지 데이터 보관
+            })) || []
+
+         setImageList(existingImages)
+         setDeleteImages([]) // 삭제 목록 초기화
       }
    }, [currentItem])
 
@@ -66,45 +80,47 @@ const ItemEdit = () => {
       const files = Array.from(e.target.files)
       const validFiles = files.filter((file) => file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024)
 
-      const currentImagesCount = imagePreviews.length - deleteImages.length
-      if (currentImagesCount + validFiles.length > 5) {
+      // 현재 이미지 개수 확인
+      const currentActiveImages = imageList.filter((img) => !deleteImages.includes(img.id))
+      if (currentActiveImages.length + validFiles.length > 5) {
          alert('최대 5개의 이미지만 업로드할 수 있습니다.')
          return
       }
 
-      const newImages = [...formData.images, ...validFiles]
-      const newPreviews = [...imagePreviews]
+      // 새 이미지들을 imageList에 추가
+      const newImages = validFiles.map((file, index) => ({
+         id: `new_${Date.now()}_${index}`,
+         url: URL.createObjectURL(file),
+         isExisting: false,
+         file: file,
+      }))
 
-      validFiles.forEach((file) => {
-         newPreviews.push(URL.createObjectURL(file))
-      })
-
+      setImageList((prev) => [...prev, ...newImages])
       setFormData((prev) => ({
          ...prev,
-         images: newImages,
+         images: [...prev.images, ...validFiles],
       }))
-      setImagePreviews(newPreviews)
    }
 
-   const handleImageRemove = (index, imageId) => {
-      // 기존 이미지일 경우 삭제 목록에 추가
-      if (imageId) {
-         setDeleteImages((prev) => [...prev, imageId])
-      }
+   const handleImageRemove = (imageId) => {
+      const imageToRemove = imageList.find((img) => img.id === imageId)
 
-      // 미리보기에서 제거
-      const newPreviews = imagePreviews.filter((_, i) => i !== index)
-      setImagePreviews(newPreviews)
+      if (!imageToRemove) return
 
-      // 새로 추가한 이미지인 경우에만 formData에서 제거
-      if (!imageId) {
-         const newImageIndex = index - (currentItem?.imgs?.length || 0)
-         const newImages = formData.images.filter((_, i) => i !== newImageIndex)
+      if (imageToRemove.isExisting) {
+         const originalImageId = currentItem?.imgs?.find((img, index) => imageToRemove.id === img.id || imageToRemove.id === `existing_${index}`)?.id
+
+         if (originalImageId) {
+            setDeleteImages((prev) => [...prev, originalImageId])
+         }
+      } else {
          setFormData((prev) => ({
             ...prev,
-            images: newImages,
+            images: prev.images.filter((file) => file !== imageToRemove.file),
          }))
+         URL.revokeObjectURL(imageToRemove.url)
       }
+      setImageList((prev) => prev.filter((img) => img.id !== imageId))
    }
 
    const validateForm = () => {
@@ -128,13 +144,24 @@ const ItemEdit = () => {
       if (!validateForm()) return
 
       try {
-         await dispatch(updateItem({ id, itemData: { ...formData, deleteImages } })).unwrap()
+         await dispatch(
+            updateItem({
+               id,
+               itemData: {
+                  ...formData,
+                  deleteImages: deleteImages, // 실제 이미지 ID들만 들어있음
+               },
+            })
+         ).unwrap()
          alert('상품이 성공적으로 수정되었습니다.')
          navigate(`/items/detail/${id}`)
       } catch (error) {
          console.error('상품 수정 실패:', error)
       }
    }
+
+   // 현재 표시할 이미지들 (삭제 예정인 것 제외)
+   const displayImages = imageList.filter((img) => !deleteImages.includes(img.id))
 
    return (
       <div className="item-create-container">
@@ -180,9 +207,9 @@ const ItemEdit = () => {
                      <div className="section-header">이미지</div>
                      <div className="section-content">
                         <div className="image-grid-container">
-                           {imagePreviews.map((preview, index) => (
-                              <div key={index} className="image-preview-item">
-                                 <img src={preview} alt={`preview-${index}`} />
+                           {displayImages.map((image) => (
+                              <div key={image.id} className="image-preview-item">
+                                 <img src={image.url} alt={`preview-${image.id}`} />
                                  <IconButton
                                     sx={{
                                        position: 'absolute',
@@ -193,7 +220,7 @@ const ItemEdit = () => {
                                        '&:hover': { background: 'rgba(244, 67, 54, 1)' },
                                     }}
                                     size="small"
-                                    onClick={() => handleImageRemove(index, currentItem?.imgs?.[index]?.id)}
+                                    onClick={() => handleImageRemove(image.id)}
                                  >
                                     <X size={16} />
                                  </IconButton>
@@ -201,7 +228,7 @@ const ItemEdit = () => {
                            ))}
                         </div>
 
-                        {formData.images.length < 5 && (
+                        {displayImages.length < 5 && (
                            <Button variant="outlined" component="label" sx={{ mt: 2 }}>
                               이미지 추가
                               <input type="file" accept="image/*" hidden multiple onChange={handleImageUpload} />
