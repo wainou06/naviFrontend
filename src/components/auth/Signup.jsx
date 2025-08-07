@@ -67,20 +67,6 @@ function Signup() {
          })
    }
 
-   //회원가입이 완료 되었을때 보일 컴포넌트
-   if (isSignupComplete) {
-      return (
-         <div className="overlay">
-            <div className="popup">
-               <p>환영합니다. 회원가입이 완료되었습니다!</p>
-               <p>
-                  <Link to="/login">로그인 하러 가기</Link>
-               </p>
-            </div>
-         </div>
-      )
-   }
-
    return (
       <Container maxWidth="sm">
          <Typography variant="h4" gutterBottom>
@@ -123,6 +109,17 @@ function Signup() {
          <Button variant="contained" color="primary" onClick={handleSignup} fullWidth disabled={loading} style={{ marginTop: '20px' }}>
             {loading ? <CircularProgress size={24} /> : '회원가입'}
          </Button>
+         {isSignupComplete && (
+            //회원가입이 완료 되었을때 보일 컴포넌트
+            <div className="overlay">
+               <div className="popup">
+                  <p>환영합니다. 회원가입이 완료되었습니다!</p>
+                  <p>
+                     <Link to="/login">로그인 하러 가기</Link>
+                  </p>
+               </div>
+            </div>
+         )}
       </Container>
    )
 }
