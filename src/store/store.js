@@ -7,7 +7,7 @@ const store = configureStore({
    reducer: {
       items: itemsReducer,
       auth: authReducer,
-      keyword: keywordsReducer,
+      keywords: keywordsReducer,
    },
 })
 
