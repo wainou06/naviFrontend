@@ -100,7 +100,7 @@ function Navbar({ isAuthenticated, user, onSearch }) {
                                        onClick={handleOpenUserMenu}
                                     >
                                        <Avatar alt={user?.name} src="/images/로그인상태.png" />
-                                       <Typography sx={{ ml: 1, mr: 2, color: '#000', fontSize: 14 }}>{user?.nick}님</Typography>
+                                       <Typography sx={{ ml: 1, mr: 2, color: '#000' }}>{user?.nick}님</Typography>
                                     </Box>
                                  </Tooltip>
                                  <Menu
@@ -160,7 +160,7 @@ function Navbar({ isAuthenticated, user, onSearch }) {
                                        onClick={handleOpenUserMenu}
                                     >
                                        <Avatar alt={user?.name} src="/images/로그인상태.png" />
-                                       <Typography sx={{ ml: 1, mr: 2, color: '#000', fontSize: 14 }}>{user?.nick}님</Typography>
+                                       <Typography sx={{ ml: 1, mr: 2, color: '#000' }}>{user?.nick}님</Typography>
                                     </Box>
                                  </Tooltip>
                                  <Menu
