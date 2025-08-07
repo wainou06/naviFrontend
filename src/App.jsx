@@ -13,7 +13,6 @@ import Navbar from './components/shared/Navbar'
 import Footer from './components/shared/Footer'
 import SignupPage from './pages/SignupPage'
 import LoginPage from './pages/LoginPage'
-import SearchPwPage from './pages/SearchPwPage'
 import ItemCreatePage from './pages/ItemCreatePage'
 import ItemListPage from './pages/ItemListPage'
 
@@ -38,7 +37,6 @@ function App() {
             <Route path="/" element={<Home searchTerm={searchTerm} />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/searchPw" element={<SearchPwPage />} />
 
             <Route path="/items/list" element={<ItemListPage key={location.key} />} />
             <Route path="/items/create" element={<ItemCreatePage />} />
