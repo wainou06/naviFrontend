@@ -5,7 +5,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUserThunk } from '../../features/authSlice'
 
-import '../../styles/login.css'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+
+import '../../styles/popup.css'
 
 function Login() {
    const [email, setEmail] = useState('') // 이메일 상태
@@ -104,7 +106,7 @@ function Login() {
                   <div className="overlay">
                      <div className="popup">
                         <button className="close-btn" onClick={closeEmail}>
-                           뒤로가기
+                           <ArrowBackIcon />
                         </button>
                         <button
                            className="close-btn"
@@ -124,7 +126,7 @@ function Login() {
                   <div className="overlay">
                      <div className="popup">
                         <button className="close-btn" onClick={closePhone}>
-                           뒤로가기
+                           <ArrowBackIcon />
                         </button>
                         <button
                            className="close-btn"
