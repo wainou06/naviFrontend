@@ -1,5 +1,6 @@
 import { ManagerLeft } from '../shared/managerParts'
 
+
 const ManagerKeywords = () => {
    return (
       <div>
