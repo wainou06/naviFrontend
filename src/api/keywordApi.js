@@ -1,5 +1,6 @@
 import api from './axiosApi'
 
+//키워드 생성
 export const postKeyword = async (name) => {
    try {
       const config = {
@@ -15,6 +16,7 @@ export const postKeyword = async (name) => {
    }
 }
 
+//키워드 조회
 export const getKeyword = async () => {
    try {
       const response = await api.get('/keyword')
@@ -25,6 +27,7 @@ export const getKeyword = async () => {
    }
 }
 
+//키워드 수정
 export const putKeyword = async (id, name) => {
    try {
       const config = {
@@ -41,6 +44,7 @@ export const putKeyword = async (id, name) => {
    }
 }
 
+//키워드 삭제
 export const deleteKeyword = async (id) => {
    try {
       const response = await api.delete(`/keyword/${id}`)
