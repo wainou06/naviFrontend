@@ -2,7 +2,7 @@ import { Card, CardMedia, CardContent, Typography, Pagination, Box } from '@mui/
 import { useEffect, useState } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchItemsThunk } from '../../features/itemSlice'
+import { fetchItemsThunk } from '../../features/itemsSlice'
 import { formatWithComma } from '../../utils/priceSet'
 import { Link } from 'react-router-dom'
 
