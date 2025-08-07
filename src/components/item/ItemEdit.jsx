@@ -18,7 +18,7 @@ const ItemEdit = () => {
       content: '',
       status: 'available',
       keywords: [],
-      images: [],
+      images: [], // 새로 추가할 이미지만 저장
    })
 
    const [imagePreviews, setImagePreviews] = useState([])
@@ -39,7 +39,7 @@ const ItemEdit = () => {
             content: currentItem.itemDetail,
             status: currentItem.itemSellStatus?.toLowerCase(),
             keywords: currentItem.keywords || [],
-            images: currentItem.imgs || [],
+            images: [], // 새로 추가할 이미지만 저장
          })
 
          const previews = currentItem.imgs?.map((img) => `${import.meta.env.VITE_APP_API_URL.replace(/\/$/, '')}/${img.imgUrl.replace(/\\/g, '/')}`)
@@ -66,7 +66,8 @@ const ItemEdit = () => {
       const files = Array.from(e.target.files)
       const validFiles = files.filter((file) => file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024)
 
-      if (formData.images.length + validFiles.length > 5) {
+      const currentImagesCount = imagePreviews.length - deleteImages.length
+      if (currentImagesCount + validFiles.length > 5) {
          alert('최대 5개의 이미지만 업로드할 수 있습니다.')
          return
       }
@@ -86,19 +87,24 @@ const ItemEdit = () => {
    }
 
    const handleImageRemove = (index, imageId) => {
-      // 기존 이미지일 경우 ID 추가
+      // 기존 이미지일 경우 삭제 목록에 추가
       if (imageId) {
          setDeleteImages((prev) => [...prev, imageId])
       }
 
-      const newImages = formData.images.filter((_, i) => i !== index)
+      // 미리보기에서 제거
       const newPreviews = imagePreviews.filter((_, i) => i !== index)
-
-      setFormData((prev) => ({
-         ...prev,
-         images: newImages,
-      }))
       setImagePreviews(newPreviews)
+
+      // 새로 추가한 이미지인 경우에만 formData에서 제거
+      if (!imageId) {
+         const newImageIndex = index - (currentItem?.imgs?.length || 0)
+         const newImages = formData.images.filter((_, i) => i !== newImageIndex)
+         setFormData((prev) => ({
+            ...prev,
+            images: newImages,
+         }))
+      }
    }
 
    const validateForm = () => {
@@ -187,7 +193,7 @@ const ItemEdit = () => {
                                        '&:hover': { background: 'rgba(244, 67, 54, 1)' },
                                     }}
                                     size="small"
-                                    onClick={() => handleImageRemove(index, currentItem.imgs?.[index]?.id)}
+                                    onClick={() => handleImageRemove(index, currentItem?.imgs?.[index]?.id)}
                                  >
                                     <X size={16} />
                                  </IconButton>
@@ -219,9 +225,9 @@ const ItemEdit = () => {
                         <FormControl fullWidth>
                            <InputLabel>판매상태</InputLabel>
                            <Select name="status" value={formData.status} label="판매상태" onChange={handleInputChange}>
-                              <MenuItem value="SELL">판매중</MenuItem>
-                              <MenuItem value="RESERVATION">예약중</MenuItem>
-                              <MenuItem value="SOLD_OUT">판매완료</MenuItem>
+                              <MenuItem value="sell">판매중</MenuItem>
+                              <MenuItem value="reservation">예약중</MenuItem>
+                              <MenuItem value="sold_out">판매완료</MenuItem>
                            </Select>
                         </FormControl>
                      </div>
