@@ -15,6 +15,7 @@ import SignupPage from './pages/SignupPage'
 import LoginPage from './pages/LoginPage'
 import ItemCreatePage from './pages/ItemCreatePage'
 import ItemListPage from './pages/ItemListPage'
+import ManagerKeywords from './components/manager/managerKeywords'
 
 function App() {
    const dispatch = useDispatch()
@@ -40,6 +41,8 @@ function App() {
 
             <Route path="/items/list" element={<ItemListPage key={location.key} />} />
             <Route path="/items/create" element={<ItemCreatePage />} />
+
+            <Route path="/manager/keywords" element={<ManagerKeywords />} />
          </Routes>
          <Footer />
       </>
