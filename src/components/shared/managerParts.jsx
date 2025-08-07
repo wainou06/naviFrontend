@@ -1,6 +1,6 @@
 
 import { Container } from '@mui/material'
-import './managerParts.css'
+import '../../styles/managerParts.css'
 export const ManagerLeft = () => {
    return <div className="managerLeftBody"></div>
 }
