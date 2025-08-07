@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUserThunk } from '../../features/authSlice'
 
-import '../../styles/login.css'
+import '../../styles/popup.css'
 
 function Login() {
    const [email, setEmail] = useState('') // 이메일 상태
