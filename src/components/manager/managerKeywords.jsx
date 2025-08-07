@@ -1,4 +1,4 @@
-import { ManagerLeft } from './parts/managerParts'
+import { ManagerLeft } from '../shared/managerParts'
 
 const ManagerKeywords = () => {
    return (

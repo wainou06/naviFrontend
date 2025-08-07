@@ -19,7 +19,7 @@ const ItemCreate = () => {
       price: '',
       stock: '',
       content: '',
-      status: 'available',
+      status: 'sell',
       keywords: [],
       images: [],
    })
@@ -126,7 +126,7 @@ const ItemCreate = () => {
          price: '',
          stock: '',
          content: '',
-         status: 'available',
+         status: 'sell',
          keywords: [],
          images: [],
       })
