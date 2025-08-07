@@ -120,22 +120,22 @@ function Navbar({ isAuthenticated, user, onSearch }) {
                                     onClose={handleCloseUserMenu}
                                  >
                                     <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/my">
+                                       <Link to="/manager">
                                           <Typography sx={{ textAlign: 'center' }}>상품관리</Typography>
                                        </Link>
                                     </MenuItem>
                                     <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/my/items">
+                                       <Link to="/manager/keywords">
                                           <Typography sx={{ textAlign: 'center' }}>키워드관리</Typography>
                                        </Link>
                                     </MenuItem>
                                     <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/my/rental">
+                                       <Link to="/manager/user">
                                           <Typography sx={{ textAlign: 'center' }}>사용자관리</Typography>
                                        </Link>
                                     </MenuItem>
                                     <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/my/deal">
+                                       <Link to="/manager/user/:id/rating">
                                           <Typography sx={{ textAlign: 'center' }}>통계</Typography>
                                        </Link>
                                     </MenuItem>
