@@ -1,6 +1,10 @@
-import { Container } from '@mui/material'
+import { ManagerLeft } from './parts/managerParts'
 
 const ManagerKeywords = () => {
-   return <div></div>
+   return (
+      <div>
+         <ManagerLeft></ManagerLeft>
+      </div>
+   )
 }
 export default ManagerKeywords
