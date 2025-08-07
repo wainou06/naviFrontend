@@ -90,8 +90,8 @@ const ItemsList = () => {
             return '판매중'
          case 'SOLD_OUT':
             return '품절'
-         case 'ON_SALE':
-            return '할인중'
+         case 'RESERVATION':
+            return '예약중'
          default:
             return '알 수 없음'
       }
@@ -103,7 +103,7 @@ const ItemsList = () => {
             return 'status-available'
          case 'SOLD_OUT':
             return 'status-sold'
-         case 'ON_SALE':
+         case 'RESERVATION':
             return 'status-on-sale'
          default:
             return 'status-unknown'
