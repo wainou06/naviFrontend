@@ -4,7 +4,7 @@ export const rentalItemsAPI = {
    // 렌탈상품 목록 조회 (페이징, 검색 기능 포함)
    getRentalItems: async (params = {}) => {
       try {
-         const response = await naviApi.get('/rental-items', { params })
+         const response = await naviApi.get('/rental/list', { params })
          return response.data
       } catch (error) {
          console.error('렌탈상품 목록 조회 오류:', error)
@@ -15,7 +15,7 @@ export const rentalItemsAPI = {
    // 특정 렌탈상품 조회
    getRentalItem: async (id) => {
       try {
-         const response = await naviApi.get(`/rental-items/${id}`)
+         const response = await naviApi.get(`/rental/list/${id}`)
          return response.data
       } catch (error) {
          console.error('렌탈상품 조회 오류:', error)
