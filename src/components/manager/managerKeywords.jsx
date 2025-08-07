@@ -1,4 +1,6 @@
+import { Container } from '@mui/material'
+
 const ManagerKeywords = () => {
-   return <div>A</div>
+   return <div></div>
 }
 export default ManagerKeywords
