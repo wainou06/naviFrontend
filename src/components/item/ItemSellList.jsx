@@ -2,7 +2,7 @@ import { Card, CardMedia, CardContent, Typography, Pagination, Box } from '@mui/
 import { useEffect, useState } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchItemsThunk } from '../../features/itemSlice'
+import { fetchItems } from '../../features/itemsSlice'
 import { formatWithComma } from '../../utils/priceSet'
 import { Link } from 'react-router-dom'
 
@@ -12,7 +12,7 @@ function ItemSellList({ searchTerm }) {
    const [page, setPage] = useState(1)
 
    useEffect(() => {
-      dispatch(fetchItemsThunk({ page, limit: 10, searchTerm }))
+      dispatch(fetchItems({ page, limit: 10, searchTerm }))
    }, [dispatch, page, searchTerm])
 
    if (loading) {
