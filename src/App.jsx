@@ -15,6 +15,8 @@ import SignupPage from './pages/SignupPage'
 import LoginPage from './pages/LoginPage'
 import ItemCreatePage from './pages/ItemCreatePage'
 import ItemListPage from './pages/ItemListPage'
+import ItemEditPage from './pages/ItemEditPage'
+import ItemDetailPage from './pages/ItemDetailPage'
 import ManagerKeywords from './components/manager/managerKeywords'
 
 function App() {
@@ -38,9 +40,11 @@ function App() {
             <Route path="/" element={<Home searchTerm={searchTerm} />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
-
+              
             <Route path="/items/list" element={<ItemListPage key={location.key} />} />
             <Route path="/items/create" element={<ItemCreatePage />} />
+            <Route path="/items/edit/:id" element={<ItemEditPage />} />
+            <Route path="/items/detail/:id" element={<ItemDetailPage />} />
 
             <Route path="/manager/keywords" element={<ManagerKeywords />} />
          </Routes>

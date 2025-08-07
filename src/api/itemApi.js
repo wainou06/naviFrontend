@@ -80,6 +80,11 @@ export const updateItem = async (id, itemData) => {
       if (itemData.status !== undefined) formData.append('status', itemData.status)
       if (itemData.keywords !== undefined) formData.append('keywords', itemData.keywords)
 
+      // 삭제할 이미지 ID들 추가
+      if (itemData.deleteImages && itemData.deleteImages.length > 0) {
+         formData.append('deleteImages', JSON.stringify(itemData.deleteImages))
+      }
+
       // 새로운 이미지가 있는 경우 추가
       if (itemData.images && itemData.images.length > 0) {
          itemData.images.forEach((image) => {
