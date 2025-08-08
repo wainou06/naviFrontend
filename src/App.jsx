@@ -19,6 +19,8 @@ import ItemEditPage from './pages/ItemEditPage'
 import ItemDetailPage from './pages/ItemDetailPage'
 import ManagerPage from './pages/ManagerPage'
 import RentalListPage from './pages/RentalListPage'
+import RentalCreatePage from './pages/RentalCreatePage'
+import RentalDetailPage from './pages/RentalDetailPage'
 
 function App() {
    const dispatch = useDispatch()
@@ -48,7 +50,10 @@ function App() {
             <Route path="/items/detail/:id" element={<ItemDetailPage />} />
 
             <Route path="/manager" element={<ManagerPage user={user} />} />
+
             <Route path="/rental/list" element={<RentalListPage />} />
+            <Route path="/rental/create" element={<RentalCreatePage />} />
+            <Route path="/rental/detail/:id" element={<RentalDetailPage />} />
          </Routes>
          <Footer />
       </>
