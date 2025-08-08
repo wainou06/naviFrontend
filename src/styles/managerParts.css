@@ -39,20 +39,33 @@ div.profile {
 
 /* 폼 디자인 */
 
-div.form{
+div.form {
    margin-top: 95px;
+   margin-right: 163px;
+   overflow: hidden;
 }
 
-div.css-19kzrtu {
+div.form.itemform {
+   overflow-y: scroll;
+
+}
+
+div.form div.css-19kzrtu {
    padding: 0;
+   width: 920px;
 }
 
-div.css-19kzrtu h1 {
+div.form div.css-19kzrtu h1 {
    font-size: 60px;
    font-weight: 500;
    margin-bottom: 90px;
 }
 
-.css-1lt5qva-MuiCardContent-root:last-child div, .css-1lt5qva-MuiCardContent-root:last-child p {
-font-size: 30px;
+div.form .css-1lt5qva-MuiCardContent-root:last-child div,
+div.form .css-1lt5qva-MuiCardContent-root:last-child p {
+   font-size: 30px;
+}
+
+div.form .css-1lt5qva-MuiCardContent-root:last-child span {
+   font-size: 20px;
 }

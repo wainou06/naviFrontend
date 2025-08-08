@@ -52,6 +52,7 @@ function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight
                            <Typography variant="body2" color="text.secondary">
                               {formatWithComma(String(item.price))}
                            </Typography>
+                           <span>{item.updatedAt ? new Date(item.updatedAt).toLocaleString() : '정보 없음'}</span>
                         </CardContent>
                      </Card>
                   </Link>
