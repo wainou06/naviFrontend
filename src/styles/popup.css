@@ -1,10 +1,11 @@
 /* 전체 배경 어둡게  */
 .overlay {
-   position: fixed;
-   top: 0;
-   left: 0;
-   width: 100vw;
-   height: 100vh;
+   position: absolute;
+   top: -482px;
+   left: 0px;
+   width: 880px;
+   height: 405px;
+   border-radius: 16px;
    display: flex;
    justify-content: center;
    align-items: center;
