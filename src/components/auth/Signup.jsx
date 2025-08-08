@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { registerUserThunk } from '../../features/authSlice'
 import { Link, useNavigate } from 'react-router-dom'
 
-import '../../styles/popup.css'
+import '../../styles/login.css'
 
 function Signup() {
    const [email, setEmail] = useState('')
@@ -63,7 +63,6 @@ function Signup() {
          })
          .catch((error) => {
             // 회원가입 중 에러 발생시
-            alert('검문')
             console.error('회원가입 에러: ', error)
          })
    }
