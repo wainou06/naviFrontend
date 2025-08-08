@@ -45,7 +45,6 @@ function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight
                      <Card sx={{ width: cardWidth, height: cardHeight }}>
                         {/* 대표이미지만 가져오기 */}
                         <CardMedia component="img" height={imgHeight} image={`${import.meta.env.VITE_APP_API_URL}${item.imgs.filter((img) => img.field === 'Y')[0].imgUrl}`} alt={item.itemNm} />
-
                         <CardContent>
                            <Typography variant="h6" component="div">
                               {item.itemNm}
