@@ -15,7 +15,6 @@ const RentalList = () => {
       error,
       deleteLoading,
    } = useSelector((state) => {
-      console.log('🔍 Redux state:', state.rental)
       return state.rental || {}
    })
 
@@ -65,9 +64,9 @@ const RentalList = () => {
    const getStatusText = (status) => {
       switch (status) {
          case 'Y':
-            return '대여중'
+            return '렌탈가능'
          case 'N':
-            return '대여불가'
+            return '렌탈중'
          default:
             return '알 수 없음'
       }
@@ -87,7 +86,7 @@ const RentalList = () => {
 
             {/* 필터 버튼들 */}
             <div className="filter-section">
-               {['전체', '대여중', '대여불가'].map((filter) => (
+               {['필터', '가격순', '날짜순', '렌탈일순'].map((filter) => (
                   <Button key={filter} className={`filter-btn ${activeFilter === filter ? 'active' : ''}`} onClick={() => handleFilterClick(filter)}>
                      {filter}
                   </Button>
