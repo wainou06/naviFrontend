@@ -44,23 +44,35 @@ export default function ManagerParts({ user }) {
    return (
       <>
          <div className="linktab">
-            <Tabs orientation="vertical" variant="scrollable" value={value} onChange={handleChange} aria-label="Vertical tabs example">
+            <Tabs
+               orientation="vertical"
+               variant="scrollable"
+               value={value}
+               onChange={handleChange}
+               aria-label="Vertical tabs example"
+               TabIndicatorProps={{
+                  sx: {
+                     backgroundColor: 'transparent',
+                  },
+               }}
+            >
                <Tab
                   disabled
                   label={
-                     <div>
+                     <div className="profile">
                         <img src="/images/로그아웃상태.png" alt="프로필" />
-                        <p>관리자 {user?.nick}님</p>
-                        <p>{user?.email}</p>
+                        <p style={{ fontSize: '40px', margin: '20px 0px 10px' }}>관리자 {user?.nick}님</p>
+                        <p style={{ fontSize: '24px', color: '#757575', fontFamily: 'Arial, sans-serif', textTransform: 'none' }}>{user?.email}</p>
                      </div>
                   }
                   {...a11yProps(0)}
                />
-               <Tab label="Item Two" {...a11yProps(1)} />
-               <Tab label="Item Three" {...a11yProps(2)} />
-               <Tab label="Item Four" {...a11yProps(3)} />
-               <Tab label="Item Five" {...a11yProps(4)} />
+               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>상품관리</div>} {...a11yProps(1)} />
+               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>키워드관리</div>} {...a11yProps(2)} />
+               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>사용자관리</div>} {...a11yProps(3)} />
+               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>통계</div>} {...a11yProps(4)} />
             </Tabs>
+
             <TabPanel value={value} index={0} className="form">
                Item One
             </TabPanel>
