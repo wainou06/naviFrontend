@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import '../../styles/itemDetail.css'
 
-const ItemDetail = ({ onDeleteSubmit, onEditSubmit, onPriceProposal }) => {
+const ItemDetail = ({ onDeleteSubmit, onPriceProposal }) => {
    const { currentItem, loading, error } = useSelector((state) => state.items)
    const { user } = useSelector((state) => state.auth)
 
-   const [selectedImage, setSelectedImage] = useState(0)
+   const [selectedImage] = useState(0)
    const [priceProposal, setPriceProposal] = useState('')
    const [deliveryMethod, setDeliveryMethod] = useState('택배')
    const [showPriceModal, setShowPriceModal] = useState(false)
