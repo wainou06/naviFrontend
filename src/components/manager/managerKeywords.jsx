@@ -1,4 +1,8 @@
 const ManagerKeywords = () => {
-   return <div></div>
+   return (
+      <>
+         <div>{/* 키워드 구현 */}</div>
+      </>
+   )
 }
 export default ManagerKeywords
