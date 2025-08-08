@@ -6,7 +6,7 @@ import { fetchItems } from '../../features/itemsSlice'
 import { formatWithComma } from '../../utils/priceSet'
 import { Link } from 'react-router-dom'
 
-function ItemSellList({ searchTerm }) {
+function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight = cardWidth, imgHeight = 140 }) {
    const dispatch = useDispatch()
    const { items, pagination, loading, error } = useSelector((state) => state.items)
    const [page, setPage] = useState(1)
@@ -34,9 +34,7 @@ function ItemSellList({ searchTerm }) {
             <Box
                sx={{
                   display: 'grid',
-                  gridTemplateColumns: {
-                     lg: 'repeat(5, 1fr)',
-                  },
+                  gridTemplateColumns: `repeat(${columns}, 1fr)`,
                   gridAutoRows: 'auto',
                   gap: '16px',
                   justifyItems: 'center',
@@ -44,10 +42,9 @@ function ItemSellList({ searchTerm }) {
             >
                {items.map((item) => (
                   <Link to={`/items/detail/${item.id}`} key={item.id}>
-                     <Card sx={{ width: '250px' }}>
+                     <Card sx={{ width: cardWidth, height: cardHeight }}>
                         {/* 대표이미지만 가져오기 */}
-                        {/* <CardMedia component="img" height="140" image={`${import.meta.env.VITE_APP_API_URL}${item.imgs.filter((img) => img.field === 'Y')[0].imgUrl}`} alt={item.itemNm} /> */}
-
+                        <CardMedia component="img" height={imgHeight} image={`${import.meta.env.VITE_APP_API_URL}${item.imgs.filter((img) => img.field === 'Y')[0].imgUrl}`} alt={item.itemNm} />
                         <CardContent>
                            <Typography variant="h6" component="div">
                               {item.itemNm}
@@ -62,7 +59,9 @@ function ItemSellList({ searchTerm }) {
             </Box>
          ) : (
             <Box sx={{ textAlign: 'center' }}>
-               <Typography variant="h6">검색된 상품이 없습니다.</Typography>
+               <Typography variant="h6" component="h6">
+                  검색된 상품이 없습니다.
+               </Typography>
             </Box>
          )}
 
