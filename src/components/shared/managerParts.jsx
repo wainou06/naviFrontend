@@ -10,6 +10,7 @@ import Box from '@mui/material/Box'
 import '../../styles/managerParts.css'
 
 import ItemSellList from '../../components/item/ItemSellList'
+import ManagerKeywords from '../manager/managerKeywords'
 
 function TabPanel(props) {
    const { children, value, index, ...other } = props
@@ -102,7 +103,7 @@ export default function ManagerParts({ user }) {
 
             <TabPanel value={value} index={2} className="form">
                <h1>키워드관리</h1>
-               {/* 컴포넌트 매니저에서 폼 만들어서 여기로 가져오기 */}
+               <ManagerKeywords />
             </TabPanel>
             <TabPanel value={value} index={3} className="form">
                <h1>사용자관리</h1>

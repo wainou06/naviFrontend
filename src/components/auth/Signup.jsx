@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { registerUserThunk } from '../../features/authSlice'
 import { Link, useNavigate } from 'react-router-dom'
 
-import '../../styles/popup.css'
+import '../../styles/login.css'
 
 function Signup() {
    const [email, setEmail] = useState('')
