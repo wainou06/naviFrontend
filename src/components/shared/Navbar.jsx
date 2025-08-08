@@ -46,6 +46,7 @@ function Navbar({ isAuthenticated, user, onSearch }) {
       e.preventDefault()
       if (onSearch && searchTerm.trim()) {
          onSearch(searchTerm.trim())
+         setSearchTerm('')
       }
    }
 
