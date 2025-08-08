@@ -16,7 +16,7 @@ const ItemsList = () => {
       searchCategory: 'name',
       status: '',
       page: 1,
-      limit: 12,
+      limit: 10,
    })
 
    const [deleteDialog, setDeleteDialog] = useState({ open: false, item: null })
@@ -42,7 +42,7 @@ const ItemsList = () => {
          searchCategory: 'name',
          status: '',
          page: 1,
-         limit: 12,
+         limit: 10,
       }
       setFilters(resetFilters)
       setActiveFilter('전체')
@@ -114,7 +114,7 @@ const ItemsList = () => {
       <div className="items-list-container">
          <div className="main-container">
             <div className="register-button-section">
-               <Button className="register-btn" startIcon={<Add />} onClick={() => navigate('/')}>
+               <Button className="register-btn" startIcon={<Add />} onClick={() => navigate('/rental/list')}>
                   물건 렌탈하러 가기 &gt;
                </Button>
             </div>
@@ -219,25 +219,6 @@ const ItemsList = () => {
             <hr className="section-divider" />
             <div className="section-title">Share & Release</div>
          </div>
-
-         {/* 삭제 확인 다이얼로그 */}
-         <Dialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, item: null })}>
-            <DialogTitle>상품 삭제</DialogTitle>
-            <DialogContent>
-               <Typography>
-                  '{deleteDialog.item?.itemNm}' 상품을 정말 삭제하시겠습니까?
-                  <br />이 작업은 되돌릴 수 없습니다.
-               </Typography>
-            </DialogContent>
-            <DialogActions>
-               <Button onClick={() => setDeleteDialog({ open: false, item: null })} disabled={deleteLoading}>
-                  취소
-               </Button>
-               <Button onClick={handleDelete} color="error" variant="contained" disabled={deleteLoading} startIcon={deleteLoading && <CircularProgress size={16} />}>
-                  삭제
-               </Button>
-            </DialogActions>
-         </Dialog>
       </div>
    )
 }
