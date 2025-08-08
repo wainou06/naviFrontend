@@ -1,5 +1,6 @@
 div.linktab {
    display: flex;
+   height: 1210px;
 }
 
 div.linktab > div:first-of-type {
@@ -7,20 +8,31 @@ div.linktab > div:first-of-type {
    width: 650px;
 }
 
-.linktab button.css-1usuzwp-MuiButtonBase-root-MuiTab-root {
+div.css-1ondbrm-MuiTabs-list {
+   align-items: center;
+}
+
+div.profile {
+   padding: 95px 0px 50px;
+}
+
+.linktab button.css-1usuzwp-MuiButtonBase-root-MuiTab-root:first-of-type {
    color: black;
-   font-size: 40px;
    max-width: none;
+}
+
+.linktab button.css-1usuzwp-MuiButtonBase-root-MuiTab-root:not(:first-of-type) {
+   color: black;
+   width: 250px;
+   font-size: 40px;
+   padding: 8px 0;
+   margin: 10px;
 }
 
 .linktab button.css-1usuzwp-MuiButtonBase-root-MuiTab-root.Mui-selected {
    color: black;
    font-weight: bold;
-}
-
-.linktab span.MuiTabs-indicator.css-oewvya-MuiTabs-indicator {
-   background-color: black;
-   width: 5px;
+   border-bottom: 5px solid black;
 }
 
 /* 폼 디자인 */
