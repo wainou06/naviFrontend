@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteKeywordThunk, getKeywordThunk, postKeywordThunk, putKeywordThunk } from '../../features/keywordSlice'
+import '../../styles/managerKeywords.css'
 
 const ManagerKeywords = () => {
    const [keyword, setKeyword] = useState('')
@@ -81,31 +82,45 @@ const ManagerKeywords = () => {
       <div>
          {!loading ? (
             <>
-               키워드 Keywords
-               <br></br>
-               <select onChange={(e) => onChangeSelect(e.target.value)}>
-                  <option value={''}>키워드 추가하기</option>
-                  {keywords?.keywords?.map((keyword) => (
-                     <option key={keyword.id} value={keyword.name}>
-                        {keyword.name}
-                     </option>
-                  ))}
-               </select>
-               <br></br>
+               <div>
+                  <div style={{ marginBottom: '35px' }}>
+                     <span className="managerKeywordsTitle">키워드</span>
+                     <span className="managerKeywordsTitleBetween"> </span>
+                     <span className="managerKeywordsSubtitle">Keywords</span>
+                  </div>
+                  <select style={{ marginBottom: '35px' }} className="managerKeywordsSelectKeyword" onChange={(e) => onChangeSelect(e.target.value)}>
+                     <option value={''}>현재 키워드</option>
+                     {keywords?.keywords?.map((keyword) => (
+                        <option key={keyword.id} value={keyword.name}>
+                           {keyword.name}
+                        </option>
+                     ))}
+                  </select>
+               </div>
                {selected ? (
                   <>
-                     수정할 키워드 Edit keyword
-                     <br></br>
-                     <input value={keyword} type="text" placeholder="수정할 키워드를 입력해주세요." onChange={(e) => setKeyword(e.target.value)}></input>
-                     <button onClick={onClickEdit}>edit</button>
-                     <button onClick={onclickDelete}>delete</button>
+                     <div style={{ marginBottom: '35px' }}>
+                        <span className="managerKeywordsTitle">수정할 키워드</span>
+                        <span className="managerKeywordsTitleBetween"> </span>
+                        <span className="managerKeywordsSubtitle">Edit keyword</span>
+                     </div>
+                     <input style={{ marginBottom: '35px' }} className="managerKeywordsSelectKeyword" value={keyword} type="text" placeholder="수정할 키워드를 입력해주세요." onChange={(e) => setKeyword(e.target.value)}></input>
+                     <button className="managerKeywordsEdit" onClick={onClickEdit}>
+                        수정하기
+                     </button>
+                     <button onClick={onclickDelete}>삭제하기</button>
                   </>
                ) : (
                   <>
-                     추가할 키워드 Add keyword
-                     <br></br>
-                     <input value={keyword} type="text" placeholder="추가할 키워드를 입력해주세요." onChange={(e) => setKeyword(e.target.value)}></input>
-                     <button onClick={onClickAdd}>add</button>
+                     <div style={{ marginBottom: '35px' }}>
+                        <span className="managerKeywordsTitle">추가할 키워드</span>
+                        <span className="managerKeywordsTitleBetween"> </span>
+                        <span className="managerKeywordsSubtitle">Add keyword</span>
+                     </div>
+                     <input style={{ marginBottom: '35px' }} className="managerKeywordsSelectKeyword" value={keyword} type="text" placeholder="추가할 키워드를 입력해주세요." onChange={(e) => setKeyword(e.target.value)}></input>
+                     <button className="managerKeywordsSave" onClick={onClickAdd}>
+                        저장하기
+                     </button>
                   </>
                )}
             </>

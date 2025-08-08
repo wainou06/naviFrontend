@@ -1,4 +1,7 @@
 import * as React from 'react'
+import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+
 import PropTypes from 'prop-types'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
@@ -37,11 +40,26 @@ function a11yProps(index) {
 }
 
 export default function ManagerParts({ user }) {
-   const [value, setValue] = React.useState(1)
+  const location = useLocation()
 
-   const handleChange = (event, newValue) => {
-      setValue(newValue)
-   }
+  // 기본값은 상품관리(1)
+  const [value, setValue] = React.useState(1)
+
+  useEffect(() => {
+     if (location.pathname === '/manager') {
+        setValue(1) // 상품관리
+     } else if (location.pathname === '/manager/keywords') {
+        setValue(2) // 키워드관리
+     } else if (location.pathname === '/manager/user') {
+        setValue(3) // 사용자관리
+     } else if (location.pathname.includes('/manager/user/') && location.pathname.endsWith('/rating')) {
+        setValue(4) // 통계
+     }
+  }, [location.pathname])
+
+  const handleChange = (event, newValue) => {
+     setValue(newValue)
+  }
 
    return (
       <>
