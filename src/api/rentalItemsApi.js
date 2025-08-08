@@ -15,7 +15,7 @@ export const rentalItemsAPI = {
    // 특정 렌탈상품 조회
    getRentalItem: async (id) => {
       try {
-         const response = await naviApi.get(`/rental/list/${id}`)
+         const response = await naviApi.get(`/rental/detail/${id}`)
          return response.data
       } catch (error) {
          console.error('렌탈상품 조회 오류:', error)
@@ -29,13 +29,11 @@ export const rentalItemsAPI = {
          const formData = new FormData()
 
          // 기본 렌탈상품 정보 추가
-         formData.append('name', rentalItemData.name)
-         formData.append('price', rentalItemData.price)
-         formData.append('stock', rentalItemData.stock)
-         if (rentalItemData.content) formData.append('content', rentalItemData.content)
-         if (rentalItemData.status) formData.append('status', rentalItemData.status)
-         if (rentalItemData.rentalPeriodMin) formData.append('rentalPeriodMin', rentalItemData.rentalPeriodMin)
-         if (rentalItemData.rentalPeriodMax) formData.append('rentalPeriodMax', rentalItemData.rentalPeriodMax)
+         formData.append('rentalItemNm', rentalItemData.rentalItemNm)
+         formData.append('oneDayPrice', rentalItemData.oneDayPrice)
+         formData.append('quantity', rentalItemData.quantity)
+         if (rentalItemData.rentalDetail) formData.append('rentalDetail', rentalItemData.rentalDetail)
+         if (rentalItemData.rentalStatus) formData.append('rentalStatus', rentalItemData.rentalStatus)
          if (rentalItemData.keywords) formData.append('keywords', rentalItemData.keywords)
 
          // 이미지 파일들 추가
@@ -45,7 +43,7 @@ export const rentalItemsAPI = {
             })
          }
 
-         const response = await naviApi.post('/rental-items', formData, {
+         const response = await naviApi.post('/rental/', formData, {
             headers: {
                'Content-Type': 'multipart/form-data',
             },
@@ -79,7 +77,7 @@ export const rentalItemsAPI = {
             })
          }
 
-         const response = await naviApi.put(`/rental-items/${id}`, formData, {
+         const response = await naviApi.put(`/rental/edit/${id}`, formData, {
             headers: {
                'Content-Type': 'multipart/form-data',
             },
@@ -94,7 +92,7 @@ export const rentalItemsAPI = {
    // 렌탈 상품 삭제
    deleteRentalItem: async (id) => {
       try {
-         const response = await naviApi.delete(`/rental-items/${id}`)
+         const response = await naviApi.delete(`/rental/${id}`)
          return response.data
       } catch (error) {
          console.error('렌탈상품 삭제 오류:', error)
