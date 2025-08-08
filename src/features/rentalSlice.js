@@ -91,7 +91,7 @@ const rentalSlice = createSlice({
       })
       builder.addCase(fetchRentalItem.fulfilled, (state, action) => {
          state.loading = false
-         state.rentalItemDetail = action.payload.data
+         state.rentalItemDetail = action.payload
       })
       builder.addCase(fetchRentalItem.rejected, (state, action) => {
          state.loading = false
