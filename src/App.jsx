@@ -50,6 +50,9 @@ function App() {
             <Route path="/items/detail/:id" element={<ItemDetailPage />} />
 
             <Route path="/manager" element={<ManagerPage user={user} />} />
+            <Route path="/manager/keywords" element={<ManagerPage user={user} />} />
+            <Route path="/manager/user" element={<ManagerPage user={user} />} />
+            <Route path="/manager/user/:id/rating" element={<ManagerPage user={user} />} />
 
             <Route path="/rental/list" element={<RentalListPage />} />
             <Route path="/rental/create" element={<RentalCreatePage />} />
