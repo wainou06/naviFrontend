@@ -2,10 +2,11 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
-import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 
 import '../../styles/managerParts.css'
+
+import ItemSellList from '../../components/item/ItemSellList'
 
 function TabPanel(props) {
    const { children, value, index, ...other } = props
@@ -14,7 +15,7 @@ function TabPanel(props) {
       <div role="tabpanel" hidden={value !== index} id={`vertical-tabpanel-${index}`} aria-labelledby={`vertical-tab-${index}`} {...other}>
          {value === index && (
             <Box sx={{ p: 3 }}>
-               <Typography>{children}</Typography>
+               <div>{children}</div>
             </Box>
          )}
       </div>
@@ -74,19 +75,21 @@ export default function ManagerParts({ user }) {
             </Tabs>
 
             <TabPanel value={value} index={0} className="form">
-               Item One
+               비활성화 상태
             </TabPanel>
             <TabPanel value={value} index={1} className="form">
-               Item Two
+               <h1>상품관리</h1>
+               <ItemSellList columns={2} cardWidth="420px" cardHeight="450px" imgHeight='320px'/>
             </TabPanel>
+
             <TabPanel value={value} index={2} className="form">
-               Item Three
+               <h1>키워드관리</h1>
             </TabPanel>
             <TabPanel value={value} index={3} className="form">
-               Item Four
+               <h1>사용자관리</h1>
             </TabPanel>
             <TabPanel value={value} index={4} className="form">
-               Item Five
+               <h1>통계</h1>
             </TabPanel>
          </div>
       </>
