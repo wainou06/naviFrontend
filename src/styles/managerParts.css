@@ -1,3 +1,26 @@
-div.manager {
-   background-color: aqua;
+div.linktab {
+   display: flex;
 }
+
+div.linktab > div:first-of-type {
+   background-color: #fff9f6;
+   width: 650px;
+}
+
+.linktab button.css-1usuzwp-MuiButtonBase-root-MuiTab-root {
+   color: black;
+   font-size: 40px;
+   max-width: none;
+}
+
+.linktab button.css-1usuzwp-MuiButtonBase-root-MuiTab-root.Mui-selected {
+   color: black;
+   font-weight: bold;
+}
+
+.linktab span.MuiTabs-indicator.css-oewvya-MuiTabs-indicator {
+   background-color: black;
+   width: 5px;
+}
+
+/* 폼 디자인 */
