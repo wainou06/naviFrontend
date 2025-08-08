@@ -81,7 +81,7 @@ const ManagerKeywords = () => {
       <div>
          {!loading ? (
             <>
-               Keywords
+               키워드 Keywords
                <br></br>
                <select onChange={(e) => onChangeSelect(e.target.value)}>
                   <option value={''}>키워드 추가하기</option>
@@ -94,17 +94,17 @@ const ManagerKeywords = () => {
                <br></br>
                {selected ? (
                   <>
-                     Edit keyword
+                     수정할 키워드 Edit keyword
                      <br></br>
-                     <input value={keyword} type="text" placeholder="키워드 수정" onChange={(e) => setKeyword(e.target.value)}></input>
+                     <input value={keyword} type="text" placeholder="수정할 키워드를 입력해주세요." onChange={(e) => setKeyword(e.target.value)}></input>
                      <button onClick={onClickEdit}>edit</button>
                      <button onClick={onclickDelete}>delete</button>
                   </>
                ) : (
                   <>
-                     Add keyword
+                     추가할 키워드 Add keyword
                      <br></br>
-                     <input value={keyword} type="text" placeholder="키워드 추가" onChange={(e) => setKeyword(e.target.value)}></input>
+                     <input value={keyword} type="text" placeholder="추가할 키워드를 입력해주세요." onChange={(e) => setKeyword(e.target.value)}></input>
                      <button onClick={onClickAdd}>add</button>
                   </>
                )}
