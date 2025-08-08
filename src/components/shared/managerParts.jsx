@@ -77,9 +77,10 @@ export default function ManagerParts({ user }) {
             <TabPanel value={value} index={0} className="form">
                비활성화 상태
             </TabPanel>
-            <TabPanel value={value} index={1} className="form">
+            <TabPanel value={value} index={1} className="form itemform">
                <h1>상품관리</h1>
-               <ItemSellList columns={2} cardWidth="420px" cardHeight="450px" imgHeight='320px'/>
+
+               <ItemSellList columns={2} cardWidth="420px" cardHeight="480px" imgHeight='320px'/>
             </TabPanel>
 
             <TabPanel value={value} index={2} className="form">
