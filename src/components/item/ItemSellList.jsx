@@ -46,7 +46,7 @@ function ItemSellList({ searchTerm }) {
                   <Link to={`/items/detail/${item.id}`} key={item.id}>
                      <Card sx={{ width: '250px' }}>
                         {/* 대표이미지만 가져오기 */}
-                        <CardMedia component="img" height="140" image={`${import.meta.env.VITE_APP_API_URL}${item.imgs.filter((img) => img.field === 'Y')[0].imgUrl}`} alt={item.itemNm} />
+                        {/* <CardMedia component="img" height="140" image={`${import.meta.env.VITE_APP_API_URL}${item.imgs.filter((img) => img.field === 'Y')[0].imgUrl}`} alt={item.itemNm} /> */}
 
                         <CardContent>
                            <Typography variant="h6" component="div">
