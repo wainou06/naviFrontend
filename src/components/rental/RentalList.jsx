@@ -117,7 +117,7 @@ const RentalList = () => {
                </div>
             ) : (
                <>
-                  {/* 상품 그리드 */}
+                  {/* 상품 */}
                   <div className="products-grid">
                      {rentalItems.map((item) => (
                         <div key={item.id} className="product-card">
@@ -135,8 +135,20 @@ const RentalList = () => {
                               </button>
                            </div>
 
+                           {/* 상품 이미지 */}
                            <div className="product-image" onClick={() => navigate(`/rental/detail/${item.id}`)}>
-                              {Array.isArray(item.rentalImgs) && item.rentalImgs.length > 0 && item.rentalImgs[0]?.imgUrl ? <img src={item.rentalImgs[0].imgUrl} alt={item.rentalItemNm} /> : <div className="placeholder-image">이미지</div>}
+                              {Array.isArray(item.rentalImgs) && item.rentalImgs.length > 0 && item.rentalImgs[0]?.imgUrl ? (
+                                 (() => {
+                                    const rawPath = item.rentalImgs[0].imgUrl.replace(/\\/g, '/')
+                                    const cleanPath = rawPath.startsWith('/') ? rawPath.slice(1) : rawPath
+                                    const baseURL = import.meta.env.VITE_APP_API_URL.replace(/\/$/, '')
+                                    const imageUrl = `${baseURL}/${cleanPath}`
+
+                                    return <img src={imageUrl} alt={item.rentalItemNm} />
+                                 })()
+                              ) : (
+                                 <div className="placeholder-image">이미지</div>
+                              )}
                            </div>
 
                            <div className="product-info">
