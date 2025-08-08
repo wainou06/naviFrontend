@@ -105,10 +105,12 @@ const ManagerKeywords = () => {
                         <span className="managerKeywordsSubtitle">Edit keyword</span>
                      </div>
                      <input style={{ marginBottom: '35px' }} className="managerKeywordsSelectKeyword" value={keyword} type="text" placeholder="수정할 키워드를 입력해주세요." onChange={(e) => setKeyword(e.target.value)}></input>
-                     <button className="managerKeywordsEdit" onClick={onClickEdit}>
+                     <button style={{ marginBottom: '35px' }} className="managerKeywordsEdit" onClick={onClickEdit}>
                         수정하기
                      </button>
-                     <button onClick={onclickDelete}>삭제하기</button>
+                     <button className="managerKeywordsEdit" onClick={onclickDelete}>
+                        삭제하기
+                     </button>
                   </>
                ) : (
                   <>
