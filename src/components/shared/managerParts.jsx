@@ -79,18 +79,20 @@ export default function ManagerParts({ user }) {
             </TabPanel>
             <TabPanel value={value} index={1} className="form itemform">
                <h1>상품관리</h1>
-
-               <ItemSellList columns={2} cardWidth="420px" cardHeight="480px" imgHeight='320px'/>
+               <ItemSellList columns={2} cardWidth="420px" cardHeight="480px" imgHeight="320px" />
             </TabPanel>
 
             <TabPanel value={value} index={2} className="form">
                <h1>키워드관리</h1>
+               {/* 컴포넌트 매니저에서 폼 만들어서 여기로 가져오기 */}
             </TabPanel>
             <TabPanel value={value} index={3} className="form">
                <h1>사용자관리</h1>
+               {/* 컴포넌트 매니저에서 폼 만들어서 여기로 가져오기 */}
             </TabPanel>
             <TabPanel value={value} index={4} className="form">
                <h1>통계</h1>
+               {/* 컴포넌트 매니저에서 폼 만들어서 여기로 가져오기 */}
             </TabPanel>
          </div>
       </>
