@@ -44,7 +44,17 @@ function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight
                   <Link to={`/items/detail/${item.id}`} key={item.id}>
                      <Card sx={{ width: cardWidth, height: cardHeight }}>
                         {/* 대표이미지만 가져오기 */}
-                        <CardMedia component="img" height={imgHeight} image={`${import.meta.env.VITE_APP_API_URL}${item.imgs.filter((img) => img.field === 'Y')[0].imgUrl}`} alt={item.itemNm} />
+                        <CardMedia
+                           component="img"
+                           height={imgHeight}
+                           image={(() => {
+                              const baseUrl = import.meta.env.VITE_APP_API_URL || ''
+                              const foundImg = item?.imgs?.find((img) => img.field === 'Y')?.imgUrl
+                              return foundImg ? `${baseUrl}${foundImg}` : '/images/no-image.png'
+                           })()}
+                           alt={item?.itemNm || '상품 이미지'}
+                        />
+
                         <CardContent>
                            <Typography variant="h6" component="div">
                               {item.itemNm}
