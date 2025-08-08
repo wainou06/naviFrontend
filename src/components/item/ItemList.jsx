@@ -114,7 +114,7 @@ const ItemsList = () => {
       <div className="items-list-container">
          <div className="main-container">
             <div className="register-button-section">
-               <Button className="register-btn" startIcon={<Add />} onClick={() => navigate('/')}>
+               <Button className="register-btn" startIcon={<Add />} onClick={() => navigate('/rental/list')}>
                   물건 렌탈하러 가기 &gt;
                </Button>
             </div>
