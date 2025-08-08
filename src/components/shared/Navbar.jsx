@@ -5,7 +5,6 @@ import Menu from '@mui/material/Menu'
 import Avatar from '@mui/material/Avatar'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
-
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, useRef } from 'react'
 import { useDispatch } from 'react-redux'
@@ -16,31 +15,19 @@ function Navbar({ isAuthenticated, user, onSearch }) {
    const navigate = useNavigate()
    const [anchorElUser, setAnchorElUser] = useState(null)
    const userMenuAnchorRef = useRef(null)
+   const [searchTerm, setSearchTerm] = useState('')
 
    const handleLogout = () => {
       dispatch(logoutUserThunk())
          .unwrap()
-         .then(() => {
-            navigate('/')
-         })
-         .catch((error) => {
-            alert('로그아웃 실패: ' + error)
-         })
+         .then(() => navigate('/'))
+         .catch((error) => alert('로그아웃 실패: ' + error))
    }
 
-   const handleOpenUserMenu = () => {
-      setAnchorElUser(userMenuAnchorRef.current)
-   }
+   const handleOpenUserMenu = () => setAnchorElUser(userMenuAnchorRef.current)
+   const handleCloseUserMenu = () => setAnchorElUser(null)
 
-   const handleCloseUserMenu = () => {
-      setAnchorElUser(null)
-   }
-
-   const [searchTerm, setSearchTerm] = useState('')
-
-   const handleInputChange = (e) => {
-      setSearchTerm(e.target.value)
-   }
+   const handleInputChange = (e) => setSearchTerm(e.target.value)
 
    const handleSearch = (e) => {
       e.preventDefault()
@@ -49,6 +36,43 @@ function Navbar({ isAuthenticated, user, onSearch }) {
          setSearchTerm('')
       }
    }
+
+   // 메뉴 구성 데이터
+   const managerMenu = [{ to: '/manager', label: '상품관리' }, { to: '/manager/keywords', label: '키워드관리' }, { to: '/manager/user', label: '사용자관리' }, { to: `/manager/user/${user?.id}/rating`, label: '통계' }, { label: '1:1 채팅' }, { label: '로그아웃', action: handleLogout }]
+
+   const userMenuItems = [{ to: '/my', label: '나의 정보' }, { to: '/my/items', label: '나의 상품' }, { to: '/my/rental', label: '렌탈 내역' }, { to: '/my/deal', label: '거래 내역' }, { label: '1:1 채팅' }, { label: '로그아웃', action: handleLogout }]
+
+   const menuItems = user?.access === 'MANAGER' ? managerMenu : userMenuItems
+
+   const renderUserMenu = () => (
+      <Box sx={{ flexGrow: 0 }}>
+         <Tooltip title="Open settings">
+            <Box ref={userMenuAnchorRef} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleOpenUserMenu}>
+               <Avatar alt={user?.name} src="/images/로그인상태.png" />
+               <Typography sx={{ ml: 1, mr: 2, color: '#000' }}>{user?.nick}님</Typography>
+            </Box>
+         </Tooltip>
+         <Menu sx={{ mt: '45px' }} id="menu-appbar" anchorEl={anchorElUser} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
+            {menuItems.map((item, idx) => (
+               <MenuItem
+                  key={idx}
+                  onClick={() => {
+                     handleCloseUserMenu()
+                     item.action?.()
+                  }}
+               >
+                  {item.to ? (
+                     <Link to={item.to}>
+                        <Typography sx={{ textAlign: 'center' }}>{item.label}</Typography>
+                     </Link>
+                  ) : (
+                     <Typography sx={{ textAlign: 'center' }}>{item.label}</Typography>
+                  )}
+               </MenuItem>
+            ))}
+         </Menu>
+      </Box>
+   )
 
    return (
       <header>
@@ -87,129 +111,7 @@ function Navbar({ isAuthenticated, user, onSearch }) {
 
                   <li>
                      {isAuthenticated ? (
-                        <>
-                           {user.access === 'MANAGER' ? (
-                              <Box sx={{ flexGrow: 0 }}>
-                                 <Tooltip title="Open settings">
-                                    <Box
-                                       ref={userMenuAnchorRef}
-                                       sx={{
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          cursor: 'pointer',
-                                       }}
-                                       onClick={handleOpenUserMenu}
-                                    >
-                                       <Avatar alt={user?.name} src="/images/로그인상태.png" />
-                                       <Typography sx={{ ml: 1, mr: 2, color: '#000' }}>{user?.nick}님</Typography>
-                                    </Box>
-                                 </Tooltip>
-                                 <Menu
-                                    sx={{ mt: '45px' }}
-                                    id="menu-appbar"
-                                    anchorEl={anchorElUser}
-                                    anchorOrigin={{
-                                       vertical: 'top',
-                                       horizontal: 'right',
-                                    }}
-                                    keepMounted
-                                    transformOrigin={{
-                                       vertical: 'top',
-                                       horizontal: 'right',
-                                    }}
-                                    open={Boolean(anchorElUser)}
-                                    onClose={handleCloseUserMenu}
-                                 >
-                                    <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/manager">
-                                          <Typography sx={{ textAlign: 'center' }}>상품관리</Typography>
-                                       </Link>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/manager/keywords">
-                                          <Typography sx={{ textAlign: 'center' }}>키워드관리</Typography>
-                                       </Link>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/manager/user">
-                                          <Typography sx={{ textAlign: 'center' }}>사용자관리</Typography>
-                                       </Link>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/manager/user/:id/rating">
-                                          <Typography sx={{ textAlign: 'center' }}>통계</Typography>
-                                       </Link>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleCloseUserMenu}>
-                                       <Typography sx={{ textAlign: 'center' }}>1:1 채팅</Typography>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleLogout}>
-                                       <Typography sx={{ textAlign: 'center' }}>로그아웃</Typography>
-                                    </MenuItem>
-                                 </Menu>
-                              </Box>
-                           ) : (
-                              <Box sx={{ flexGrow: 0 }}>
-                                 <Tooltip title="Open settings">
-                                    <Box
-                                       ref={userMenuAnchorRef}
-                                       sx={{
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          cursor: 'pointer',
-                                       }}
-                                       onClick={handleOpenUserMenu}
-                                    >
-                                       <Avatar alt={user?.name} src="/images/로그인상태.png" />
-                                       <Typography sx={{ ml: 1, mr: 2, color: '#000' }}>{user?.nick}님</Typography>
-                                    </Box>
-                                 </Tooltip>
-                                 <Menu
-                                    sx={{ mt: '45px' }}
-                                    id="menu-appbar"
-                                    anchorEl={anchorElUser}
-                                    anchorOrigin={{
-                                       vertical: 'top',
-                                       horizontal: 'right',
-                                    }}
-                                    keepMounted
-                                    transformOrigin={{
-                                       vertical: 'top',
-                                       horizontal: 'right',
-                                    }}
-                                    open={Boolean(anchorElUser)}
-                                    onClose={handleCloseUserMenu}
-                                 >
-                                    <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/my">
-                                          <Typography sx={{ textAlign: 'center' }}>나의 정보</Typography>
-                                       </Link>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/my/items">
-                                          <Typography sx={{ textAlign: 'center' }}>나의 상품</Typography>
-                                       </Link>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/my/rental">
-                                          <Typography sx={{ textAlign: 'center' }}>렌탈 내역</Typography>
-                                       </Link>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleCloseUserMenu}>
-                                       <Link to="/my/deal">
-                                          <Typography sx={{ textAlign: 'center' }}>거래 내역</Typography>
-                                       </Link>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleCloseUserMenu}>
-                                       <Typography sx={{ textAlign: 'center' }}>1:1 채팅</Typography>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleLogout}>
-                                       <Typography sx={{ textAlign: 'center' }}>로그아웃</Typography>
-                                    </MenuItem>
-                                 </Menu>
-                              </Box>
-                           )}
-                        </>
+                        renderUserMenu()
                      ) : (
                         <Link to="/login">
                            <img src="/images/로그아웃상태.png" alt="로그인하세요" height="50" />
