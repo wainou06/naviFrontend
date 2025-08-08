@@ -17,7 +17,7 @@ import ItemCreatePage from './pages/ItemCreatePage'
 import ItemListPage from './pages/ItemListPage'
 import ItemEditPage from './pages/ItemEditPage'
 import ItemDetailPage from './pages/ItemDetailPage'
-import ManagerKeywords from './components/manager/managerKeywords'
+import ManagerPage from './pages/ManagerPage'
 import RentalListPage from './pages/RentalListPage'
 
 function App() {
@@ -46,8 +46,9 @@ function App() {
             <Route path="/items/create" element={<ItemCreatePage />} />
             <Route path="/items/edit/:id" element={<ItemEditPage />} />
             <Route path="/items/detail/:id" element={<ItemDetailPage />} />
+
+            <Route path="/manager" element={<ManagerPage user={user} />} />
             <Route path="/rental/list" element={<RentalListPage />} />
-            <Route path="/manager/keywords" element={<ManagerKeywords />} />
          </Routes>
          <Footer />
       </>

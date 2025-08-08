@@ -1,11 +1,4 @@
-import { ManagerLeft } from '../shared/managerParts'
-
-
 const ManagerKeywords = () => {
-   return (
-      <div>
-         <ManagerLeft></ManagerLeft>
-      </div>
-   )
+   return <div></div>
 }
 export default ManagerKeywords
