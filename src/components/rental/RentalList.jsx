@@ -15,7 +15,6 @@ const RentalList = () => {
       error,
       deleteLoading,
    } = useSelector((state) => {
-      console.log('🔍 Redux state:', state.rental)
       return state.rental || {}
    })
 
@@ -65,9 +64,9 @@ const RentalList = () => {
    const getStatusText = (status) => {
       switch (status) {
          case 'Y':
-            return '대여중'
+            return '렌탈가능'
          case 'N':
-            return '대여불가'
+            return '렌탈중'
          default:
             return '알 수 없음'
       }
@@ -87,7 +86,7 @@ const RentalList = () => {
 
             {/* 필터 버튼들 */}
             <div className="filter-section">
-               {['전체', '대여중', '대여불가'].map((filter) => (
+               {['필터', '가격순', '날짜순', '렌탈일순'].map((filter) => (
                   <Button key={filter} className={`filter-btn ${activeFilter === filter ? 'active' : ''}`} onClick={() => handleFilterClick(filter)}>
                      {filter}
                   </Button>
@@ -118,7 +117,7 @@ const RentalList = () => {
                </div>
             ) : (
                <>
-                  {/* 상품 그리드 */}
+                  {/* 상품 */}
                   <div className="products-grid">
                      {rentalItems.map((item) => (
                         <div key={item.id} className="product-card">
@@ -136,8 +135,20 @@ const RentalList = () => {
                               </button>
                            </div>
 
+                           {/* 상품 이미지 */}
                            <div className="product-image" onClick={() => navigate(`/rental/detail/${item.id}`)}>
-                              {Array.isArray(item.rentalImgs) && item.rentalImgs.length > 0 && item.rentalImgs[0]?.imgUrl ? <img src={item.rentalImgs[0].imgUrl} alt={item.rentalItemNm} /> : <div className="placeholder-image">이미지</div>}
+                              {Array.isArray(item.rentalImgs) && item.rentalImgs.length > 0 && item.rentalImgs[0]?.imgUrl ? (
+                                 (() => {
+                                    const rawPath = item.rentalImgs[0].imgUrl.replace(/\\/g, '/')
+                                    const cleanPath = rawPath.startsWith('/') ? rawPath.slice(1) : rawPath
+                                    const baseURL = import.meta.env.VITE_APP_API_URL.replace(/\/$/, '')
+                                    const imageUrl = `${baseURL}/${cleanPath}`
+
+                                    return <img src={imageUrl} alt={item.rentalItemNm} />
+                                 })()
+                              ) : (
+                                 <div className="placeholder-image">이미지</div>
+                              )}
                            </div>
 
                            <div className="product-info">
