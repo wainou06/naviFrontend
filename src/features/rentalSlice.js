@@ -76,8 +76,8 @@ const rentalSlice = createSlice({
       })
       builder.addCase(fetchRentalItems.fulfilled, (state, action) => {
          state.loading = false
-         state.rentalItems = action.payload.data.rentalItems
-         state.pagination = action.payload.data.pagination
+         state.rentalItems = action.payload?.rentalItems || []
+         state.pagination = action.payload?.pagination || {}
       })
       builder.addCase(fetchRentalItems.rejected, (state, action) => {
          state.loading = false

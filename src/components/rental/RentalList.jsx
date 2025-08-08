@@ -8,7 +8,16 @@ import { fetchRentalItems, deleteRentalItem } from '../../features/rentalSlice'
 const RentalList = () => {
    const dispatch = useDispatch()
    const navigate = useNavigate()
-   const { rentalItems, pagination, loading, error, deleteLoading } = useSelector((state) => state.rental)
+   const {
+      rentalItems = [],
+      pagination = { totalPages: 1, currentPage: 1 },
+      loading,
+      error,
+      deleteLoading,
+   } = useSelector((state) => {
+      console.log('🔍 Redux state:', state.rental)
+      return state.rental || {}
+   })
 
    const [filters, setFilters] = useState({
       keyword: '',
@@ -21,53 +30,32 @@ const RentalList = () => {
    const [deleteDialog, setDeleteDialog] = useState({ open: false, item: null })
    const [activeFilter, setActiveFilter] = useState('전체')
 
+   //오류 찾는중...
    useEffect(() => {
-      loadRentalItems()
-   }, [filters]) // 필터가 변경될 때마다 데이터를 새로 로드
+      const promise = dispatch(fetchRentalItems(filters))
 
-   const loadRentalItems = (newFilters = filters) => {
-      dispatch(fetchRentalItems(newFilters))
-   }
-
-   const handleSearch = () => {
-      const newFilters = { ...filters, page: 1 } // 검색 시 첫 페이지로 리셋
-      setFilters(newFilters)
-      loadRentalItems(newFilters)
-   }
-
-   const handleReset = () => {
-      const resetFilters = {
-         keyword: '',
-         searchCategory: 'rentalItemNm',
-         rentalStatus: '',
-         page: 1,
-         limit: 10,
-      }
-      setFilters(resetFilters)
-      setActiveFilter('전체')
-      loadRentalItems(resetFilters)
-   }
+      promise
+         .then((result) => {
+            console.log('🔍결과:', result)
+         })
+         .catch((error) => {
+            console.log('🔍에러:', error)
+         })
+   }, [dispatch, filters])
 
    const handleFilterClick = (filterType) => {
       setActiveFilter(filterType)
-      let rentalStatus = ''
-      if (filterType === '대여중') rentalStatus = 'Y'
-      if (filterType === '대여불가') rentalStatus = 'N'
-
-      const newFilters = { ...filters, rentalStatus, page: 1 }
-      setFilters(newFilters)
-      loadRentalItems(newFilters)
+      const rentalStatus = filterType === '대여중' ? 'Y' : filterType === '대여불가' ? 'N' : ''
+      setFilters({ ...filters, rentalStatus, page: 1 })
    }
 
    const handlePageChange = (event, page) => {
-      const newFilters = { ...filters, page }
-      setFilters(newFilters)
-      loadRentalItems(newFilters)
+      setFilters((prev) => ({ ...prev, page }))
    }
 
    const handleDelete = async (itemId) => {
-      dispatch(deleteRentalItem(itemId)) // 삭제 요청
-      setDeleteDialog({ open: false, item: null }) // 삭제 다이얼로그 닫기
+      dispatch(deleteRentalItem(itemId))
+      setDeleteDialog({ open: false, item: null })
    }
 
    const formatPrice = (price) => {
@@ -95,7 +83,7 @@ const RentalList = () => {
             </div>
 
             <hr className="section-divider" />
-            <div className="section-title">중고 상품</div>
+            <div className="section-title">Share & Release</div>
 
             {/* 필터 버튼들 */}
             <div className="filter-section">
@@ -105,23 +93,18 @@ const RentalList = () => {
                   </Button>
                ))}
                <div className="search-actions">
-                  <Button className="search-btn" onClick={handleSearch}>
-                     검색
-                  </Button>
-                  <Button className="reset-btn" onClick={handleReset}>
-                     초기화
+                  <Button className="search-btn" startIcon={<Add />} onClick={() => navigate('/rental/create')}>
+                     렌탈 상품등록
                   </Button>
                </div>
             </div>
 
-            {/* 에러 메시지 */}
             {error && (
                <Alert severity="error" sx={{ mb: 3 }}>
                   {error}
                </Alert>
             )}
 
-            {/* 로딩 */}
             {loading && rentalItems.length === 0 ? (
                <div className="loading-state">
                   <CircularProgress />
@@ -130,7 +113,7 @@ const RentalList = () => {
                <div className="empty-state">
                   <Typography className="empty-state-title">등록된 상품이 없습니다</Typography>
                   <Button className="register-btn" startIcon={<Add />} onClick={() => navigate('/rental/create')}>
-                     상품 등록하기
+                     렌탈 상품 등록하기
                   </Button>
                </div>
             ) : (
@@ -139,7 +122,7 @@ const RentalList = () => {
                   <div className="products-grid">
                      {rentalItems.map((item) => (
                         <div key={item.id} className="product-card">
-                           <div className={`product-status-label ${item.rentalStatus === 'Y' ? 'status-available' : 'status-unavailable'}`}>{getStatusText(item.rentalStatus)}</div>
+                           <div className={`product-status-label ${item?.rentalStatus === 'Y' ? 'status-available' : 'status-unavailable'}`}>{getStatusText(item?.rentalStatus)}</div>
 
                            <div className="product-actions">
                               <button className="action-btn view" onClick={() => navigate(`/rental/detail/${item.id}`)} title="상세보기">
@@ -154,7 +137,7 @@ const RentalList = () => {
                            </div>
 
                            <div className="product-image" onClick={() => navigate(`/rental/detail/${item.id}`)}>
-                              {item.rentalImgs && item.rentalImgs.length > 0 ? <img src={item.rentalImgs[0].url} alt={item.rentalItemNm} /> : <div className="placeholder-image">이미지</div>}
+                              {Array.isArray(item.rentalImgs) && item.rentalImgs.length > 0 && item.rentalImgs[0]?.imgUrl ? <img src={item.rentalImgs[0].imgUrl} alt={item.rentalItemNm} /> : <div className="placeholder-image">이미지</div>}
                            </div>
 
                            <div className="product-info">
@@ -185,7 +168,7 @@ const RentalList = () => {
                   <Button onClick={() => setDeleteDialog({ open: false, item: null })} color="primary">
                      취소
                   </Button>
-                  <Button onClick={() => handleDelete(deleteDialog.item.id)} color="secondary" disabled={deleteLoading}>
+                  <Button onClick={() => handleDelete(deleteDialog.item?.id)} color="secondary" disabled={deleteLoading}>
                      {deleteLoading ? <CircularProgress size={24} /> : '삭제'}
                   </Button>
                </DialogActions>
