@@ -17,8 +17,8 @@ import ItemCreatePage from './pages/ItemCreatePage'
 import ItemListPage from './pages/ItemListPage'
 import ItemEditPage from './pages/ItemEditPage'
 import ItemDetailPage from './pages/ItemDetailPage'
-import ManagerKeywords from './components/manager/managerKeywords'
 import ManagerPage from './pages/ManagerPage'
+import RentalListPage from './pages/RentalListPage'
 
 function App() {
    const dispatch = useDispatch()
@@ -48,6 +48,7 @@ function App() {
             <Route path="/items/detail/:id" element={<ItemDetailPage />} />
 
             <Route path="/manager" element={<ManagerPage user={user} />} />
+            <Route path="/rental/list" element={<RentalListPage />} />
          </Routes>
          <Footer />
       </>
