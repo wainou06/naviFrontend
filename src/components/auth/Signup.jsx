@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { registerUserThunk } from '../../features/authSlice'
 import { Link, useNavigate } from 'react-router-dom'
 
+import GoogleIcon from '@mui/icons-material/Google'
+
 import '../../styles/login.css'
 
 function Signup() {
@@ -68,58 +70,119 @@ function Signup() {
    }
 
    return (
-      <Container maxWidth="sm">
-         <Typography variant="h4" gutterBottom>
+      <Container
+         style={{
+            margin: '0 auto',
+            width: '880.5px',
+            height: '935.69px',
+            marginTop: '100px',
+            marginBottom: '320px',
+            display: 'flex',
+            flexDirection: 'column',
+         }}
+      >
+         <Typography variant="h4" gutterBottom style={{ fontSize: '64px', fontWeight: 400 }}>
             회원가입
          </Typography>
 
-         <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ position: 'relative', marginTop: '20px' }}
-            onClick={() => {
-               // window.location.href = 'http://localhost:8000/auth/google/callback'
-               window.location.href = 'http://localhost:8000/auth/google'
-            }}
-         >
-            구글 아이디로 회원가입
-         </Button>
+         <form style={{ marginTop: '55px' }}>
+            <p style={{ fontSize: '31.5px', fontWeight: 400, textAlign: 'center' }}>다른 방법으로 회원가입</p>
+            <Button
+               style={{
+                  backgroundColor: 'white',
+                  borderRadius: '22.5px',
+               }}
+               variant="contained"
+               fullWidth
+               sx={{
+                  position: 'relative',
+                  marginTop: '20px',
+                  marginBottom: '20px',
+                  padding: '10px 0', // 버튼 높이 여유
+               }}
+               onClick={() => {
+                  window.location.href = 'http://localhost:8000/auth/google'
+               }}
+            >
+               <span
+                  style={{
+                     display: 'flex',
+                     alignItems: 'center',
+                     justifyContent: 'center',
+                     gap: '10px', // 아이콘과 텍스트 간격
+                     color: 'black',
+                     fontSize: '30px',
+                     fontWeight: 600,
+                  }}
+               >
+                  <GoogleIcon style={{ width: '45px', height: '45px' }} />
+                  Google
+               </span>
+            </Button>
 
-         {error && (
-            <Typography color="error" align="center">
-               {error}
-            </Typography>
-         )}
+            {error && (
+               <Typography color="error" align="center">
+                  {error}
+               </Typography>
+            )}
 
-         <TextField label="이메일" variant="outlined" fullWidth margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@example.com" inputProps={{ maxLength: 250 }} />
-
-         <TextField label="사용자 이름" variant="outlined" fullWidth margin="normal" value={name} onChange={(e) => setName(e.target.value)} inputProps={{ maxLength: 80 }} />
-
-         <TextField label="주소" variant="outlined" type="text" fullWidth margin="normal" value={address} onChange={(e) => setAddress(e.target.value)} inputProps={{ maxLength: 80 }} />
-
-         <TextField label="닉네임" variant="outlined" type="text" fullWidth margin="normal" value={nick} onChange={(e) => setNick(e.target.value)} inputProps={{ maxLength: 80 }} />
-
-         <TextField label="휴대폰 번호" variant="outlined" type="text" fullWidth margin="normal" value={phone} onChange={(e) => setPhone(e.target.value)} inputProps={{ maxLength: 80 }} />
-
-         <TextField label="비밀번호" variant="outlined" type="password" fullWidth margin="normal" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="8자리 이상이고, 영문자와 특수문자를 포함" inputProps={{ maxLength: 250 }} />
-
-         <TextField label="비밀번호 확인" variant="outlined" type="password" fullWidth margin="normal" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="8자리 이상이고, 영문자와 특수문자를 포함" inputProps={{ maxLength: 250 }} />
-
-         <Button variant="contained" color="primary" onClick={handleSignup} fullWidth disabled={loading} style={{ marginTop: '20px' }}>
-            {loading ? <CircularProgress size={24} /> : '회원가입'}
-         </Button>
-         {isSignupComplete && (
-            //회원가입이 완료 되었을때 보일 컴포넌트
-            <div className="overlay">
-               <div className="popup">
-                  <p>환영합니다. 회원가입이 완료되었습니다!</p>
-                  <p>
-                     <Link to="/login">로그인 하러 가기</Link>
-                  </p>
-               </div>
+            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
+               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
             </div>
-         )}
+
+            <TextField label="이메일" variant="outlined" fullWidth margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@example.com" inputProps={{ maxLength: 250 }} />
+
+            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
+               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+            </div>
+
+            <TextField label="사용자 이름" variant="outlined" fullWidth margin="normal" value={name} onChange={(e) => setName(e.target.value)} inputProps={{ maxLength: 80 }} />
+
+            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
+               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+            </div>
+
+            <TextField label="주소" variant="outlined" type="text" fullWidth margin="normal" value={address} onChange={(e) => setAddress(e.target.value)} inputProps={{ maxLength: 80 }} />
+
+            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
+               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+            </div>
+
+            <TextField label="닉네임" variant="outlined" type="text" fullWidth margin="normal" value={nick} onChange={(e) => setNick(e.target.value)} inputProps={{ maxLength: 80 }} />
+
+            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
+               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+            </div>
+
+            <TextField label="휴대폰 번호" variant="outlined" type="text" fullWidth margin="normal" value={phone} onChange={(e) => setPhone(e.target.value)} inputProps={{ maxLength: 80 }} />
+
+            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
+               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+            </div>
+
+            <TextField label="비밀번호" variant="outlined" type="password" fullWidth margin="normal" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="8자리 이상이고, 영문자와 특수문자를 포함" inputProps={{ maxLength: 250 }} />
+
+            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
+               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+            </div>
+
+            <TextField label="비밀번호 확인" variant="outlined" type="password" fullWidth margin="normal" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="8자리 이상이고, 영문자와 특수문자를 포함" inputProps={{ maxLength: 250 }} />
+
+            <Button variant="contained" color="primary" onClick={handleSignup} fullWidth disabled={loading} style={{ marginTop: '20px' }}>
+               {loading ? <CircularProgress size={24} /> : '회원가입'}
+            </Button>
+            {isSignupComplete && (
+               //회원가입이 완료 되었을때 보일 컴포넌트
+               <div className="overlay">
+                  <div className="popup">
+                     <p>환영합니다. 회원가입이 완료되었습니다!</p>
+                     <p>
+                        <Link to="/login">로그인 하러 가기</Link>
+                     </p>
+                  </div>
+               </div>
+            )}
+         </form>
       </Container>
    )
 }
