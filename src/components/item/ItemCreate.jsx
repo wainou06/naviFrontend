@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, CloudUpload, Trash2, Save, X } from 'lucide-react'
 import { createItem } from '../../features/itemsSlice.js'
-// import { getKeywordThunk } from '../../features/keywordSlice' // 키워드 가져오는 액션
+import { getKeywordThunk } from '../../features/keywordSlice' // 키워드 가져오는 액션
 import { Container, Box, IconButton, Typography, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, ImageList, ImageListItem, ImageListItemBar, CircularProgress, Chip } from '@mui/material'
 import { Delete, Cancel } from '@mui/icons-material'
 import '../../styles/ItemCreate.css'
@@ -12,7 +12,7 @@ const ItemCreate = () => {
    const dispatch = useDispatch()
    const navigate = useNavigate()
    const { createLoading, error } = useSelector((state) => state.items)
-   // const { keywords } = useSelector((state) => state.keywords) // 키워드 목록 가져오기
+   const { keywords } = useSelector((state) => state.keywords) // 키워드 목록 가져오기
 
    const [formData, setFormData] = useState({
       name: '',
@@ -27,10 +27,10 @@ const ItemCreate = () => {
    const [imagePreviews, setImagePreviews] = useState([])
    const [formErrors, setFormErrors] = useState({})
 
-   // useEffect(() => {
-   //    // 컴포넌트가 마운트되면 키워드 목록을 가져옵니다.
-   //    dispatch(getKeywordThunk())
-   // }, [dispatch])
+   useEffect(() => {
+      // 컴포넌트가 마운트되면 키워드 목록을 가져옵니다.
+      dispatch(getKeywordThunk())
+   }, [dispatch])
 
    const handleInputChange = (e) => {
       const { name, value } = e.target
@@ -241,16 +241,16 @@ const ItemCreate = () => {
                   <div className="form-section-card">
                      <div className="section-header">키워드 선택 ▼</div>
                      <div className="section-content">
-                        {/* <FormControl fullWidth>
+                        <FormControl fullWidth>
                            <InputLabel>키워드 선택</InputLabel>
                            <Select name="keywords" value={formData.keywords} multiple onChange={handleKeywordChange} renderValue={(selected) => selected.join(', ')}>
-                              {keywords.map((keyword) => (
+                              {/* {keywords.keywords.map((keyword) => (
                                  <MenuItem key={keyword.id} value={keyword.name}>
                                     <Chip label={keyword.name} />
                                  </MenuItem>
-                              ))}
+                              ))} */}
                            </Select>
-                        </FormControl> */}
+                        </FormControl>
                      </div>
                   </div>
                   {/* 상세설명 섹션 */}

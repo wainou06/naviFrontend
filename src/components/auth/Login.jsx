@@ -84,9 +84,9 @@ function Login() {
             </Typography>
          )}
 
-         <p style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
+         <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
             이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
-         </p>
+         </div>
 
          <form onSubmit={handleLogin}>
             <TextField
@@ -113,9 +113,9 @@ function Login() {
                }}
             />
 
-            <p style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
+            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
                비밀번호 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Password</p>
-            </p>
+            </div>
 
             <TextField
                label="비밀번호를 입력하세요."
@@ -546,7 +546,7 @@ function Login() {
          <Button
             style={{
                backgroundColor: 'white',
-               borderRadius: '2.26px',
+               borderRadius: '22.5px',
             }}
             variant="contained"
             fullWidth
