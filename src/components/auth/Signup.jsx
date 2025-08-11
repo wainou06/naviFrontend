@@ -6,8 +6,9 @@ import { registerUserThunk } from '../../features/authSlice'
 import { Link, useNavigate } from 'react-router-dom'
 
 import GoogleIcon from '@mui/icons-material/Google'
+import NavigateNextIcon from '@mui/icons-material/NavigateNext'
 
-import '../../styles/login.css'
+import '../../styles/popup.css'
 
 function Signup() {
    const [email, setEmail] = useState('')
@@ -24,6 +25,10 @@ function Signup() {
    const navigate = useNavigate()
    const { loading, error } = useSelector((state) => state.auth)
 
+   // 회원가입 팝업
+   const [isOpen, setIsOpen] = useState(false)
+   const openPopup = () => setIsOpen(true)
+
    const validateEmail = (email) => {
       // 이메일 형식인지 체크
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -36,37 +41,35 @@ function Signup() {
       return passwordRegex.test(password)
    }
 
-   const handleSignup = () => {
+   const handleSignup = async () => {
       if (!email.trim() || !name.trim() || !address.trim() || !password.trim() || !confirmPassword.trim()) {
          alert('모든 필드를 입력해주세요!')
-         return
+         return false
       }
 
       if (!validateEmail(email)) {
          alert('유효한 이메일 주소를 입력해주세요!')
-         return
+         return false
       }
 
       if (!validatePassword(password) || !validatePassword(confirmPassword)) {
          alert('비밀번호는 8자리 이상이고, 영문자와 특수문자를 포함해야 합니다!')
-         return
+         return false
       }
 
       if (password !== confirmPassword) {
          alert('비밀번호가 일치하지 않습니다!')
-         return
+         return false
       }
 
-      dispatch(registerUserThunk({ email, name, address, password, phone, nick }))
-         .unwrap()
-         .then(() => {
-            // 회원가입 성공시
-            setIsSignupComplete(true) // 회원가입 완료 상태 true로 변경
-         })
-         .catch((error) => {
-            // 회원가입 중 에러 발생시
-            console.error('회원가입 에러: ', error)
-         })
+      try {
+         await dispatch(registerUserThunk({ email, name, address, password, phone, nick })).unwrap()
+         openPopup()
+         return true
+      } catch (error) {
+         console.error('회원가입 에러: ', error)
+         return false
+      }
    }
 
    return (
@@ -74,7 +77,7 @@ function Signup() {
          style={{
             margin: '0 auto',
             width: '880.5px',
-            height: '935.69px',
+            height: 'auto',
             marginTop: '100px',
             marginBottom: '320px',
             display: 'flex',
@@ -127,58 +130,309 @@ function Signup() {
             )}
 
             <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
-               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+               이름 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Name</p>
             </div>
 
-            <TextField label="이메일" variant="outlined" fullWidth margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@example.com" inputProps={{ maxLength: 250 }} />
+            <TextField
+               label="이름을 입력하세요."
+               name="name"
+               fullWidth
+               margin="normal"
+               value={name}
+               onChange={(e) => setName(e.target.value)}
+               style={{ marginTop: '20px', marginBottom: '20px' }}
+               sx={{
+                  '& .MuiInputBase-root': {
+                     height: '113px',
+                     borderRadius: '30px',
+                     fontSize: '30px',
+                     paddingLeft: '50px',
+                  },
+                  '& .MuiInputLabel-root': {
+                     fontSize: '30px',
+                     fontWeight: 400,
+                     paddingLeft: '40px',
+                     lineHeight: '84px',
+                  },
+               }}
+            />
+
+            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
+               전화번호 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Phone</p>
+            </div>
+
+            <TextField
+               label="핸드폰 번호를 입력해주세요. 010-XXXX-XXXX"
+               name="phone"
+               fullWidth
+               margin="normal"
+               value={phone}
+               onChange={(e) => setPhone(e.target.value)}
+               style={{ marginTop: '20px', marginBottom: '20px' }}
+               sx={{
+                  '& .MuiInputBase-root': {
+                     height: '113px',
+                     borderRadius: '30px',
+                     fontSize: '30px',
+                     paddingLeft: '50px',
+                  },
+                  '& .MuiInputLabel-root': {
+                     fontSize: '30px',
+                     fontWeight: 400,
+                     paddingLeft: '40px',
+                     lineHeight: '84px',
+                  },
+               }}
+            />
 
             <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
                이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
             </div>
 
-            <TextField label="사용자 이름" variant="outlined" fullWidth margin="normal" value={name} onChange={(e) => setName(e.target.value)} inputProps={{ maxLength: 80 }} />
+            <TextField
+               label="이메일을 입력하세요. navi@example.com"
+               name="email"
+               fullWidth
+               margin="normal"
+               value={email}
+               onChange={(e) => setEmail(e.target.value)}
+               style={{ marginTop: '20px', marginBottom: '20px' }}
+               sx={{
+                  '& .MuiInputBase-root': {
+                     height: '113px',
+                     borderRadius: '30px',
+                     fontSize: '30px',
+                     paddingLeft: '50px',
+                  },
+                  '& .MuiInputLabel-root': {
+                     fontSize: '30px',
+                     fontWeight: 400,
+                     paddingLeft: '40px',
+                     lineHeight: '84px',
+                  },
+               }}
+            />
 
             <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
-               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+               비밀번호 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Password</p>
             </div>
 
-            <TextField label="주소" variant="outlined" type="text" fullWidth margin="normal" value={address} onChange={(e) => setAddress(e.target.value)} inputProps={{ maxLength: 80 }} />
+            <TextField
+               label="비밀번호를 입력하세요."
+               name="password"
+               type="password"
+               fullWidth
+               margin="normal"
+               value={password}
+               onChange={(e) => setPassword(e.target.value)}
+               style={{ marginTop: '20px', marginBottom: '20px' }}
+               sx={{
+                  '& .MuiInputBase-root': {
+                     height: '113px',
+                     borderRadius: '30px',
+                     fontSize: '30px',
+                     paddingLeft: '50px',
+                  },
+                  '& .MuiInputLabel-root': {
+                     fontSize: '30px',
+                     fontWeight: 400,
+                     paddingLeft: '40px',
+                     lineHeight: '84px',
+                  },
+               }}
+            />
 
             <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
-               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+               비밀번호 확인 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>CheckPassword</p>
             </div>
 
-            <TextField label="닉네임" variant="outlined" type="text" fullWidth margin="normal" value={nick} onChange={(e) => setNick(e.target.value)} inputProps={{ maxLength: 80 }} />
+            <TextField
+               label="비밀번호를 확인해주세요."
+               name="confirmPassword"
+               type="password"
+               fullWidth
+               margin="normal"
+               value={confirmPassword}
+               onChange={(e) => setConfirmPassword(e.target.value)}
+               style={{ marginTop: '20px', marginBottom: '20px' }}
+               sx={{
+                  '& .MuiInputBase-root': {
+                     height: '113px',
+                     borderRadius: '30px',
+                     fontSize: '30px',
+                     paddingLeft: '50px',
+                  },
+                  '& .MuiInputLabel-root': {
+                     fontSize: '30px',
+                     fontWeight: 400,
+                     paddingLeft: '40px',
+                     lineHeight: '84px',
+                  },
+               }}
+            />
 
             <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
-               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+               닉네임 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Nickname</p>
             </div>
 
-            <TextField label="휴대폰 번호" variant="outlined" type="text" fullWidth margin="normal" value={phone} onChange={(e) => setPhone(e.target.value)} inputProps={{ maxLength: 80 }} />
+            <TextField
+               label="사용할 닉네임을 입력하세요."
+               name="nick"
+               fullWidth
+               margin="normal"
+               value={nick}
+               onChange={(e) => setNick(e.target.value)}
+               style={{ marginTop: '20px', marginBottom: '20px' }}
+               sx={{
+                  '& .MuiInputBase-root': {
+                     height: '113px',
+                     borderRadius: '30px',
+                     fontSize: '30px',
+                     paddingLeft: '50px',
+                  },
+                  '& .MuiInputLabel-root': {
+                     fontSize: '30px',
+                     fontWeight: 400,
+                     paddingLeft: '40px',
+                     lineHeight: '84px',
+                  },
+               }}
+            />
 
             <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
-               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
+               주소 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Address</p>
             </div>
 
-            <TextField label="비밀번호" variant="outlined" type="password" fullWidth margin="normal" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="8자리 이상이고, 영문자와 특수문자를 포함" inputProps={{ maxLength: 250 }} />
+            <TextField
+               label="주소를 입력하세요. XX시 OO구 XX동"
+               name="address"
+               fullWidth
+               margin="normal"
+               value={address}
+               onChange={(e) => setAddress(e.target.value)}
+               style={{ marginTop: '20px', marginBottom: '20px' }}
+               sx={{
+                  '& .MuiInputBase-root': {
+                     height: '113px',
+                     borderRadius: '30px',
+                     fontSize: '30px',
+                     paddingLeft: '50px',
+                  },
+                  '& .MuiInputLabel-root': {
+                     fontSize: '30px',
+                     fontWeight: 400,
+                     paddingLeft: '40px',
+                     lineHeight: '84px',
+                  },
+               }}
+            />
 
-            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
-               이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
-            </div>
-
-            <TextField label="비밀번호 확인" variant="outlined" type="password" fullWidth margin="normal" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="8자리 이상이고, 영문자와 특수문자를 포함" inputProps={{ maxLength: 250 }} />
-
-            <Button variant="contained" color="primary" onClick={handleSignup} fullWidth disabled={loading} style={{ marginTop: '20px' }}>
+            {/* <Button variant="contained" color="primary" onClick={handleSignup} fullWidth disabled={loading} style={{ marginTop: '20px' }}>
                {loading ? <CircularProgress size={24} /> : '회원가입'}
+            </Button> */}
+            <Button
+               onClick={handleSignup}
+               variant="contained"
+               type="button"
+               fullWidth
+               disabled={loading}
+               sx={{ position: 'relative', marginTop: '20px' }}
+               style={{
+                  backgroundColor: '#F0907F',
+                  borderRadius: '30px',
+                  height: '112px',
+                  marginTop: '20px',
+                  marginBottom: '20px',
+               }}
+            >
+               {loading ? (
+                  <CircularProgress
+                     size={24}
+                     sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                     }}
+                  />
+               ) : (
+                  <p
+                     style={{
+                        fontSize: '36px',
+                        fontStyle: 'medium',
+                        fontWeight: 500,
+                     }}
+                  >
+                     회원가입
+                  </p>
+               )}
             </Button>
-            {isSignupComplete && (
+
+            {isOpen && (
                //회원가입이 완료 되었을때 보일 컴포넌트
                <div className="overlay">
-                  <div className="popup">
-                     <p>환영합니다. 회원가입이 완료되었습니다!</p>
-                     <p>
-                        <Link to="/login">로그인 하러 가기</Link>
-                     </p>
+                  <div
+                     className="popup"
+                     style={{
+                        position: 'relative',
+                        width: '880px',
+                        height: '405px',
+                        borderRadius: '100px',
+                        backgroundColor: '#F0907F',
+                        display: 'flex',
+                        justifyContent: 'center', // 가로 중앙
+                        alignItems: 'center', // 세로 중앙
+                     }}
+                  >
+                     <div
+                        style={{
+                           display: 'flex',
+                           flexDirection: 'column',
+                           alignItems: 'center',
+                           gap: '20px',
+                           width: '690px',
+                           height: '203px',
+                        }}
+                     >
+                        <p
+                           style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              border: 'none',
+                              backgroundColor: 'white',
+                              padding: '10px 20px',
+                              borderRadius: '8px',
+                              height: '88px',
+                              fontSize: '23.55px',
+                              fontWeight: 500,
+                              justifyContent: 'center',
+                              width: '100%',
+                              margin: 0,
+                           }}
+                        >
+                           환영합니다. 회원가입이 완료되었습니다!
+                        </p>
+
+                        <button
+                           type="button"
+                           style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              border: 'none',
+                              backgroundColor: 'white',
+                              padding: '10px 20px',
+                              borderRadius: '8px',
+                              width: '100%',
+                              height: '88px',
+                           }}
+                        >
+                           <p style={{ fontSize: '23.55px', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: 0, gap: '59px' }}>
+                              <Link to="/login">
+                                 로그인 하러 가기 <NavigateNextIcon />
+                              </Link>
+                           </p>
+                        </button>
+                     </div>
                   </div>
                </div>
             )}
