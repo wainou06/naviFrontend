@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 
 import PropTypes from 'prop-types'
 import Tabs from '@mui/material/Tabs'
@@ -11,6 +11,7 @@ import '../../styles/managerParts.css'
 
 import ItemSellList from '../../components/item/ItemSellList'
 import ManagerKeywords from '../manager/managerKeywords'
+import ManagerUser from '../manager/managerUser'
 
 function TabPanel(props) {
    const { children, value, index, ...other } = props
@@ -40,26 +41,26 @@ function a11yProps(index) {
 }
 
 export default function ManagerParts({ user }) {
-  const location = useLocation()
+   const location = useLocation()
 
-  // 기본값은 상품관리(1)
-  const [value, setValue] = React.useState(1)
+   // 기본값은 상품관리(1)
+   const [value, setValue] = React.useState(1)
 
-  useEffect(() => {
-     if (location.pathname === '/manager') {
-        setValue(1) // 상품관리
-     } else if (location.pathname === '/manager/keywords') {
-        setValue(2) // 키워드관리
-     } else if (location.pathname === '/manager/user') {
-        setValue(3) // 사용자관리
-     } else if (location.pathname.includes('/manager/user/') && location.pathname.endsWith('/rating')) {
-        setValue(4) // 통계
-     }
-  }, [location.pathname])
+   useEffect(() => {
+      if (location.pathname === '/manager') {
+         setValue(1) // 상품관리
+      } else if (location.pathname === '/manager/keywords') {
+         setValue(2) // 키워드관리
+      } else if (location.pathname === '/manager/user') {
+         setValue(3) // 사용자관리
+      } else if (location.pathname.includes('/manager/user/') && location.pathname.endsWith('/rating')) {
+         setValue(4) // 통계
+      }
+   }, [location.pathname])
 
-  const handleChange = (event, newValue) => {
-     setValue(newValue)
-  }
+   const handleChange = (event, newValue) => {
+      setValue(newValue)
+   }
 
    return (
       <>
@@ -107,7 +108,7 @@ export default function ManagerParts({ user }) {
             </TabPanel>
             <TabPanel value={value} index={3} className="form">
                <h1>사용자관리</h1>
-               {/* 컴포넌트 매니저에서 폼 만들어서 여기로 가져오기 */}
+               <ManagerUser />
             </TabPanel>
             <TabPanel value={value} index={4} className="form">
                <h1>통계</h1>
