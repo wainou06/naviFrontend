@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, CloudUpload, X, Save, AlertCircle } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { Container, Box, IconButton, Typography, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress } from '@mui/material'
-import '../../styles/RentalItemCreate.css'
+import '../../styles/rentalItemCreate.css'
 
 const RentalItemCreate = ({ onCreateSubmit }) => {
    const navigate = useNavigate()

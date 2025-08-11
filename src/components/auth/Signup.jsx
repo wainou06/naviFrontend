@@ -1,11 +1,10 @@
 import { TextField, Button, Container, Typography, CircularProgress } from '@mui/material'
-
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { registerUserThunk } from '../../features/authSlice'
-import { Link, useNavigate } from 'react-router-dom'
-
-import '../../styles/login.css'
+import { Link } from 'react-router-dom'
+import GoogleIcon from '@mui/icons-material/Google'
+import '../../styles/popup.css'
 
 function Signup() {
    const [email, setEmail] = useState('')
@@ -15,111 +14,176 @@ function Signup() {
    const [password, setPassword] = useState('')
    const [confirmPassword, setConfirmPassword] = useState('')
    const [address, setAddress] = useState('')
-   const [isSignupComplete, setIsSignupComplete] = useState(false) // 회원가입 완료 상태
+   const [isOpen, setIsOpen] = useState(false) // 회원가입 완료 팝업 상태
 
-   // 오타
    const dispatch = useDispatch()
-   const navigate = useNavigate()
    const { loading, error } = useSelector((state) => state.auth)
 
    const validateEmail = (email) => {
-      // 이메일 형식인지 체크
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return emailRegex.test(email) // 유효성 체크의 결과를 true, false로 리턴
+      return emailRegex.test(email)
    }
 
    const validatePassword = (password) => {
-      // 비밀번호가 8자리 이상이고, 영문자와 특수문자를 포함
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/
       return passwordRegex.test(password)
    }
 
-   const handleSignup = () => {
+   const openPopup = () => setIsOpen(true)
+
+   const handleSignup = async () => {
       if (!email.trim() || !name.trim() || !address.trim() || !password.trim() || !confirmPassword.trim()) {
          alert('모든 필드를 입력해주세요!')
-         return
+         return false
       }
 
       if (!validateEmail(email)) {
          alert('유효한 이메일 주소를 입력해주세요!')
-         return
+         return false
       }
 
       if (!validatePassword(password) || !validatePassword(confirmPassword)) {
          alert('비밀번호는 8자리 이상이고, 영문자와 특수문자를 포함해야 합니다!')
-         return
+         return false
       }
 
       if (password !== confirmPassword) {
          alert('비밀번호가 일치하지 않습니다!')
-         return
+         return false
       }
 
-      dispatch(registerUserThunk({ email, name, address, password, phone, nick }))
-         .unwrap()
-         .then(() => {
-            // 회원가입 성공시
-            setIsSignupComplete(true) // 회원가입 완료 상태 true로 변경
-         })
-         .catch((error) => {
-            // 회원가입 중 에러 발생시
-            console.error('회원가입 에러: ', error)
-         })
+      try {
+         await dispatch(registerUserThunk({ email, name, address, password, phone, nick })).unwrap()
+         openPopup()
+         return true
+      } catch (error) {
+         console.error('회원가입 에러: ', error)
+         return false
+      }
    }
 
    return (
-      <Container maxWidth="sm">
-         <Typography variant="h4" gutterBottom>
+      <Container
+         style={{
+            margin: '0 auto',
+            width: '880.5px',
+            marginTop: '100px',
+            marginBottom: '320px',
+            display: 'flex',
+            flexDirection: 'column',
+         }}
+      >
+         <Typography variant="h4" gutterBottom style={{ fontSize: '64px', fontWeight: 400 }}>
             회원가입
          </Typography>
 
-         <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ position: 'relative', marginTop: '20px' }}
-            onClick={() => {
-               // window.location.href = 'http://localhost:8000/auth/google/callback'
-               window.location.href = 'http://localhost:8000/auth/google'
-            }}
-         >
-            구글 아이디로 회원가입
-         </Button>
+         <form style={{ marginTop: '55px' }}>
+            <p style={{ fontSize: '31.5px', fontWeight: 400, textAlign: 'center' }}>다른 방법으로 회원가입</p>
+            <Button
+               style={{ backgroundColor: 'white', borderRadius: '22.5px' }}
+               variant="contained"
+               fullWidth
+               sx={{ position: 'relative', marginTop: '20px', marginBottom: '20px', padding: '10px 0' }}
+               onClick={() => {
+                  window.location.href = 'http://localhost:8000/auth/google'
+               }}
+            >
+               <span
+                  style={{
+                     display: 'flex',
+                     alignItems: 'center',
+                     justifyContent: 'center',
+                     gap: '10px',
+                     color: 'black',
+                     fontSize: '30px',
+                     fontWeight: 600,
+                  }}
+               >
+                  <GoogleIcon style={{ width: '45px', height: '45px' }} />
+                  Google
+               </span>
+            </Button>
 
-         {error && (
-            <Typography color="error" align="center">
-               {error}
-            </Typography>
-         )}
+            {error && (
+               <Typography color="error" align="center">
+                  {error}
+               </Typography>
+            )}
 
-         <TextField label="이메일" variant="outlined" fullWidth margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@example.com" inputProps={{ maxLength: 250 }} />
-
-         <TextField label="사용자 이름" variant="outlined" fullWidth margin="normal" value={name} onChange={(e) => setName(e.target.value)} inputProps={{ maxLength: 80 }} />
-
-         <TextField label="주소" variant="outlined" type="text" fullWidth margin="normal" value={address} onChange={(e) => setAddress(e.target.value)} inputProps={{ maxLength: 80 }} />
-
-         <TextField label="닉네임" variant="outlined" type="text" fullWidth margin="normal" value={nick} onChange={(e) => setNick(e.target.value)} inputProps={{ maxLength: 80 }} />
-
-         <TextField label="휴대폰 번호" variant="outlined" type="text" fullWidth margin="normal" value={phone} onChange={(e) => setPhone(e.target.value)} inputProps={{ maxLength: 80 }} />
-
-         <TextField label="비밀번호" variant="outlined" type="password" fullWidth margin="normal" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="8자리 이상이고, 영문자와 특수문자를 포함" inputProps={{ maxLength: 250 }} />
-
-         <TextField label="비밀번호 확인" variant="outlined" type="password" fullWidth margin="normal" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="8자리 이상이고, 영문자와 특수문자를 포함" inputProps={{ maxLength: 250 }} />
-
-         <Button variant="contained" color="primary" onClick={handleSignup} fullWidth disabled={loading} style={{ marginTop: '20px' }}>
-            {loading ? <CircularProgress size={24} /> : '회원가입'}
-         </Button>
-         {isSignupComplete && (
-            //회원가입이 완료 되었을때 보일 컴포넌트
-            <div className="overlay">
-               <div className="popup">
-                  <p>환영합니다. 회원가입이 완료되었습니다!</p>
-                  <p>
-                     <Link to="/login">로그인 하러 가기</Link>
-                  </p>
+            {/* 입력 필드 반복적으로 정리 */}
+            {[
+               { label: '이름을 입력하세요.', value: name, setter: setName, name: 'name' },
+               { label: '핸드폰 번호를 입력해주세요. 010-XXXX-XXXX', value: phone, setter: setPhone, name: 'phone' },
+               { label: '이메일을 입력하세요. navi@example.com', value: email, setter: setEmail, name: 'email' },
+               { label: '비밀번호를 입력하세요.', value: password, setter: setPassword, name: 'password', type: 'password' },
+               { label: '비밀번호를 확인해주세요.', value: confirmPassword, setter: setConfirmPassword, name: 'confirmPassword', type: 'password' },
+               { label: '사용할 닉네임을 입력하세요.', value: nick, setter: setNick, name: 'nick' },
+               { label: '주소를 입력하세요. XX시 OO구 XX동', value: address, setter: setAddress, name: 'address' },
+            ].map(({ label, value, setter, name, type = 'text' }) => (
+               <div key={name} style={{ marginTop: '20px', marginBottom: '20px' }}>
+                  <TextField
+                     label={label}
+                     name={name}
+                     type={type}
+                     fullWidth
+                     margin="normal"
+                     value={value}
+                     onChange={(e) => setter(e.target.value)}
+                     sx={{
+                        '& .MuiInputBase-root': {
+                           height: '113px',
+                           borderRadius: '30px',
+                           fontSize: '30px',
+                           paddingLeft: '50px',
+                        },
+                        '& .MuiInputLabel-root': {
+                           fontSize: '30px',
+                           fontWeight: 400,
+                           paddingLeft: '40px',
+                           lineHeight: '84px',
+                        },
+                     }}
+                  />
                </div>
-            </div>
-         )}
+            ))}
+
+            <Button
+               onClick={async () => {
+                  await handleSignup()
+               }}
+               variant="contained"
+               type="button"
+               fullWidth
+               disabled={loading}
+               sx={{ position: 'relative', marginTop: '20px', marginBottom: '20px' }}
+               style={{ backgroundColor: '#F0907F', borderRadius: '30px', height: '112px' }}
+            >
+               {loading ? (
+                  <CircularProgress
+                     size={24}
+                     sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                     }}
+                  />
+               ) : (
+                  <p style={{ fontSize: '36px', fontWeight: 500 }}>회원가입</p>
+               )}
+            </Button>
+
+            {isOpen && (
+               <div className="overlay">
+                  <div className="popup">
+                     <p>환영합니다. 회원가입이 완료되었습니다!</p>
+                     <p>
+                        <Link to="/login">로그인 하러 가기</Link>
+                     </p>
+                  </div>
+               </div>
+            )}
+         </form>
       </Container>
    )
 }

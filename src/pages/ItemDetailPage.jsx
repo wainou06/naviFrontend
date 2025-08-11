@@ -2,7 +2,8 @@ import { Container } from '@mui/material'
 import ItemDetail from '../components/item/ItemDetail'
 import { useDispatch } from 'react-redux'
 import { useParams, useNavigate } from 'react-router-dom'
-import { fetchItem, deleteItem, updateItem } from '../features/itemsSlice'
+import { fetchItem, deleteItem } from '../features/itemsSlice'
+import { createPriceProposalThunk, fetchPriceProposalsThunk } from '../features/priceProposalSlice'
 import { useEffect } from 'react'
 
 function ItemDetailPage() {
@@ -13,16 +14,16 @@ function ItemDetailPage() {
    useEffect(() => {
       if (id) {
          dispatch(fetchItem(id))
+         dispatch(fetchPriceProposalsThunk(id)) // 해당 아이템 가격 제안도 같이 불러오기
       }
    }, [id, dispatch])
 
-   // 상품 삭제
    const onDeleteSubmit = () => {
       if (window.confirm('정말로 삭제하시겠습니까?')) {
          dispatch(deleteItem(id))
             .unwrap()
             .then(() => {
-               navigate('/items/list') // 삭제 후 상품 리스트 페이지로 이동
+               navigate('/items/list')
             })
             .catch((error) => {
                console.error('상품 삭제 에러: ', error)
@@ -31,16 +32,31 @@ function ItemDetailPage() {
       }
    }
 
-   // 상품 수정 페이지로 이동
    const onEditSubmit = () => {
       navigate(`/items/edit/${id}`)
    }
 
-   // 가격 제안
    const onPriceProposal = (proposalData) => {
-      // 가격 제안 API 호출 로직 (구현 필요)
-      console.log('가격 제안:', proposalData)
-      alert('가격 제안이 전송되었습니다.')
+      // deliveryMethod -> purchaseMethod 매핑
+      const purchaseMethod = proposalData.deliveryMethod === '택배' ? 'shipping' : proposalData.deliveryMethod === '직거래' ? 'meetup' : 'other'
+
+      const proposalPayload = {
+         itemId: proposalData.itemId,
+         proposedPrice: proposalData.proposedPrice,
+         purchaseMethod,
+         message: proposalData.message || '',
+      }
+
+      dispatch(createPriceProposalThunk(proposalPayload))
+         .unwrap()
+         .then(() => {
+            alert('가격 제안이 성공적으로 등록되었습니다.')
+            dispatch(fetchPriceProposalsThunk(proposalData.itemId)) // 제안 목록 갱신
+         })
+         .catch((error) => {
+            console.error('가격 제안 등록 실패:', error)
+            alert('가격 제안 등록에 실패했습니다.')
+         })
    }
 
    return (
