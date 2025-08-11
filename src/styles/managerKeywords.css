@@ -47,6 +47,13 @@
 
    padding-left: 50.27px;
 }
+.managerKeywordsSelect {
+   background: url('../../public/images/shav.png') no-repeat;
+   background-size: 35px 35px;
+   background-position: 791px 38px;
+   appearance: none;
+   cursor: pointer;
+}
 .managerKeywordsSave {
    width: 880.5333251953125px;
    height: 112.88888549804688px;
