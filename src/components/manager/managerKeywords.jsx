@@ -88,7 +88,7 @@ const ManagerKeywords = () => {
                      <span className="managerKeywordsTitleBetween"> </span>
                      <span className="managerKeywordsSubtitle">Keywords</span>
                   </div>
-                  <select style={{ marginBottom: '35px' }} className="managerKeywordsSelectKeyword" onChange={(e) => onChangeSelect(e.target.value)}>
+                  <select style={{ marginBottom: '35px' }} className="managerKeywordsSelectKeyword managerKeywordsSelect" onChange={(e) => onChangeSelect(e.target.value)}>
                      <option value={''}>현재 키워드</option>
                      {keywords?.keywords?.map((keyword) => (
                         <option key={keyword.id} value={keyword.name}>
