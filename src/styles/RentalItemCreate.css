@@ -269,6 +269,7 @@
 }
 
 /* 반응형 */
+/* 고정형으로만 할 거임 */
 @media (max-width: 768px) {
    .image-grid-container {
       grid-template-columns: repeat(3, 1fr) !important;
