@@ -10,7 +10,6 @@ function RentalSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeig
    const dispatch = useDispatch()
    const { rentalItems, pagination, loading, error } = useSelector((state) => state.rental)
    const [page, setPage] = useState(1)
-   console.log(rentalItems)
 
    useEffect(() => {
       dispatch(fetchRentalItems({ page, limit: 10, searchTerm }))
