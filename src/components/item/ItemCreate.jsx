@@ -244,11 +244,11 @@ const ItemCreate = () => {
                         <FormControl fullWidth>
                            <InputLabel>키워드 선택</InputLabel>
                            <Select name="keywords" value={formData.keywords} multiple onChange={handleKeywordChange} renderValue={(selected) => selected.join(', ')}>
-                              {/* {keywords.keywords.map((keyword) => (
+                              {keywords?.keywords?.map((keyword) => (
                                  <MenuItem key={keyword.id} value={keyword.name}>
                                     <Chip label={keyword.name} />
                                  </MenuItem>
-                              ))} */}
+                              ))}
                            </Select>
                         </FormControl>
                      </div>
