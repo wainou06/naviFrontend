@@ -12,15 +12,22 @@ function MyProfile() {
    const handleEdit = async (e) => {
       e.preventDefault()
 
-      if (!nick.trim()) return alert('닉네임을 입력하세요!')
-      if (!phone.trim()) return alert('전화번호를 입력하세요!')
-      if (!address.trim()) return alert('주소를 입력하세요!')
+      const updateData = {}
+      if (nick.trim()) updateData.nick = nick.trim()
+      if (phone.trim()) updateData.phone = phone.trim()
+      if (address.trim()) updateData.address = address.trim()
+
+      if (Object.keys(updateData).length === 0) {
+         return alert('수정한 정보가 없습니다!')
+      }
 
       try {
-         const res = await axios.put('http://localhost:8000/api/auth/my', { nick, phone, address }, { withCredentials: true })
+         const res = await axios.put('http://localhost:8000/api/auth/my', updateData, { withCredentials: true })
          console.log('수정 완료:', res.data)
+         alert('회원 정보가 수정되었습니다!')
       } catch (err) {
          console.error(err)
+         alert('수정 중 오류가 발생했습니다. 다시 시도해주세요.')
       }
    }
 
