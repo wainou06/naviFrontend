@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, CloudUpload, X, Save, AlertCircle } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getKeywordThunk } from '../../features/keywordSlice' // 키워드 가져오는 액션
+import { getKeywordThunk } from '../../features/keywordSlice'
+import { fetchRentalItem, updateRentalItem } from '../../features/rentalSlice'
 import { Container, Box, IconButton, Typography, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress, Chip } from '@mui/material'
 import '../../styles/rentalItemCreate.css'
 
-const RentalItemCreate = ({ onCreateSubmit }) => {
+const RentalItemEdit = ({ onUpdateSubmit }) => {
    const dispatch = useDispatch()
    const navigate = useNavigate()
+   const { id } = useParams()
+
    const { keywords } = useSelector((state) => state.keywords)
+   const { rentalItemDetail, loading: rentalLoading, error: rentalError } = useSelector((state) => state.rental)
+
    const [loading, setLoading] = useState(false)
    const [error, setError] = useState('')
+   const [initialLoading, setInitialLoading] = useState(true)
 
    const [formData, setFormData] = useState({
       rentalItemNm: '',
@@ -19,17 +25,61 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
       quantity: '',
       rentalDetail: '',
       rentalStatus: 'Y',
-      keywords: [], // 문자열에서 배열로 변경
+      keywords: [],
       images: [],
+      deleteImages: [], // 삭제할 이미지 ID 목록
    })
 
    const [imagePreviews, setImagePreviews] = useState([])
+   const [existingImages, setExistingImages] = useState([]) // 기존 이미지들
    const [formErrors, setFormErrors] = useState({})
 
+   // 컴포넌트 마운트 시 데이터 로드
    useEffect(() => {
-      // 컴포넌트가 마운트되면 키워드 목록을 가져옵니다.
-      dispatch(getKeywordThunk())
-   }, [dispatch])
+      const loadData = async () => {
+         setInitialLoading(true)
+         try {
+            await Promise.all([dispatch(getKeywordThunk()), dispatch(fetchRentalItem(id))])
+         } catch (error) {
+            setError('데이터 로드 중 오류가 발생했습니다.')
+         } finally {
+            setInitialLoading(false)
+         }
+      }
+
+      loadData()
+   }, [dispatch, id])
+
+   // 렌탈 상품 데이터가 로드되면 폼 데이터 설정
+   useEffect(() => {
+      if (rentalItemDetail) {
+         const existingKeywords = rentalItemDetail.ItemKeywords?.map((ik) => ik.Keyword.name) || []
+         const existingImgs = rentalItemDetail.rentalImgs || []
+
+         setFormData({
+            rentalItemNm: rentalItemDetail.rentalItemNm || '',
+            oneDayPrice: rentalItemDetail.oneDayPrice || '',
+            quantity: rentalItemDetail.quantity || '',
+            rentalDetail: rentalItemDetail.rentalDetail || '',
+            rentalStatus: rentalItemDetail.rentalStatus || 'Y',
+            keywords: existingKeywords,
+            images: [],
+            deleteImages: [],
+         })
+
+         setExistingImages(existingImgs)
+
+         // 기존 이미지들을 미리보기에 추가 - URL 처리 개선
+         const processedImageUrls = existingImgs.map((img) => {
+            const rawPath = img.imgUrl.replace(/\\/g, '/')
+            const cleanPath = rawPath.startsWith('/') ? rawPath.slice(1) : rawPath
+            const baseURL = import.meta.env.VITE_APP_API_URL.replace(/\/$/, '')
+            return `${baseURL}/${cleanPath}`
+         })
+
+         setImagePreviews(processedImageUrls)
+      }
+   }, [rentalItemDetail])
 
    const handleInputChange = (e) => {
       const { name, value } = e.target
@@ -60,7 +110,8 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
          return file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024
       })
 
-      if (formData.images.length + validFiles.length > 5) {
+      const currentImageCount = existingImages.length - formData.deleteImages.length + formData.images.length
+      if (currentImageCount + validFiles.length > 5) {
          alert('최대 5개의 이미지만 업로드할 수 있습니다.')
          return
       }
@@ -80,15 +131,33 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
    }
 
    const handleImageRemove = (index) => {
-      const newImages = formData.images.filter((_, i) => i !== index)
+      const totalExistingImages = existingImages.length
+      const deletedCount = formData.deleteImages.length
+      const availableExistingImages = totalExistingImages - deletedCount
+
+      if (index < availableExistingImages) {
+         // 기존 이미지 삭제
+         const actualIndex = formData.deleteImages.length + index
+         if (actualIndex < existingImages.length) {
+            const imageToDelete = existingImages[actualIndex]
+            setFormData((prev) => ({
+               ...prev,
+               deleteImages: [...prev.deleteImages, imageToDelete.id],
+            }))
+         }
+      } else {
+         // 새로 추가된 이미지 삭제
+         const newImageIndex = index - availableExistingImages
+         const newImages = formData.images.filter((_, i) => i !== newImageIndex)
+
+         setFormData((prev) => ({
+            ...prev,
+            images: newImages,
+         }))
+      }
+
+      // 미리보기에서 제거
       const newPreviews = imagePreviews.filter((_, i) => i !== index)
-
-      URL.revokeObjectURL(imagePreviews[index])
-
-      setFormData((prev) => ({
-         ...prev,
-         images: newImages,
-      }))
       setImagePreviews(newPreviews)
    }
 
@@ -121,11 +190,46 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
       setError('')
 
       try {
-         console.log('📝 등록할 데이터:', formData)
-         await onCreateSubmit(formData)
-         navigate('/rental/list')
+         // FormData 객체 생성 (multipart/form-data로 전송하기 위해)
+         const formDataToSend = new FormData()
+
+         // 기본 필드들 추가
+         formDataToSend.append('rentalItemNm', formData.rentalItemNm)
+         formDataToSend.append('oneDayPrice', formData.oneDayPrice)
+         formDataToSend.append('quantity', formData.quantity)
+         formDataToSend.append('rentalDetail', formData.rentalDetail)
+         formDataToSend.append('rentalStatus', formData.rentalStatus)
+         formDataToSend.append('keywords', formData.keywords.join(','))
+
+         // 삭제할 이미지 ID들 (배열이 비어있어도 안전하게 처리)
+         if (formData.deleteImages && formData.deleteImages.length > 0) {
+            formDataToSend.append('deleteImages', JSON.stringify(formData.deleteImages))
+         } else {
+            formDataToSend.append('deleteImages', JSON.stringify([]))
+         }
+
+         // 새로운 이미지 파일들 추가
+         if (formData.images && formData.images.length > 0) {
+            formData.images.forEach((file, index) => {
+               formDataToSend.append('img', file)
+            })
+         }
+
+         console.log('📝 수정할 데이터:')
+         console.log('- 상품명:', formData.rentalItemNm)
+         console.log('- 키워드:', formData.keywords)
+         console.log('- 삭제할 이미지 ID:', formData.deleteImages)
+         console.log('- 새 이미지 개수:', formData.images.length)
+
+         if (onUpdateSubmit) {
+            await onUpdateSubmit(formDataToSend)
+         } else {
+            await dispatch(updateRentalItem({ id, rentalItemData: formDataToSend })).unwrap()
+            navigate('/rental/list')
+         }
       } catch (error) {
-         setError('렌탈 상품 등록에 실패했습니다.')
+         setError('렌탈 상품 수정에 실패했습니다.')
+         console.error('수정 오류:', error)
       } finally {
          setLoading(false)
       }
@@ -133,6 +237,24 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
 
    const handleBack = () => {
       navigate(-1)
+   }
+
+   // 초기 로딩 중
+   if (initialLoading) {
+      return (
+         <Container maxWidth="md" sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+         </Container>
+      )
+   }
+
+   // 상품을 찾을 수 없는 경우
+   if (!rentalItemDetail && !initialLoading) {
+      return (
+         <Container maxWidth="md" sx={{ py: 4 }}>
+            <Alert severity="error">렌탈 상품을 찾을 수 없습니다.</Alert>
+         </Container>
+      )
    }
 
    return (
@@ -143,7 +265,7 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
                <IconButton onClick={handleBack}>
                   <ArrowLeft />
                </IconButton>
-               <Typography className="rental-create-title">렌탈 상품 등록</Typography>
+               <Typography className="rental-create-title">렌탈 상품 수정</Typography>
             </Box>
 
             {/* 에러 메시지 */}
@@ -215,35 +337,39 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
 
                      {/* 이미지 그리드 */}
                      <div className="image-grid-container">
-                        {[0, 1, 2, 3, 4].map((index) => (
-                           <div key={index} className="image-preview-item">
-                              {imagePreviews[index] ? (
-                                 <>
-                                    <img src={imagePreviews[index]} alt={`preview-${index}`} />
-                                    <IconButton
-                                       sx={{
-                                          position: 'absolute',
-                                          top: 4,
-                                          right: 4,
-                                          background: 'rgba(244, 67, 54, 0.8)',
-                                          color: 'white',
-                                          '&:hover': { background: 'rgba(244, 67, 54, 1)' },
-                                       }}
-                                       size="small"
-                                       onClick={() => handleImageRemove(index)}
-                                    >
-                                       <X size={16} />
-                                    </IconButton>
-                                 </>
-                              ) : (
-                                 <label className="image-placeholder">
-                                    <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} multiple={index === 0} />
-                                    <CloudUpload />
-                                    <div className="image-placeholder-text">이미지</div>
-                                 </label>
-                              )}
-                           </div>
-                        ))}
+                        {[0, 1, 2, 3, 4].map((index) => {
+                           const isDeleted = index < existingImages.length && formData.deleteImages.includes(existingImages[index]?.id)
+
+                           return (
+                              <div key={index} className="image-preview-item">
+                                 {imagePreviews[index] && !isDeleted ? (
+                                    <>
+                                       <img src={imagePreviews[index]} alt={`preview-${index}`} />
+                                       <IconButton
+                                          sx={{
+                                             position: 'absolute',
+                                             top: 4,
+                                             right: 4,
+                                             background: 'rgba(244, 67, 54, 0.8)',
+                                             color: 'white',
+                                             '&:hover': { background: 'rgba(244, 67, 54, 1)' },
+                                          }}
+                                          size="small"
+                                          onClick={() => handleImageRemove(index)}
+                                       >
+                                          <X size={16} />
+                                       </IconButton>
+                                    </>
+                                 ) : (
+                                    <label className="image-placeholder">
+                                       <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} multiple={index === imagePreviews.length} />
+                                       <CloudUpload />
+                                       <div className="image-placeholder-text">이미지</div>
+                                    </label>
+                                 )}
+                              </div>
+                           )
+                        })}
                      </div>
                   </div>
 
@@ -288,7 +414,7 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
                   <div className="button-section">
                      <Box display="flex" gap={2}>
                         <Button type="submit" startIcon={loading ? <CircularProgress size={16} /> : <Save />} disabled={loading} sx={{ flex: 2 }}>
-                           {loading ? '등록 중...' : '렌탈 상품 등록'}
+                           {loading ? '수정 중...' : '렌탈 상품 수정'}
                         </Button>
                      </Box>
                   </div>
@@ -299,4 +425,4 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
    )
 }
 
-export default RentalItemCreate
+export default RentalItemEdit
