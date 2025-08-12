@@ -10,7 +10,7 @@ import { TableVirtuoso } from 'react-virtuoso'
 import '../../styles/managerUser.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { getUserInfoThunk } from '../../features/infoSlice'
+import { deleteUserInfoThunk, getUserInfoThunk } from '../../features/infoSlice'
 import { Box, Pagination } from '@mui/material'
 import { useState } from 'react'
 
@@ -22,14 +22,13 @@ function ManagerUser() {
    const [pagination, setPagination] = useState(1)
 
    useEffect(() => {
-      dispatch(getUserInfoThunk(1))
-   }, [dispatch])
-   console.log(pageInfo)
+      dispatch(getUserInfoThunk(pagination))
+   }, [dispatch, pagination])
 
    useEffect(() => {
       if (info && info.length > 0) {
-         const newRows = Array.from({ length: pageInfo.limit }, (_, index) => ({
-            id: index,
+         const newRows = Array.from({ length: info.length }, (_, index) => ({
+            id: info[index].id,
             nick: info[index].nick,
             name: info[index].name,
             email: info[index].email,
@@ -39,6 +38,25 @@ function ManagerUser() {
          setRows(newRows)
       }
    }, [info])
+
+   const onChangePage = (event, value) => {
+      setPagination(value)
+   }
+
+   const onClickStop = (row) => {
+      const id = row.id
+      if (confirm(`정말로 정지할거에요? ${row.nick}`)) {
+         alert('네')
+      }
+   }
+
+   const onClickDelete = (row) => {
+      if (confirm(`정말로 삭제할거에요? ${row.nick}`)) {
+         dispatch(deleteUserInfoThunk(row.id)).then(() => {
+            dispatch(getUserInfoThunk(pagination))
+         })
+      }
+   }
 
    const columns = [
       {
@@ -105,11 +123,15 @@ function ManagerUser() {
             {columns.map((column) => (
                <TableCell key={column.dataKey} align={column.numeric || false ? 'right' : 'left'}>
                   {column.dataKey === 'userStop' ? (
-                     <a className="managerUserLink managerUserButton">stop</a>
+                     <a onClick={() => onClickStop(row)} className="managerUserLink managerUserButton">
+                        stop
+                     </a>
                   ) : (
                      <>
                         {column.dataKey === 'userDelete' ? (
-                           <a className="managerUserLink managerUserButton">delete</a>
+                           <a onClick={() => onClickDelete(row)} className="managerUserLink managerUserButton">
+                              delete
+                           </a>
                         ) : (
                            <>
                               <a className="managerUserLink">{row[column.dataKey]}</a>
@@ -134,7 +156,7 @@ function ManagerUser() {
       <>
          <ReactVirtualizedTable></ReactVirtualizedTable>
          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-            <Pagination onChange={() => alert('눌렀대요')} count={pageInfo.pageCount} page={pagination} color="primary" />
+            <Pagination onChange={onChangePage} count={pageInfo?.pageCount || 1} page={pagination} color="primary" />
          </Box>
       </>
    )

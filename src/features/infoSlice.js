@@ -1,9 +1,18 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getUserInfo } from '../api/infoApi'
+import { deleteUserInfo, getUserInfo } from '../api/infoApi'
 
 export const getUserInfoThunk = createAsyncThunk('info/getUserInfo', async (page, { rejectWithValue }) => {
    try {
       const response = await getUserInfo(page)
+      return response.data
+   } catch (error) {
+      return rejectWithValue(error.response?.data?.message)
+   }
+})
+
+export const deleteUserInfoThunk = createAsyncThunk('info/deleteUserInfo', async (id, { rejectWithValue }) => {
+   try {
+      const response = await deleteUserInfo(id)
       return response.data
    } catch (error) {
       return rejectWithValue(error.response?.data?.message)
@@ -36,6 +45,17 @@ const slice = createSlice({
             // console.log(action.payload.users)
          })
          .addCase(getUserInfoThunk.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+         })
+         .addCase(deleteUserInfoThunk.pending, (state) => {
+            state.loading = true
+            state.error = null
+         })
+         .addCase(deleteUserInfoThunk.fulfilled, (state, action) => {
+            state.loading = false
+         })
+         .addCase(deleteUserInfoThunk.rejected, (state, action) => {
             state.loading = false
             state.error = action.payload
          })
