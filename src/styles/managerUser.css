@@ -1,0 +1,6 @@
+.managerUserLink {
+   cursor: pointer;
+}
+.managerUserLink:hover {
+   text-decoration: underline;
+}
