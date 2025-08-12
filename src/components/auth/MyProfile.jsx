@@ -1,13 +1,22 @@
-import { TextField, Button, CircularProgress } from '@mui/material'
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import axios from 'axios' // ★ axios import 추가
+import { TextField, Button, CircularProgress, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+// import axios from 'axios' // ★ axios import 추가
+import { updateUser, checkAuthStatusThunk } from '../../features/authSlice'
 
 function MyProfile() {
-   const [nick, setNick] = useState('')
-   const [phone, setPhone] = useState('')
-   const [address, setAddress] = useState('')
-   const { loading, error } = useSelector((state) => state.auth) // error 제거
+   const dispatch = useDispatch()
+   const { loading, error, user } = useSelector((state) => state.auth)
+
+   const [nick, setNick] = useState(user?.nick || '')
+   const [phone, setPhone] = useState(user?.phone || '')
+   const [address, setAddress] = useState(user?.address || '')
+
+   useEffect(() => {
+      setNick(user?.nick || '')
+      setPhone(user?.phone || '')
+      setAddress(user?.address || '')
+   }, [user])
 
    const handleEdit = async (e) => {
       e.preventDefault()
@@ -22,8 +31,8 @@ function MyProfile() {
       }
 
       try {
-         const res = await axios.put('http://localhost:8000/api/auth/my', updateData, { withCredentials: true })
-         console.log('수정 완료:', res.data)
+         await dispatch(updateUser(updateData)).unwrap()
+         // console.log('수정 완료:', res.data)
          alert('회원 정보가 수정되었습니다!')
       } catch (err) {
          console.error(err)
