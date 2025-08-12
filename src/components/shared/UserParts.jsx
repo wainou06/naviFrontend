@@ -1,13 +1,15 @@
 import * as React from 'react'
 import { useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
+import axios from 'axios'
 import PropTypes from 'prop-types'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 
 import '../../styles/userParts.css'
+import MyProfile from '../auth/MyProfile'
 
 function TabPanel(props) {
    const { children, value, index, ...other } = props
@@ -95,6 +97,7 @@ export default function UserParts({ user }) {
             </TabPanel>
             <TabPanel value={value} index={1} className="form">
                <h1>내 프로필</h1>
+               <MyProfile user={user} />
             </TabPanel>
             <TabPanel value={value} index={2} className="form">
                <h1>보안설정</h1>
