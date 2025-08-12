@@ -9,3 +9,12 @@ export const getUserInfo = async (page) => {
       throw error
    }
 }
+
+export const deleteUserInfo = async (id) => {
+   try {
+      const response = await api.delete(`/info/managerUserDelete/${id}`)
+      return response
+   } catch (error) {
+      console.error(`API Request 오류: ${error}`)
+   }
+}
