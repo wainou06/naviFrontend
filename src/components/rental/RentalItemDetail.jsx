@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import '../../styles/rentalDetail.css'
 
 const RentalDetail = ({ onDeleteSubmit, onEditSubmit, onRentalSubmit }) => {
    const { rentalItemDetail, loading, error } = useSelector((state) => state.rental)
@@ -213,6 +214,14 @@ const RentalDetail = ({ onDeleteSubmit, onEditSubmit, onRentalSubmit }) => {
                   </div>
                )}
 
+               {/* 주의사항 섹션 */}
+               <div className="rental-notice-section">
+                  <h3>주의사항</h3>
+                  <div className="notice-content">
+                     <p>렌트하는 동안 제품에 기스가 나거나 손상이 있을 시, 배상청구가 있을 수 있습니다. 제품을 조심히 다뤄주세요.</p>
+                  </div>
+               </div>
+
                {/* 키워드 섹션 */}
                {rentalItemDetail.ItemKeywords && rentalItemDetail.ItemKeywords.length > 0 && (
                   <div className="keywords-section">
@@ -255,6 +264,7 @@ const RentalDetail = ({ onDeleteSubmit, onEditSubmit, onRentalSubmit }) => {
          )}
 
          {/* 상품 이미지 갤러리 */}
+         <h2>상품 상세 Detail</h2>
          {rentalItemDetail.rentalImgs &&
             rentalItemDetail.rentalImgs.map((img, index) => {
                const rawPath = img.imgUrl.replace(/\\/g, '/')
