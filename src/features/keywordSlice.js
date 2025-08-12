@@ -49,7 +49,7 @@ const slice = createSlice({
       keywords: [],
    },
    reducers: {
-      clearAuthError: (state) => {
+      clearKeywordError: (state) => {
          state.error = null
       },
    },
@@ -102,5 +102,5 @@ const slice = createSlice({
          })
    },
 })
-export const { clearAuthError } = slice.actions
+export const { clearKeywordError } = slice.actions
 export default slice.reducer
