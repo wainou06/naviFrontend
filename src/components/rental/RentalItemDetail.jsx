@@ -281,7 +281,7 @@ const RentalDetail = ({ onDeleteSubmit }) => {
 
                {/* 키워드 섹션 */}
 
-               {rentalItemDetail.ItemKeywords && rentalItemDetail.ItemKeywords.length > 0 && (
+               {rentalItemDetail.ItemKeywords && rentalItemDetail.ItemKeywords.length > 0 ? (
                   <div className="keywords-section">
                      <h3>관련 키워드</h3>
                      <div className="keywords">
@@ -291,6 +291,11 @@ const RentalDetail = ({ onDeleteSubmit }) => {
                            </span>
                         ))}
                      </div>
+                  </div>
+               ) : (
+                  <div className="keywords-section">
+                     <h3>관련 키워드</h3>
+                     <p>키워드가 존재하지 않습니다.</p>
                   </div>
                )}
             </div>
