@@ -62,14 +62,28 @@ export const deleteRentalItem = createAsyncThunk('rental/deleteRentalItem', asyn
    }
 })
 
+// 나의 렌탈 상품 목록 조회 (특정 사용자 ID 기준)
+export const fetchMyRentalItems = createAsyncThunk('rental/fetchMyRentalItems', async (userId, { rejectWithValue }) => {
+   try {
+      // API 호출 시 userId를 파라미터로 전달
+      const response = await rentalItemsAPI.getRentalItems({ userId })
+      return response.data.rentalItems // 응답에서 실제 상품 목록만 반환
+   } catch (error) {
+      return rejectWithValue(error.message || '나의 렌탈 상품 목록 조회 실패')
+   }
+})
+
 // 리덕스 슬라이스
 const rentalSlice = createSlice({
    name: 'rental',
    initialState: {
       rentalItems: [], // 렌탈상품 목록
       rentalItemDetail: null, // 특정 렌탈상품 상세정보
+      myRentalItems: [], // 나의 렌탈 상품 목록 (새로 추가)
       loading: false, // 로딩 상태
+      myRentalItemsLoading: false, // 나의 렌탈 상품 로딩 상태
       error: null, // 에러 메시지
+      myRentalItemsError: null, // 나의 렌탈 상품 에러 상태
       currentItem: null,
       pagination: {
          // 페이징 정보
@@ -169,6 +183,22 @@ const rentalSlice = createSlice({
       builder.addCase(deleteRentalItem.rejected, (state, action) => {
          state.loading = false
          state.error = action.payload || '상품 삭제 실패'
+      })
+
+      //나의 렌탈 상품 목록
+      builder.addCase(fetchMyRentalItems.pending, (state) => {
+         state.myRentalItemsLoading = true
+         state.myRentalItemsError = null
+      })
+      builder.addCase(fetchMyRentalItems.fulfilled, (state, action) => {
+         state.myRentalItemsLoading = false
+         state.myRentalItems = action.payload || []
+         state.myRentalItemsError = null
+      })
+      builder.addCase(fetchMyRentalItems.rejected, (state, action) => {
+         state.myRentalItemsLoading = false
+         state.myRentalItemsError = action.payload || '나의 렌탈 상품 목록 조회 실패'
+         state.myRentalItems = []
       })
    },
 })
