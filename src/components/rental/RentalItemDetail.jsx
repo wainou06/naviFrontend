@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { createRentalOrderThunk, fetchRentalOrdersByItemThunk } from '../../features/rentalOrderSlice'
 import '../../styles/rentalDetail.css'
+import loginStatusImg from '../../../public/images/로그인상태.png'
 
 const RentalDetail = ({ onDeleteSubmit }) => {
    const dispatch = useDispatch()
@@ -161,34 +162,37 @@ const RentalDetail = ({ onDeleteSubmit }) => {
                </div>
 
                {/* 렌트 날짜 및 수량 선택 */}
-               <div className="rental-date-section">
-                  <h3>렌트 기간 및 수량 선택</h3>
+               {/* 렌트 날짜 및 수량 선택 */}
+               {!isOwner && (
+                  <div className="rental-date-section">
+                     <h3>렌트 기간 및 수량 선택</h3>
 
-                  <div className="date-inputs">
-                     <div className="date-input-group">
-                        <label>시작일</label>
-                        <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} min={today} className="date-input" />
+                     <div className="date-inputs">
+                        <div className="date-input-group">
+                           <label>시작일</label>
+                           <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} min={today} className="date-input" />
+                        </div>
+                        <div className="date-input-group">
+                           <label>종료일</label>
+                           <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} min={startDate || today} className="date-input" />
+                        </div>
+                        <div className="quantity-input-group">
+                           <label>수량</label>
+                           <input type="number" value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value) || 1)} min="1" max={rentalItemDetail.quantity} className="quantity-input" />
+                        </div>
                      </div>
-                     <div className="date-input-group">
-                        <label>종료일</label>
-                        <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} min={startDate || today} className="date-input" />
-                     </div>
-                     <div className="quantity-input-group">
-                        <label>수량</label>
-                        <input type="number" value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value) || 1)} min="1" max={rentalItemDetail.quantity} className="quantity-input" />
-                     </div>
+
+                     {startDate && endDate && (
+                        <div className="rental-summary">
+                           <p>렌트 기간: {calculateDays()}일</p>
+                           <p>수량: {quantity}개</p>
+                           <p>
+                              총 금액: <strong>{formatPrice(calculateTotalPrice())}</strong>
+                           </p>
+                        </div>
+                     )}
                   </div>
-
-                  {startDate && endDate && (
-                     <div className="rental-summary">
-                        <p>렌트 기간: {calculateDays()}일</p>
-                        <p>수량: {quantity}개</p>
-                        <p>
-                           총 금액: <strong>{formatPrice(calculateTotalPrice())}</strong>
-                        </p>
-                     </div>
-                  )}
-               </div>
+               )}
 
                {/* 버튼 섹션 */}
                <div className="action-section">
@@ -314,23 +318,12 @@ const RentalDetail = ({ onDeleteSubmit }) => {
                               {new Date(order.useStart).toLocaleDateString()} ~ {new Date(order.useEnd).toLocaleDateString()}
                            </div>
                            <div className="rental-user">
-                              <img
-                                 src={'/default-avatar.png'} // 기본 아바타만 사용
-                                 alt={order.user?.name || '사용자'}
-                                 className="user-avatar"
-                              />
+                              <img src={loginStatusImg} alt={order.user?.name || '사용자'} className="user-avatar" />
                               <span>{order.user?.name || '익명'}</span>
                            </div>
                            <div className="rental-info">
-                              <div className="rental-quantity">수량: {order.quantity}개</div>
-                              <div className="rental-status-badge">
-                                 {/* <span className={`status ${order.orderStatus}`}>
-                                    {order.orderStatus === 'pending' && '대기중'}
-                                    {order.orderStatus === 'approved' && '승인됨'}
-                                    {order.orderStatus === 'completed' && '완료'}
-                                    {order.orderStatus === 'cancelled' && '취소됨'}
-                                 </span> */}
-                              </div>
+                              <div className="rental-quantity">수량: {order?.quantity || 1}개</div>
+                              <div className="rental-status-badge"></div>
                            </div>
                         </div>
                      ))
