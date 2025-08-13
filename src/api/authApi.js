@@ -44,4 +44,3 @@ export const checkAuthStatus = async () => {
       throw error
    }
 }
-// /auth/status 여기있음
