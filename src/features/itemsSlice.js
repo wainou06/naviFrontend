@@ -46,11 +46,22 @@ export const deleteItem = createAsyncThunk('items/deleteItem', async (id, { reje
    }
 })
 
+// 나의 상품 목록 조회 (로그인한 사용자 ID 기준)
+export const fetchMyItems = createAsyncThunk('items/fetchMyItems', async (userId, { rejectWithValue }) => {
+   try {
+      const response = await itemsAPI.getItems({ userId })
+      const items = response.items || response.data?.items || []
+      return items
+   } catch (error) {
+      return rejectWithValue(error.message || '나의 상품 목록을 불러오는데 실패했습니다.')
+   }
+})
 const itemsSlice = createSlice({
    name: 'items',
    initialState: {
       items: [],
       currentItem: null,
+      myItems: [], // 나의 상품 목록을 위한 새로운 상태
       pagination: {
          currentPage: 1,
          totalPages: 1,
@@ -59,7 +70,9 @@ const itemsSlice = createSlice({
          hasPrev: false,
       },
       loading: false,
+      myItemsLoading: false, // 나의 상품 로딩 상태
       error: null,
+      myItemsError: null, // 나의 상품 에러 상태
       deleteLoading: false,
    },
    reducers: {
@@ -161,6 +174,23 @@ const itemsSlice = createSlice({
          .addCase(deleteItem.rejected, (state, action) => {
             state.deleteLoading = false
             state.error = action.payload
+         })
+
+      // 나의 상품 목록 조회
+      builder
+         .addCase(fetchMyItems.pending, (state) => {
+            state.myItemsLoading = true
+            state.myItemsError = null
+         })
+         .addCase(fetchMyItems.fulfilled, (state, action) => {
+            state.myItemsLoading = false
+            state.myItems = action.payload
+            state.myItemsError = null
+         })
+         .addCase(fetchMyItems.rejected, (state, action) => {
+            state.myItemsLoading = false
+            state.myItemsError = action.payload || '나의 상품 목록 조회 실패'
+            state.myItems = [] // 에러 발생 시 목록 비우기
          })
    },
 })

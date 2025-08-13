@@ -6,8 +6,6 @@ import { useEffect, useState } from 'react'
 import useSocket from './hooks/useSocket'
 
 import './styles/common.css'
-import './styles/itemCreate.css'
-import './styles/itemList.css'
 
 import Home from './pages/Home'
 import Navbar from './components/shared/Navbar'
