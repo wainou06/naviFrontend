@@ -29,7 +29,6 @@ const RentalList = () => {
    const [deleteDialog, setDeleteDialog] = useState({ open: false, item: null })
    const [activeFilter, setActiveFilter] = useState('전체')
 
-   //오류 찾는중...
    useEffect(() => {
       const promise = dispatch(fetchRentalItems(filters))
 
@@ -44,7 +43,7 @@ const RentalList = () => {
 
    const handleFilterClick = (filterType) => {
       setActiveFilter(filterType)
-      const rentalStatus = filterType === '대여중' ? 'Y' : filterType === '대여불가' ? 'N' : ''
+      const rentalStatus = filterType === '렌탈가능' ? 'Y' : filterType === '렌탈불가' ? 'N' : ''
       setFilters({ ...filters, rentalStatus, page: 1 })
    }
 
@@ -61,14 +60,25 @@ const RentalList = () => {
       return new Intl.NumberFormat('ko-KR').format(price)
    }
 
-   const getStatusText = (status) => {
+   const getStatusText = (status, quantity = 0) => {
       switch (status) {
          case 'Y':
-            return '렌탈가능'
+            return quantity > 0 ? '렌탈가능' : '렌탈중'
          case 'N':
             return '렌탈중'
          default:
             return '알 수 없음'
+      }
+   }
+
+   const getStatusClass = (status, quantity = 0) => {
+      switch (status) {
+         case 'Y':
+            return quantity > 0 ? 'status-available' : 'status-sold'
+         case 'N':
+            return 'status-unavailable'
+         default:
+            return 'status-unknown'
       }
    }
 
@@ -86,7 +96,7 @@ const RentalList = () => {
 
             {/* 필터 버튼들 */}
             <div className="filter-section">
-               {['필터', '가격순', '날짜순', '렌탈일순'].map((filter) => (
+               {['필터', '가격순', '날짜순'].map((filter) => (
                   <Button key={filter} className={`filter-btn ${activeFilter === filter ? 'active' : ''}`} onClick={() => handleFilterClick(filter)}>
                      {filter}
                   </Button>
@@ -123,7 +133,8 @@ const RentalList = () => {
                         .filter((item) => item && item.id) // item이 존재하고, id 속성이 있는 경우만 필터링
                         .map((item) => (
                            <div key={item.id} className="product-card">
-                              <div className={`product-status-label ${item?.rentalStatus === 'Y' ? 'status-available' : 'status-unavailable'}`}>{getStatusText(item?.rentalStatus)}</div>
+                              {/* 상태라벨  */}
+                              <div className={`product-status-label ${getStatusClass(item?.rentalStatus, item?.quantity)}`}>{getStatusText(item?.rentalStatus, item?.quantity)}</div>
 
                               <div className="product-actions">
                                  <button className="action-btn view" onClick={() => navigate(`/rental/detail/${item.id}`)} title="상세보기">
