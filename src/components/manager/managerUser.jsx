@@ -10,9 +10,10 @@ import { TableVirtuoso } from 'react-virtuoso'
 import '../../styles/managerUser.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { deleteUserInfoThunk, getUserInfoThunk } from '../../features/infoSlice'
+import { deleteUserInfoThunk, getUserInfoThunk, suspendUserInfoThunk } from '../../features/infoSlice'
 import { Box, Pagination } from '@mui/material'
 import { useState } from 'react'
+import { dayLeft, datePass } from '../../utils/dateSet'
 
 function ManagerUser() {
    const dispatch = useDispatch()
@@ -34,6 +35,7 @@ function ManagerUser() {
             email: info[index].email,
             address: info[index].address,
             phone: info[index].phone,
+            suspend: info[index].suspend,
          }))
          setRows(newRows)
       }
@@ -45,13 +47,24 @@ function ManagerUser() {
 
    const onClickStop = (row) => {
       const id = row.id
-      if (confirm(`정말로 정지할거에요? ${row.nick}`)) {
-         alert('네')
+      const day = prompt('정지 일 수를 입력해주세요')
+
+      if (isNaN(day)) {
+         alert('숫자가 아니에요')
+         return
+      } else if (!day) {
+         return
+      }
+
+      if (confirm(`정말로 정지하시겠습니까? ${row.nick}, ${day}일`)) {
+         const date = new Date()
+         date.setDate(date.getDate() + Number(day))
+         dispatch(suspendUserInfoThunk({ id, date }))
       }
    }
 
    const onClickDelete = (row) => {
-      if (confirm(`정말로 삭제할거에요? ${row.nick}`)) {
+      if (confirm(`정말로 삭제하시겠습니까? ${row.nick}`)) {
          dispatch(deleteUserInfoThunk(row.id)).then(() => {
             dispatch(getUserInfoThunk(pagination))
          })
@@ -73,7 +86,6 @@ function ManagerUser() {
          width: 100,
          label: '이메일',
          dataKey: 'email',
-         // numeric: true,
       },
       {
          width: 100,
@@ -123,9 +135,7 @@ function ManagerUser() {
             {columns.map((column) => (
                <TableCell key={column.dataKey} align={column.numeric || false ? 'right' : 'left'}>
                   {column.dataKey === 'userStop' ? (
-                     <a onClick={() => onClickStop(row)} className="managerUserLink managerUserButton">
-                        stop
-                     </a>
+                     <a className="managerUserLink managerUserButton">{datePass(row.suspend) ? <span style={{ fontSize: '25px' }}>{dayLeft(row.suspend)}일</span> : <span onClick={() => onClickStop(row)}>stop</span>}</a>
                   ) : (
                      <>
                         {column.dataKey === 'userDelete' ? (
