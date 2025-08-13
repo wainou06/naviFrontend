@@ -1,5 +1,7 @@
 import api from './axiosApi'
 
+//유저 조회
+
 export const getUserInfo = async (page) => {
    try {
       const response = await api.get(`/info/managerUser/${page}`)
@@ -10,6 +12,8 @@ export const getUserInfo = async (page) => {
    }
 }
 
+//계정 삭제
+
 export const deleteUserInfo = async (id) => {
    try {
       const response = await api.delete(`/info/managerUserDelete/${id}`)
@@ -18,6 +22,8 @@ export const deleteUserInfo = async (id) => {
       console.error(`API Request 오류: ${error}`)
    }
 }
+
+//계정 정지
 
 export const suspendUserInfo = async (id, date) => {
    try {
