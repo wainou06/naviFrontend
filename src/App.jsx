@@ -22,6 +22,7 @@ import RentalListPage from './pages/RentalListPage'
 import RentalCreatePage from './pages/RentalCreatePage'
 import RentalDetailPage from './pages/RentalDetailPage'
 import MyPage from './pages/MyPage'
+import RentalEditPage from './pages/RentalEditPage'
 
 function App() {
    const dispatch = useDispatch()
@@ -63,6 +64,7 @@ function App() {
             <Route path="/rental/list" element={<RentalListPage />} />
             <Route path="/rental/create" element={<RentalCreatePage />} />
             <Route path="/rental/detail/:id" element={<RentalDetailPage />} />
+            <Route path="/rental/edit/:id" element={<RentalEditPage />} />
 
             <Route path="/manager" element={<ManagerPage user={user} />} />
             <Route path="/manager/keywords" element={<ManagerPage user={user} />} />

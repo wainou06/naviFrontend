@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { registerUser, loginUser, logoutUser, checkAuthStatus } from '../api/authApi'
+import axios from 'axios'
 
 // 회원가입
 export const registerUserThunk = createAsyncThunk('auth/registerUser', async (userData, { rejectWithValue }) => {
@@ -36,6 +37,16 @@ export const checkAuthStatusThunk = createAsyncThunk('auth/checkAuthStatus', asy
    try {
       const response = await checkAuthStatus()
       return response
+   } catch (error) {
+      return rejectWithValue(error.response?.data?.message)
+   }
+})
+
+// 유저 정보 수정
+export const updateUser = createAsyncThunk('auth/updateUser', async (userData, { rejectWithValue }) => {
+   try {
+      const res = await axios.put('http://localhost:8000/auth/my', userData, { withCredentials: true })
+      return res.data
    } catch (error) {
       return rejectWithValue(error.response?.data?.message)
    }
@@ -111,6 +122,21 @@ const authSlice = createSlice({
             state.error = action.payload
             state.isAuthenticated = false
             state.user = null
+         })
+      builder
+         //회원 정보 수정
+         .addCase(updateUser.pending, (state) => {
+            state.loading = true
+            state.error = null
+         })
+         .addCase(updateUser.fulfilled, (state, action) => {
+            state.loading = false
+            state.error = null
+            state.user = action.payload.user || { ...state.user, ...action.meta.arg }
+         })
+         .addCase(updateUser.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload?.message || '회원 정보 수정 실패'
          })
    },
 })

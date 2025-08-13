@@ -58,19 +58,33 @@ export const rentalItemsAPI = {
    // 렌탈상품 수정 (이미지 포함)
    updateRentalItem: async (id, rentalItemData) => {
       try {
+         // FormData가 이미 전달된 경우 그대로 서버에 전송
+         if (rentalItemData instanceof FormData) {
+            console.log('FormData로 받음 - 그대로 전송')
+
+            const response = await naviApi.put(`/rental/edit/${id}`, rentalItemData, {
+               headers: {
+                  'Content-Type': 'multipart/form-data',
+               },
+            })
+            return response.data
+         }
+
+         // 일반 객체로 받은 경우 FormData로 변환 (기존 방식 유지)
+         console.log('일반 객체로 받음 - FormData로 변환')
          const formData = new FormData()
 
-         // 기본 렌탈상품 정보 추가
-         if (rentalItemData.name !== undefined) formData.append('name', rentalItemData.name)
-         if (rentalItemData.price !== undefined) formData.append('price', rentalItemData.price)
-         if (rentalItemData.stock !== undefined) formData.append('stock', rentalItemData.stock)
-         if (rentalItemData.content !== undefined) formData.append('content', rentalItemData.content)
-         if (rentalItemData.status !== undefined) formData.append('status', rentalItemData.status)
-         if (rentalItemData.rentalPeriodMin !== undefined) formData.append('rentalPeriodMin', rentalItemData.rentalPeriodMin)
-         if (rentalItemData.rentalPeriodMax !== undefined) formData.append('rentalPeriodMax', rentalItemData.rentalPeriodMax)
+         if (rentalItemData.rentalItemNm !== undefined) formData.append('rentalItemNm', rentalItemData.rentalItemNm)
+         if (rentalItemData.oneDayPrice !== undefined) formData.append('oneDayPrice', rentalItemData.oneDayPrice)
+         if (rentalItemData.quantity !== undefined) formData.append('quantity', rentalItemData.quantity)
+         if (rentalItemData.rentalDetail !== undefined) formData.append('rentalDetail', rentalItemData.rentalDetail)
+         if (rentalItemData.rentalStatus !== undefined) formData.append('rentalStatus', rentalItemData.rentalStatus)
          if (rentalItemData.keywords !== undefined) formData.append('keywords', rentalItemData.keywords)
 
-         // 이미지 파일들 추가 (새로운 이미지가 있는 경우)
+         if (rentalItemData.deleteImages && rentalItemData.deleteImages.length > 0) {
+            formData.append('deleteImages', JSON.stringify(rentalItemData.deleteImages))
+         }
+
          if (rentalItemData.images && rentalItemData.images.length > 0) {
             rentalItemData.images.forEach((image) => {
                formData.append('img', image)

@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, CloudUpload, Trash2, Save, X } from 'lucide-react'
-import { createItem } from '../../features/itemsSlice.js'
+import { ArrowLeft, CloudUpload, Save, X } from 'lucide-react'
 import { getKeywordThunk } from '../../features/keywordSlice' // 키워드 가져오는 액션
-import { Container, Box, IconButton, Typography, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, ImageList, ImageListItem, ImageListItemBar, CircularProgress, Chip } from '@mui/material'
-import { Delete, Cancel } from '@mui/icons-material'
+import { Container, Box, IconButton, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress, Chip } from '@mui/material'
 import '../../styles/ItemCreate.css'
 
-const ItemCreate = () => {
+const ItemCreate = ({ onCreateSubmit }) => {
    const dispatch = useDispatch()
    const navigate = useNavigate()
    const { createLoading, error } = useSelector((state) => state.items)
-   const { keywords } = useSelector((state) => state.keywords) // 키워드 목록 가져오기
+   const { keywords } = useSelector((state) => state.keywords)
 
    const [formData, setFormData] = useState({
       name: '',
@@ -112,27 +110,11 @@ const ItemCreate = () => {
       }
 
       try {
-         await dispatch(createItem(formData)).unwrap()
+         await onCreateSubmit(formData)
          alert('상품이 성공적으로 등록되었습니다.')
-         navigate && navigate('/items/list')
       } catch (error) {
          console.error('상품 등록 실패:', error)
       }
-   }
-
-   const handleReset = () => {
-      setFormData({
-         name: '',
-         price: '',
-         stock: '',
-         content: '',
-         status: 'sell',
-         keywords: [],
-         images: [],
-      })
-      imagePreviews.forEach((url) => URL.revokeObjectURL(url))
-      setImagePreviews([])
-      setFormErrors({})
    }
 
    const handleKeywordChange = (event) => {
@@ -174,7 +156,6 @@ const ItemCreate = () => {
                   {/* 가격 섹션 */}
                   <div className="form-section-card">
                      <div className="section-header">가격</div>
-                     {/* <div className="section-description">상품 가격을 입력해주세요.</div> */}
                      <div className="section-content">
                         <Grid container spacing={2}>
                            <Grid item xs={15} sm={6}>
@@ -255,7 +236,6 @@ const ItemCreate = () => {
                   </div>
                   {/* 상세설명 섹션 */}
                   <div className="description-section">
-                     {/* <Typography className="description-title">상세 설명을 작성해주세요.</Typography> */}
                      <TextField fullWidth name="content" value={formData.content} onChange={handleInputChange} multiline rows={6} placeholder="상세 설명을 작성해주세요." variant="outlined" />
                      <div className="description-divider"></div>
                   </div>

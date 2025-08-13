@@ -269,6 +269,7 @@
 }
 
 /* 반응형 */
+/* 고정형으로 진행하는 중임 (삭제 필요) */
 @media (max-width: 768px) {
    .image-grid-container {
       grid-template-columns: repeat(3, 1fr) !important;

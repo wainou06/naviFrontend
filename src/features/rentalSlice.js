@@ -34,12 +34,23 @@ export const createRentalItem = createAsyncThunk('rental/createRentalItem', asyn
 // 렌탈상품 수정
 export const updateRentalItem = createAsyncThunk('rental/updateRentalItem', async ({ id, rentalItemData }, { rejectWithValue }) => {
    try {
+      console.log('Redux thunk - 수정 요청:', { id, rentalItemData })
       const response = await rentalItemsAPI.updateRentalItem(id, rentalItemData)
+      console.log('Redux thunk - 서버 응답:', response.data)
       return response.data
    } catch (error) {
+      console.error('Redux thunk - 에러:', error)
       return rejectWithValue(error.message || '상품 수정 실패')
    }
 })
+// export const updateRentalItem = createAsyncThunk('rental/updateRentalItem', async ({ id, rentalItemData }, { rejectWithValue }) => {
+//    try {
+//       const response = await rentalItemsAPI.updateRentalItem(id, rentalItemData)
+//       return response.data
+//    } catch (error) {
+//       return rejectWithValue(error.message || '상품 수정 실패')
+//    }
+// })
 
 // 렌탈상품 삭제
 export const deleteRentalItem = createAsyncThunk('rental/deleteRentalItem', async (id, { rejectWithValue }) => {
@@ -59,6 +70,7 @@ const rentalSlice = createSlice({
       rentalItemDetail: null, // 특정 렌탈상품 상세정보
       loading: false, // 로딩 상태
       error: null, // 에러 메시지
+      currentItem: null,
       pagination: {
          // 페이징 정보
          totalItems: 0,
@@ -92,6 +104,7 @@ const rentalSlice = createSlice({
       builder.addCase(fetchRentalItem.fulfilled, (state, action) => {
          state.loading = false
          state.rentalItemDetail = action.payload
+         state.currentItem = action.payload
       })
       builder.addCase(fetchRentalItem.rejected, (state, action) => {
          state.loading = false
@@ -119,10 +132,24 @@ const rentalSlice = createSlice({
       })
       builder.addCase(updateRentalItem.fulfilled, (state, action) => {
          state.loading = false
-         const updatedItem = action.payload.data
-         const index = state.rentalItems.findIndex((item) => item.id === updatedItem.id)
-         if (index !== -1) {
-            state.rentalItems[index] = updatedItem // 수정된 상품 정보로 교체
+         state.error = null
+
+         // 서버 응답에서 실제 데이터 추출
+         const updatedItem = action.payload.data || action.payload
+
+         console.log('Redux fulfilled - 받은 데이터:', updatedItem)
+
+         if (updatedItem && updatedItem.id) {
+            // 리스트에서 해당 아이템 찾아서 업데이트
+            const index = state.rentalItems.findIndex((item) => item.id === updatedItem.id)
+
+            if (index !== -1) {
+               state.rentalItems[index] = updatedItem
+            }
+
+            // 상세 정보도 업데이트
+            state.rentalItemDetail = updatedItem
+            state.currentItem = updatedItem
          }
       })
       builder.addCase(updateRentalItem.rejected, (state, action) => {
