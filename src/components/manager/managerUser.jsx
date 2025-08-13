@@ -10,9 +10,10 @@ import { TableVirtuoso } from 'react-virtuoso'
 import '../../styles/managerUser.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { deleteUserInfoThunk, getUserInfoThunk } from '../../features/infoSlice'
+import { deleteUserInfoThunk, getUserInfoThunk, suspendUserInfoThunk } from '../../features/infoSlice'
 import { Box, Pagination } from '@mui/material'
 import { useState } from 'react'
+import { dayLeft, datePass } from '../../utils/dateSet'
 
 function ManagerUser() {
    const dispatch = useDispatch()
@@ -34,6 +35,7 @@ function ManagerUser() {
             email: info[index].email,
             address: info[index].address,
             phone: info[index].phone,
+            suspend: info[index].suspend,
          }))
          setRows(newRows)
       }
@@ -45,16 +47,53 @@ function ManagerUser() {
 
    const onClickStop = (row) => {
       const id = row.id
-      if (confirm(`정말로 정지할거에요? ${row.nick}`)) {
-         alert('네')
+      const day = prompt('정지 일 수를 입력해주세요')
+
+      if (isNaN(day)) {
+         alert('숫자가 아니에요')
+         return
+      } else if (!day) {
+         return
+      }
+
+      if (confirm(`정말로 정지하시겠습니까? ${row.nick}, ${day}일`)) {
+         const date = new Date()
+         date.setDate(date.getDate() + Number(day))
+         dispatch(suspendUserInfoThunk({ id, date })).then(() => {
+            dispatch(getUserInfoThunk(pagination))
+         })
+      }
+   }
+
+   const onClickEdit = (row) => {
+      const id = row.id
+      let day = prompt('정지 일 수의 증감값을 입력해주세요')
+
+      if (isNaN(day)) {
+         alert('숫자가 아닙니다')
+         return
+      } else if (!day) {
+         return
+      } else if (dayLeft(row.suspend) + Number(day) < 0) {
+         day = dayLeft(row.suspend) * -1
+      }
+
+      if (confirm(`정말로 수정하시겠습니까? ${row.nick}, ${Number(day)}일`)) {
+         const date = new Date(row.suspend)
+         date.setDate(date.getDate() + Number(day))
+         dispatch(suspendUserInfoThunk({ id, date })).then(() => {
+            dispatch(getUserInfoThunk(pagination))
+         })
       }
    }
 
    const onClickDelete = (row) => {
-      if (confirm(`정말로 삭제할거에요? ${row.nick}`)) {
-         dispatch(deleteUserInfoThunk(row.id)).then(() => {
-            dispatch(getUserInfoThunk(pagination))
-         })
+      if (confirm(`정말로 삭제하시겠습니까? ${row.nick}`)) {
+         if (prompt('사용자 닉네임을 입력해주세요') === row.nick) {
+            dispatch(deleteUserInfoThunk(row.id)).then(() => {
+               dispatch(getUserInfoThunk(pagination))
+            })
+         }
       }
    }
 
@@ -73,7 +112,6 @@ function ManagerUser() {
          width: 100,
          label: '이메일',
          dataKey: 'email',
-         // numeric: true,
       },
       {
          width: 100,
@@ -123,13 +161,11 @@ function ManagerUser() {
             {columns.map((column) => (
                <TableCell key={column.dataKey} align={column.numeric || false ? 'right' : 'left'}>
                   {column.dataKey === 'userStop' ? (
-                     <a onClick={() => onClickStop(row)} className="managerUserLink managerUserButton">
-                        stop
-                     </a>
+                     <a className="managerUserLink managerUserButton">{datePass(row.suspend) ? <span onClick={() => onClickEdit(row)}>{dayLeft(row.suspend)}일</span> : <span onClick={() => onClickStop(row)}>stop</span>}</a>
                   ) : (
                      <>
                         {column.dataKey === 'userDelete' ? (
-                           <a onClick={() => onClickDelete(row)} className="managerUserLink managerUserButton">
+                           <a style={{ fontSize: '13px' }} onClick={() => onClickDelete(row)} className="managerUserLink managerUserButton">
                               delete
                            </a>
                         ) : (

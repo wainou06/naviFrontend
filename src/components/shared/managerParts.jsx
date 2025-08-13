@@ -12,6 +12,7 @@ import '../../styles/managerParts.css'
 import ItemSellList from '../../components/item/ItemSellList'
 import ManagerKeywords from '../manager/managerKeywords'
 import ManagerUser from '../manager/managerUser'
+import ManagerUserRating from '../manager/managerUserRating'
 
 function TabPanel(props) {
    const { children, value, index, ...other } = props
@@ -112,7 +113,7 @@ export default function ManagerParts({ user }) {
             </TabPanel>
             <TabPanel value={value} index={4} className="form">
                <h1>통계</h1>
-               {/* 컴포넌트 매니저에서 폼 만들어서 여기로 가져오기 */}
+               <ManagerUserRating />
             </TabPanel>
          </div>
       </>

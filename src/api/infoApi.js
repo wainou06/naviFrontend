@@ -18,3 +18,13 @@ export const deleteUserInfo = async (id) => {
       console.error(`API Request 오류: ${error}`)
    }
 }
+
+export const suspendUserInfo = async (id, date) => {
+   try {
+      const response = await api.put(`/info/managerUserSuspend/${id}`, { date: date })
+      return response
+   } catch (error) {
+      console.error(`API Request 오류: ${error}`)
+      throw error
+   }
+}
