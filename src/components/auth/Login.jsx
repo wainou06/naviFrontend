@@ -5,6 +5,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUserThunk } from '../../features/authSlice'
 
+import axios from 'axios' // ★ axios import 추가
+
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import CloseIcon from '@mui/icons-material/Close'
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail'
@@ -26,6 +28,37 @@ function Login() {
 
    // 아이디 저장
    const [rememberMe, setRememberMe] = useState(false)
+
+   const [emailInput, setEmailInput] = useState('')
+   const [phoneInput, setPhoneInput] = useState('')
+
+   const handleSendEmail = async () => {
+      try {
+         const res = await axios.post('http://localhost:8000/auth/forgot-password-email', {
+            email: emailInput,
+         })
+         alert(`${res.data.message}\n임시 비밀번호: ${res.data.tempPassword}`) // 성공 메시지
+         setEmailInput('') // 입력 초기화
+         setOpenEmail(false) // 팝업 닫기
+         setIsOpen(false)
+      } catch (err) {
+         alert(err.response?.data?.message || '오류 발생')
+      }
+   }
+
+   const handleSendPhone = async () => {
+      try {
+         const res = await axios.post('http://localhost:8000/auth/forgot-password-phone', {
+            phone: phoneInput,
+         })
+         alert(`${res.data.message}\n임시 비밀번호: ${res.data.tempPassword}`) // 성공 메시지
+         setPhoneInput('') // 입력 초기화
+         setOpenPhone(false) // 팝업 닫기
+         setIsOpen(false)
+      } catch (err) {
+         alert(err.response?.data?.message || '오류 발생')
+      }
+   }
 
    useEffect(() => {
       const savedEmail = localStorage.getItem('savedEmail')
@@ -360,10 +393,12 @@ function Login() {
                                     lineHeight: '55px',
                                  },
                               }}
+                              value={emailInput}
+                              onChange={(e) => setEmailInput(e.target.value)}
                            />
                            <button
                               type="button"
-                              onClick={openEmail}
+                              onClick={handleSendEmail}
                               style={{
                                  display: 'flex',
                                  alignItems: 'center',
@@ -472,10 +507,12 @@ function Login() {
                                     lineHeight: '55px',
                                  },
                               }}
+                              value={phoneInput}
+                              onChange={(e) => setPhoneInput(e.target.value)}
                            />
                            <button
                               type="button"
-                              onClick={openPhone}
+                              onClick={handleSendPhone}
                               style={{
                                  display: 'flex',
                                  alignItems: 'center',
