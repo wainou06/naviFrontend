@@ -19,14 +19,57 @@ const ChatRoomList = () => {
       }
    }, [chats, selectedChatId])
 
-   if (!user) return <div>로그인이 필요합니다.</div>
-   if (chats.length === 0) return <div>채팅방이 없습니다.</div>
+   if (!user) return <div style={{ padding: 20, textAlign: 'center', color: '#555' }}>로그인이 필요합니다.</div>
+
+   if (chats.length === 0)
+      return (
+         <div
+            style={{
+               flex: 1,
+               display: 'flex',
+               justifyContent: 'center',
+               alignItems: 'center',
+               fontSize: '1.2rem',
+               color: '#999',
+               fontStyle: 'italic',
+               height: '100%',
+            }}
+         >
+            채팅방이 없습니다.
+         </div>
+      )
 
    return (
-      <div style={{ display: 'flex', height: '600px', border: '1px solid #ddd', borderRadius: '6px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+      <div
+         style={{
+            display: 'flex',
+            height: '600px',
+            border: '1px solid #ddd',
+            borderRadius: '6px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            overflow: 'hidden',
+         }}
+      >
          {/* 채팅방 리스트 */}
-         <div style={{ width: '250px', borderRight: '1px solid #ddd', overflowY: 'auto' }}>
-            <h3 style={{ padding: '12px', borderBottom: '1px solid #ddd', fontWeight: '600' }}>내 채팅방</h3>
+         <div
+            style={{
+               width: '250px',
+               borderRight: '1px solid #ddd',
+               overflowY: 'auto',
+               backgroundColor: '#fafafa',
+            }}
+         >
+            <h3
+               style={{
+                  padding: '12px',
+                  borderBottom: '1px solid #ddd',
+                  fontWeight: '600',
+                  backgroundColor: '#f5f5f5',
+                  margin: 0,
+               }}
+            >
+               내 채팅방
+            </h3>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                {chats.map((chat) => {
                   const participants = chat.participants || []

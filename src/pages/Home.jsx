@@ -4,9 +4,10 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 // Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/navigation'
+import 'swiper/css/autoplay' // 없어도 되지만 명시적으로 추가해도 됨
 
 // import required modules
-import { Navigation } from 'swiper/modules'
+import { Navigation, Autoplay } from 'swiper/modules'
 
 import { Link } from 'react-router-dom'
 
@@ -17,7 +18,7 @@ function Home({ searchTerm }) {
    return (
       <div className="main">
          <div>
-            <Swiper navigation={true} modules={[Navigation]}>
+            <Swiper navigation={true} modules={[Navigation, Autoplay]} autoplay={{ delay: 3000, disableOnInteraction: false }}>
                <SwiperSlide>
                   <img src="/images/banner1.jpg" alt="나비 뜻" />
                </SwiperSlide>
