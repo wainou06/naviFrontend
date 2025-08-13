@@ -1,84 +1,98 @@
-import { useEffect, useRef, useMemo, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { sendMessageThunk, addLocalMessage, removeLocalMessage } from '../../features/chatSlice'
-import { v4 as uuidv4 } from 'uuid'
-import { makeSelectMessagesForChat, selectIsSending } from './ChatSelectors'
+// ChatForm.jsx
+import { useEffect, useRef, useState, useLayoutEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { io } from 'socket.io-client'
+import { addLocalMessage } from '../../features/chatSlice'
+import { fetchChatMessages, sendMessage } from '../../api/chatApi'
+
+const SOCKET_SERVER_URL = import.meta.env.VITE_APP_SOCKET_SERVER_URL || import.meta.env.VITE_APP_API_URL || 'http://localhost:8000'
 
 const ChatForm = ({ chatId, currentUserId }) => {
-   const [content, setContent] = useState('')
+   const [messages, setMessages] = useState([])
+   const [newMessage, setNewMessage] = useState('')
+   const messagesEndRef = useRef(null)
+   const socketRef = useRef(null)
    const dispatch = useDispatch()
 
-   // 팩토리 셀렉터 생성 (메시지 배열)
-   const selectMessagesForChat = useMemo(makeSelectMessagesForChat, [])
-   const messages = useSelector((state) => selectMessagesForChat(state, chatId))
-
-   // 단순 값 추출 셀렉터
-   const isSending = useSelector(selectIsSending)
-
-   // 메시지 리스트 컨테이너 ref
-   const messagesEndRef = useRef(null)
-
-   const scrollToBottom = () => {
-      if (messagesEndRef.current) {
-         messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-      }
-   }
-
-   // 메시지가 변경될 때마다 스크롤을 최하단으로
+   // 초기 메시지 불러오기
    useEffect(() => {
-      scrollToBottom()
+      if (!chatId) return
+      setMessages([])
+
+      fetchChatMessages(chatId)
+         .then((data) => setMessages(data.messages || []))
+         .catch((err) => console.error('메시지 불러오기 실패:', err))
+   }, [chatId])
+
+   // Socket.io 연결
+   useEffect(() => {
+      if (!chatId || !currentUserId) return
+
+      socketRef.current?.disconnect()
+      const socket = io(SOCKET_SERVER_URL, { auth: { chatId, userId: currentUserId }, withCredentials: true })
+      socketRef.current = socket
+
+      socket.on('connect', () => console.log('Socket connected:', socket.id))
+      socket.on('receiveMessage', (msg) => {
+         setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]))
+         dispatch(addLocalMessage({ chatId, message: msg }))
+      })
+      socket.on('disconnect', () => console.log('Socket disconnected'))
+
+      return () => socket.disconnect()
+   }, [chatId, currentUserId, dispatch])
+
+   // 자동 스크롤
+   useLayoutEffect(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
    }, [messages])
 
-   const handleSubmit = async (e) => {
-      e.preventDefault()
-      if (!content.trim()) return
+   // 메시지 전송
+   const handleSend = async () => {
+      const trimmed = newMessage.trim()
+      if (!trimmed || !chatId) return
 
-      const tempMessage = {
-         id: uuidv4(),
-         chatId,
-         senderId: currentUserId,
-         content,
-         createdAt: new Date().toISOString(),
-         mine: true,
-         pending: true,
-      }
+      const tempId = `temp-${Date.now()}`
+      const tempMessage = { id: tempId, content: trimmed, senderId: currentUserId }
 
-      dispatch(addLocalMessage({ chatId, message: tempMessage }))
-      setContent('')
+      setMessages((prev) => [...prev, tempMessage])
+      setNewMessage('')
 
       try {
-         await dispatch(sendMessageThunk({ chatId, content })).unwrap()
-      } catch (error) {
-         console.error('메시지 전송 실패:', error)
-         dispatch(removeLocalMessage({ chatId, messageId: tempMessage.id }))
-         alert('메시지 전송에 실패했습니다. 다시 시도해주세요.')
+         const res = await sendMessage(chatId, trimmed)
+         const savedMessage = res.message
+         setMessages((prev) => prev.map((m) => (m.id === tempId ? savedMessage : m)))
+         dispatch(addLocalMessage({ chatId, message: savedMessage }))
+      } catch (err) {
+         console.error('메시지 전송 실패:', err)
       }
    }
 
    return (
-      <div className="flex flex-col h-full">
-         {/* 메시지 리스트 */}
-         <div className="flex-1 overflow-y-auto p-4 border-b">
-            {messages.length === 0 ? (
-               <p className="text-center text-gray-500">아직 메시지가 없습니다.</p>
-            ) : (
-               messages.map((msg) => (
-                  <div key={msg.id} className={`mb-2 max-w-xs px-3 py-2 rounded ${msg.mine ? 'bg-blue-500 text-white self-end' : 'bg-gray-200 text-gray-800 self-start'}`} style={{ opacity: msg.pending ? 0.6 : 1 }}>
-                     <p>{msg.content}</p>
-                     <small className="block text-xs mt-1 text-gray-300">{new Date(msg.createdAt).toLocaleTimeString()}</small>
-                  </div>
-               ))
-            )}
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+         <div style={{ flexGrow: 1, overflowY: 'auto', padding: '12px' }}>
+            {messages.map((msg) => (
+               <div key={msg.id} style={{ display: 'flex', justifyContent: msg.senderId === currentUserId ? 'flex-end' : 'flex-start', marginBottom: '8px' }}>
+                  <div style={{ backgroundColor: msg.senderId === currentUserId ? '#3b82f6' : '#e5e7eb', color: msg.senderId === currentUserId ? '#fff' : '#000', padding: '8px 12px', borderRadius: '12px', maxWidth: '70%', wordBreak: 'break-word' }}>{msg.content}</div>
+               </div>
+            ))}
             <div ref={messagesEndRef} />
          </div>
 
-         {/* 입력 폼 */}
-         <form onSubmit={handleSubmit} className="flex gap-2 p-2 border-t">
-            <input type="text" className="flex-1 border rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400" placeholder="메시지를 입력하세요..." value={content} onChange={(e) => setContent(e.target.value)} disabled={isSending} />
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 hover:bg-blue-600 transition-colors duration-200" disabled={!content.trim() || isSending}>
+         <div style={{ display: 'flex', borderTop: '1px solid #ddd', padding: '8px' }}>
+            <input
+               type="text"
+               value={newMessage}
+               onChange={(e) => setNewMessage(e.target.value)}
+               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+               placeholder="메시지를 입력하세요..."
+               style={{ flexGrow: 1, padding: '8px', borderRadius: '6px', border: '1px solid #ccc' }}
+               aria-label="메시지 입력"
+            />
+            <button onClick={handleSend} style={{ marginLeft: '8px', padding: '8px 12px', borderRadius: '6px', backgroundColor: '#3b82f6', color: '#fff', border: 'none' }} aria-label="메시지 전송">
                전송
             </button>
-         </form>
+         </div>
       </div>
    )
 }
