@@ -163,10 +163,17 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                   ) : (
                      <div className="buyer-buttons">
                         <button className="price-proposal-btn" onClick={() => setShowPriceModal(true)} disabled={localItem.itemSellStatus === 'SOLD_OUT'}>
-                           가격 제안하기
+                           제시하기
                         </button>
                      </div>
                   )}
+               </div>
+               {/* 주의사항 섹션 */}
+               <div className="rental-notice-section">
+                  <h3>주의사항</h3>
+                  <div className="notice-content">
+                     <p>판매자가 등록한 제시가 보다 가격을 높게 부를 수는 없습니다. 판매자가 제안을 승낙할 시, 1:1 채팅이 이루어집니다.</p>
+                  </div>
                </div>
 
                {/* 가격 제안 모달 */}
@@ -189,9 +196,6 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                               <span>
                                  선택된 구매방법: <strong>{deliveryMethod}</strong>
                               </span>
-                           </div>
-                           <div className="proposal-note">
-                              <p>판매자가 등록한 게시자 보다 가격을 높게 할 수 있습니다. 판매자가 제안을 수락하면 시스템에서 이메일로 알려줍니다.</p>
                            </div>
                         </div>
                         <div className="modal-footer">
@@ -251,6 +255,40 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                         </div>
                      ))
                   )}
+               </div>
+            </div>
+         )}
+
+         {/* 상품 이미지 갤러리 */}
+         {localItem.imgs && localItem.imgs.length > 0 && (
+            <div className="item-gallery-section">
+               <h2>상품 상세 Detail</h2>
+               <div className="gallery-container">
+                  {localItem.imgs.map((img, index) => {
+                     const rawPath = img.imgUrl.replace(/\\/g, '/')
+                     const cleanPath = rawPath.startsWith('/') ? rawPath.slice(1) : rawPath
+                     const fullImgUrl = `${baseURL}/${cleanPath}`
+
+                     return (
+                        <div key={index} className="gallery-image-container">
+                           <img src={fullImgUrl} alt={`${localItem.itemNm} ${index + 1}`} className="gallery-image" />
+                        </div>
+                     )
+                  })}
+               </div>
+            </div>
+         )}
+
+         {/* 상품 상세 설명 */}
+         {localItem.itemDetail && (
+            <div className="item-description-section">
+               <h2>상세 설명</h2>
+               <div className="description-content">
+                  <div className="description-text">
+                     {localItem.itemDetail.split('\n').map((line, index) => (
+                        <p key={index}>{line}</p>
+                     ))}
+                  </div>
                </div>
             </div>
          )}
