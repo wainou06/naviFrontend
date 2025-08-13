@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { registerUserThunk } from '../../features/authSlice'
 import { Link } from 'react-router-dom'
 import GoogleIcon from '@mui/icons-material/Google'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import '../../styles/popup.css'
 
 function Signup() {
@@ -175,11 +176,65 @@ function Signup() {
 
             {isOpen && (
                <div className="overlay">
-                  <div className="popup">
-                     <p>환영합니다. 회원가입이 완료되었습니다!</p>
-                     <p>
-                        <Link to="/login">로그인 하러 가기</Link>
-                     </p>
+                  <div
+                     className="popup"
+                     style={{
+                        position: 'relative',
+                        width: '880px',
+                        height: '405px',
+                        borderRadius: '100px',
+                        backgroundColor: '#F0907F',
+                        display: 'flex',
+                        justifyContent: 'center', // 가로 중앙
+                        alignItems: 'center', // 세로 중앙
+                     }}
+                  >
+                     <div
+                        style={{
+                           display: 'flex',
+                           flexDirection: 'column',
+                           alignItems: 'center',
+                           gap: '20px',
+                           width: '690px',
+                           height: '203px',
+                        }}
+                     >
+                        <div
+                           style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              border: 'none',
+                              backgroundColor: 'white',
+                              padding: '10px 20px',
+                              borderRadius: '8px',
+                              width: '100%',
+                              height: '88px',
+                           }}
+                        >
+                           <p style={{ fontSize: '23.55px', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: 0, gap: '59px' }}>환영합니다. 회원가입이 완료되었습니다!</p>
+                        </div>
+                        <div
+                           style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              border: 'none',
+                              backgroundColor: 'white',
+                              padding: '10px 20px',
+                              borderRadius: '8px',
+                              width: '100%',
+                              height: '88px',
+                           }}
+                        >
+                           <p style={{ fontSize: '23.55px', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: 0, gap: '14px' }}>
+                              <Link to="/login">
+                                 로그인 하러 가기
+                                 <ArrowForwardIosIcon />
+                              </Link>
+                           </p>
+                        </div>
+                     </div>
                   </div>
                </div>
             )}
