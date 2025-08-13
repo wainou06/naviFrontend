@@ -1,29 +1,31 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import * as chatApi from '../api/chatApi'
 
-// 1. 내 채팅방 목록 불러오기
+// 1. 내 채팅방 목록
 export const fetchMyChatsThunk = createAsyncThunk('chat/fetchMyChats', async (_, { rejectWithValue }) => {
    try {
-      return await chatApi.fetchMyChats()
+      const res = await chatApi.fetchMyChats()
+      return res.chats
    } catch (error) {
       return rejectWithValue(error.response?.data || error.message)
    }
 })
 
-// 2. 특정 채팅방 메시지 불러오기
+// 2. 채팅방 생성
+export const createChatRoomThunk = createAsyncThunk('chat/createRoom', async ({ itemId, sellerId }, { rejectWithValue }) => {
+   try {
+      const res = await chatApi.createChatRoom({ itemId, sellerId })
+      return res.chat
+   } catch (error) {
+      return rejectWithValue(error.response?.data || error.message)
+   }
+})
+
+// 3. 채팅방 메시지 불러오기
 export const fetchChatMessagesThunk = createAsyncThunk('chat/fetchMessages', async (chatId, { rejectWithValue }) => {
    try {
-      const { messages = [] } = await chatApi.fetchChatMessages(chatId)
-      return { chatId, messages }
-   } catch (error) {
-      return rejectWithValue(error.response?.data || error.message)
-   }
-})
-
-// 3. 채팅방 생성
-export const createChatRoomThunk = createAsyncThunk('chat/createRoom', async (chatData, { rejectWithValue }) => {
-   try {
-      return await chatApi.createChatRoom(chatData)
+      const res = await chatApi.fetchChatMessages(chatId)
+      return { chatId, messages: res.messages || [] }
    } catch (error) {
       return rejectWithValue(error.response?.data || error.message)
    }
@@ -32,8 +34,8 @@ export const createChatRoomThunk = createAsyncThunk('chat/createRoom', async (ch
 // 4. 메시지 전송
 export const sendMessageThunk = createAsyncThunk('chat/sendMessage', async ({ chatId, content }, { rejectWithValue }) => {
    try {
-      const { message } = await chatApi.sendMessage(chatId, content)
-      return { chatId, message }
+      const res = await chatApi.sendMessage(chatId, content)
+      return { chatId, message: res.message }
    } catch (error) {
       return rejectWithValue(error.response?.data || error.message)
    }
@@ -50,7 +52,8 @@ const chatSlice = createSlice({
       loadingChatsError: null,
       loadingMessagesError: null,
       sendMessageError: null,
-      unreadCountByChatId: {}, // 채팅방별 읽지 않은 메시지 수
+      createChatError: null,
+      unreadCountByChatId: {},
    },
    reducers: {
       clearLoadingChatsError(state) {
@@ -62,33 +65,31 @@ const chatSlice = createSlice({
       clearSendMessageError(state) {
          state.sendMessageError = null
       },
-      addLocalMessage(state, action) {
-         const { chatId, message } = action.payload
-         if (!state.messagesByChatId[chatId]) {
-            state.messagesByChatId[chatId] = []
-         }
+      clearCreateChatError(state) {
+         state.createChatError = null
+      },
+
+      addLocalMessage(state, { payload: { chatId, message } }) {
+         if (!state.messagesByChatId[chatId]) state.messagesByChatId[chatId] = []
          state.messagesByChatId[chatId].push(message)
-         // 메시지 정렬 (생성일자 기준 오름차순)
          state.messagesByChatId[chatId].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
       },
-      removeLocalMessage(state, action) {
-         const { chatId, messageId } = action.payload
+
+      removeLocalMessage(state, { payload: { chatId, messageId } }) {
          if (state.messagesByChatId[chatId]) {
-            state.messagesByChatId[chatId] = state.messagesByChatId[chatId].filter((msg) => msg.id !== messageId)
+            state.messagesByChatId[chatId] = state.messagesByChatId[chatId].filter((m) => m.id !== messageId)
          }
       },
-      incrementUnreadCount(state, action) {
-         const chatId = action.payload
-         if (!state.unreadCountByChatId[chatId]) {
-            state.unreadCountByChatId[chatId] = 0
-         }
-         state.unreadCountByChatId[chatId] += 1
+
+      incrementUnreadCount(state, { payload: chatId }) {
+         state.unreadCountByChatId[chatId] = (state.unreadCountByChatId[chatId] || 0) + 1
       },
-      resetUnreadCount(state, action) {
-         const chatId = action.payload
+
+      resetUnreadCount(state, { payload: chatId }) {
          state.unreadCountByChatId[chatId] = 0
       },
    },
+
    extraReducers: (builder) => {
       builder
          // 채팅방 목록
@@ -96,13 +97,25 @@ const chatSlice = createSlice({
             state.loadingChats = true
             state.loadingChatsError = null
          })
-         .addCase(fetchMyChatsThunk.fulfilled, (state, action) => {
+         .addCase(fetchMyChatsThunk.fulfilled, (state, { payload }) => {
             state.loadingChats = false
-            state.chats = action.payload.chats
+            state.chats = payload
          })
-         .addCase(fetchMyChatsThunk.rejected, (state, action) => {
+         .addCase(fetchMyChatsThunk.rejected, (state, { payload }) => {
             state.loadingChats = false
-            state.loadingChatsError = action.payload
+            state.loadingChatsError = payload
+         })
+
+         // 채팅방 생성
+         .addCase(createChatRoomThunk.pending, (state) => {
+            state.createChatError = null
+         })
+         .addCase(createChatRoomThunk.fulfilled, (state, { payload }) => {
+            if (!state.chats.find((c) => c.id === payload.id)) state.chats.push(payload)
+            if (!state.messagesByChatId[payload.id]) state.messagesByChatId[payload.id] = payload.messages || []
+         })
+         .addCase(createChatRoomThunk.rejected, (state, { payload }) => {
+            state.createChatError = payload
          })
 
          // 채팅방 메시지
@@ -110,29 +123,15 @@ const chatSlice = createSlice({
             state.loadingMessages = true
             state.loadingMessagesError = null
          })
-         .addCase(fetchChatMessagesThunk.fulfilled, (state, action) => {
+         .addCase(fetchChatMessagesThunk.fulfilled, (state, { payload }) => {
             state.loadingMessages = false
-            const { chatId, messages } = action.payload
-            state.messagesByChatId[chatId] = messages
-            // 메시지 정렬
-            state.messagesByChatId[chatId].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-            // 메시지 로드했으니 읽음 처리
-            state.unreadCountByChatId[chatId] = 0
+            state.messagesByChatId[payload.chatId] = payload.messages
+            state.messagesByChatId[payload.chatId].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+            state.unreadCountByChatId[payload.chatId] = 0
          })
-         .addCase(fetchChatMessagesThunk.rejected, (state, action) => {
+         .addCase(fetchChatMessagesThunk.rejected, (state, { payload }) => {
             state.loadingMessages = false
-            state.loadingMessagesError = action.payload
-         })
-
-         // 채팅방 생성
-         .addCase(createChatRoomThunk.fulfilled, (state, action) => {
-            const newChat = action.payload
-            if (!state.chats.find((c) => c.id === newChat.id)) {
-               state.chats.push(newChat)
-            }
-         })
-         .addCase(createChatRoomThunk.rejected, (state, action) => {
-            state.error = action.payload
+            state.loadingMessagesError = payload
          })
 
          // 메시지 전송
@@ -140,22 +139,19 @@ const chatSlice = createSlice({
             state.sendingMessage = true
             state.sendMessageError = null
          })
-         .addCase(sendMessageThunk.fulfilled, (state, action) => {
+         .addCase(sendMessageThunk.fulfilled, (state, { payload }) => {
             state.sendingMessage = false
-            const { chatId, message } = action.payload
-            if (!state.messagesByChatId[chatId]) {
-               state.messagesByChatId[chatId] = []
-            }
-            state.messagesByChatId[chatId].push(message)
-            // 메시지 정렬
-            state.messagesByChatId[chatId].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+            if (!state.messagesByChatId[payload.chatId]) state.messagesByChatId[payload.chatId] = []
+            state.messagesByChatId[payload.chatId].push(payload.message)
+            state.messagesByChatId[payload.chatId].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
          })
-         .addCase(sendMessageThunk.rejected, (state, action) => {
+         .addCase(sendMessageThunk.rejected, (state, { payload }) => {
             state.sendingMessage = false
-            state.sendMessageError = action.payload
+            state.sendMessageError = payload
          })
    },
 })
 
-export const { clearLoadingChatsError, clearLoadingMessagesError, clearSendMessageError, addLocalMessage, removeLocalMessage, incrementUnreadCount, resetUnreadCount } = chatSlice.actions
+export const { clearLoadingChatsError, clearLoadingMessagesError, clearSendMessageError, clearCreateChatError, addLocalMessage, removeLocalMessage, incrementUnreadCount, resetUnreadCount } = chatSlice.actions
+
 export default chatSlice.reducer

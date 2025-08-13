@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 // Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/navigation'
-import 'swiper/css/autoplay' // 없어도 되지만 명시적으로 추가해도 됨
+import 'swiper/css/autoplay'
 
 // import required modules
 import { Navigation, Autoplay } from 'swiper/modules'
