@@ -27,15 +27,12 @@ export async function fetchPriceProposals(itemId) {
 
 // 가격 제안 상태 변경 (수락/거절)
 export const updatePriceProposalStatus = async (proposalId, status) => {
-  try {
-    const response = await naviApi.patch(
-      `/priceProposal/${proposalId}/status`,
-      { status },
-      { withCredentials: true }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('가격 제안 상태 변경 실패:', error.response?.data || error.message);
-    throw error;
-  }
-};
+   try {
+      const response = await naviApi.patch(`/priceProposal/${proposalId}/status`, { status }, { withCredentials: true })
+      console.log('updatePriceProposalStatus API 응답:', response.data)
+      return response.data
+   } catch (error) {
+      console.error('가격 제안 상태 변경 실패:', error.response?.data || error.message)
+      throw error
+   }
+}

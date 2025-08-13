@@ -10,7 +10,6 @@ function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight
    const dispatch = useDispatch()
    const { items, pagination, loading, error } = useSelector((state) => state.items)
    const [page, setPage] = useState(1)
-   console.log(items)
 
    useEffect(() => {
       dispatch(fetchItems({ page, limit: 10, searchTerm }))

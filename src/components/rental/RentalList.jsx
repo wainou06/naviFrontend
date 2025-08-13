@@ -119,45 +119,47 @@ const RentalList = () => {
                <>
                   {/* 상품 */}
                   <div className="products-grid">
-                     {rentalItems.map((item) => (
-                        <div key={item.id} className="product-card">
-                           <div className={`product-status-label ${item?.rentalStatus === 'Y' ? 'status-available' : 'status-unavailable'}`}>{getStatusText(item?.rentalStatus)}</div>
+                     {rentalItems
+                        .filter((item) => item && item.id) // item이 존재하고, id 속성이 있는 경우만 필터링
+                        .map((item) => (
+                           <div key={item.id} className="product-card">
+                              <div className={`product-status-label ${item?.rentalStatus === 'Y' ? 'status-available' : 'status-unavailable'}`}>{getStatusText(item?.rentalStatus)}</div>
 
-                           <div className="product-actions">
-                              <button className="action-btn view" onClick={() => navigate(`/rental/detail/${item.id}`)} title="상세보기">
-                                 <Visibility style={{ fontSize: 14 }} />
-                              </button>
-                              <button className="action-btn edit" onClick={() => navigate(`/rental/edit/${item.id}`)} title="수정">
-                                 <Edit style={{ fontSize: 14 }} />
-                              </button>
-                              <button className="action-btn delete" onClick={() => setDeleteDialog({ open: true, item })} title="삭제">
-                                 <Delete style={{ fontSize: 14 }} />
-                              </button>
+                              <div className="product-actions">
+                                 <button className="action-btn view" onClick={() => navigate(`/rental/detail/${item.id}`)} title="상세보기">
+                                    <Visibility style={{ fontSize: 14 }} />
+                                 </button>
+                                 <button className="action-btn edit" onClick={() => navigate(`/rental/edit/${item.id}`)} title="수정">
+                                    <Edit style={{ fontSize: 14 }} />
+                                 </button>
+                                 <button className="action-btn delete" onClick={() => setDeleteDialog({ open: true, item })} title="삭제">
+                                    <Delete style={{ fontSize: 14 }} />
+                                 </button>
+                              </div>
+
+                              {/* 상품 이미지 */}
+                              <div className="product-image" onClick={() => navigate(`/rental/detail/${item.id}`)}>
+                                 {item?.rentalImgs && Array.isArray(item.rentalImgs) && item.rentalImgs.length > 0 && item.rentalImgs[0]?.imgUrl ? (
+                                    (() => {
+                                       const rawPath = item.rentalImgs[0].imgUrl.replace(/\\/g, '/')
+                                       const cleanPath = rawPath.startsWith('/') ? rawPath.slice(1) : rawPath
+                                       const baseURL = import.meta.env.VITE_APP_API_URL.replace(/\/$/, '')
+                                       const imageUrl = `${baseURL}/${cleanPath}`
+
+                                       return <img src={imageUrl} alt={item?.rentalItemNm} />
+                                    })()
+                                 ) : (
+                                    <div className="placeholder-image">이미지</div>
+                                 )}
+                              </div>
+
+                              <div className="product-info">
+                                 <div className="product-title">{item?.rentalItemNm}</div>
+                                 <div className="product-price">{formatPrice(item?.oneDayPrice)}원</div>
+                                 <div className="product-meta">{new Date(item?.createdAt).toLocaleString()}</div>
+                              </div>
                            </div>
-
-                           {/* 상품 이미지 */}
-                           <div className="product-image" onClick={() => navigate(`/rental/detail/${item.id}`)}>
-                              {Array.isArray(item.rentalImgs) && item.rentalImgs.length > 0 && item.rentalImgs[0]?.imgUrl ? (
-                                 (() => {
-                                    const rawPath = item.rentalImgs[0].imgUrl.replace(/\\/g, '/')
-                                    const cleanPath = rawPath.startsWith('/') ? rawPath.slice(1) : rawPath
-                                    const baseURL = import.meta.env.VITE_APP_API_URL.replace(/\/$/, '')
-                                    const imageUrl = `${baseURL}/${cleanPath}`
-
-                                    return <img src={imageUrl} alt={item.rentalItemNm} />
-                                 })()
-                              ) : (
-                                 <div className="placeholder-image">이미지</div>
-                              )}
-                           </div>
-
-                           <div className="product-info">
-                              <div className="product-title">{item.rentalItemNm}</div>
-                              <div className="product-price">{formatPrice(item.oneDayPrice)}원</div>
-                              <div className="product-meta">{new Date(item.createdAt).toLocaleString()}</div>
-                           </div>
-                        </div>
-                     ))}
+                        ))}
                   </div>
 
                   {/* 페이지네이션 */}
