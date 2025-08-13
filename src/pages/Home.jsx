@@ -31,13 +31,17 @@ function Home({ searchTerm }) {
          </div>
          <div className="togo">
             <Link to="/items/list">
-               <div style={{ backgroundColor: '#AEE9F5', color: '#016CFF' }}>나누GO, 비우GO! &gt;</div>
+               <div style={{ backgroundColor: '#AEE9F5', color: '#016CFF' }}>
+                  <img src="/images/상품.png" alt="상품 리스트 페이지로" />
+               </div>
             </Link>
             <div>
                <img src="/images/S&R.png" alt="" />
             </div>
             <Link to="/rental/list">
-               <div style={{ backgroundColor: '#FFD1BA', color: '#AA3900' }}>물건 렌탈하러 가기 &gt;</div>
+               <div style={{ backgroundColor: '#FFD1BA', color: '#AA3900' }}>
+                  <img src="/images/렌탈.png" alt="렌탈 리스트 페이지로" />
+               </div>
             </Link>
          </div>
          <div>
