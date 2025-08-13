@@ -81,9 +81,28 @@ const MyItems = () => {
                            transform: 'translateY(-4px)',
                            boxShadow: 4,
                         },
+                        position: 'relative',
                      }}
                      onClick={() => navigate(`/items/detail/${item.id}`)}
                   >
+                     {/* 상품 상태 라벨 */}
+                     <Box
+                        className=".my-items-section .product-status-label"
+                        sx={{
+                           position: 'absolute !important',
+                           top: '8px !important',
+                           left: '8px !important',
+                           zIndex: 2,
+                           fontSize: '13px !important',
+                           fontWeight: 600,
+                           padding: '7px 10px !important',
+                           borderRadius: '10px !important',
+                           backgroundColor: item.itemSellStatus === 'SELL' ? 'rgba(196, 240, 197, 1)' : 'rgba(240, 144, 127, 1)',
+                           color: '#2d3436',
+                        }}
+                     >
+                        {item.itemSellStatus === 'SELL' ? '판매중' : '판매완료'}
+                     </Box>
                      {/* 대표이미지 */}
                      <CardMedia
                         component="img"

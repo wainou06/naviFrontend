@@ -76,6 +76,7 @@ const MyItems = () => {
                      key={item.id}
                      sx={{
                         cursor: 'pointer',
+                        position: 'relative',
                         transition: 'transform 0.2s, box-shadow 0.2s',
                         '&:hover': {
                            transform: 'translateY(-4px)',
@@ -84,6 +85,24 @@ const MyItems = () => {
                      }}
                      onClick={() => navigate(`/rental/detail/${item.id}`)}
                   >
+                     {/* 렌탈 상태 라벨 */}
+                     <Box
+                        className="product-status-label"
+                        sx={{
+                           position: 'absolute !important',
+                           top: '8px !important',
+                           left: '8px !important',
+                           zIndex: 2,
+                           fontSize: '13px !important',
+                           fontWeight: 600,
+                           padding: '7px 10px !important',
+                           borderRadius: '10px !important',
+                           backgroundColor: item.rentalStatus === 'Y' ? 'rgba(196, 240, 197, 1)' : 'rgba(240, 144, 127, 1)',
+                           color: '#2d3436',
+                        }}
+                     >
+                        {item.rentalStatus === 'Y' ? '렌탈가능' : '렌탈불가'}
+                     </Box>
                      {/* 대표이미지 */}
                      <CardMedia
                         component="div"
