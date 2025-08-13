@@ -59,15 +59,41 @@ function ManagerUser() {
       if (confirm(`정말로 정지하시겠습니까? ${row.nick}, ${day}일`)) {
          const date = new Date()
          date.setDate(date.getDate() + Number(day))
-         dispatch(suspendUserInfoThunk({ id, date }))
+         dispatch(suspendUserInfoThunk({ id, date })).then(() => {
+            dispatch(getUserInfoThunk(pagination))
+         })
+      }
+   }
+
+   const onClickEdit = (row) => {
+      const id = row.id
+      let day = prompt('정지 일 수의 증감값을 입력해주세요')
+
+      if (isNaN(day)) {
+         alert('숫자가 아닙니다')
+         return
+      } else if (!day) {
+         return
+      } else if (dayLeft(row.suspend) + Number(day) < 0) {
+         day = dayLeft(row.suspend) * -1
+      }
+
+      if (confirm(`정말로 수정하시겠습니까? ${row.nick}, ${Number(day)}일`)) {
+         const date = new Date(row.suspend)
+         date.setDate(date.getDate() + Number(day))
+         dispatch(suspendUserInfoThunk({ id, date })).then(() => {
+            dispatch(getUserInfoThunk(pagination))
+         })
       }
    }
 
    const onClickDelete = (row) => {
       if (confirm(`정말로 삭제하시겠습니까? ${row.nick}`)) {
-         dispatch(deleteUserInfoThunk(row.id)).then(() => {
-            dispatch(getUserInfoThunk(pagination))
-         })
+         if (prompt('사용자 닉네임을 입력해주세요') === row.nick) {
+            dispatch(deleteUserInfoThunk(row.id)).then(() => {
+               dispatch(getUserInfoThunk(pagination))
+            })
+         }
       }
    }
 
@@ -135,11 +161,11 @@ function ManagerUser() {
             {columns.map((column) => (
                <TableCell key={column.dataKey} align={column.numeric || false ? 'right' : 'left'}>
                   {column.dataKey === 'userStop' ? (
-                     <a className="managerUserLink managerUserButton">{datePass(row.suspend) ? <span style={{ fontSize: '25px' }}>{dayLeft(row.suspend)}일</span> : <span onClick={() => onClickStop(row)}>stop</span>}</a>
+                     <a className="managerUserLink managerUserButton">{datePass(row.suspend) ? <span onClick={() => onClickEdit(row)}>{dayLeft(row.suspend)}일</span> : <span onClick={() => onClickStop(row)}>stop</span>}</a>
                   ) : (
                      <>
                         {column.dataKey === 'userDelete' ? (
-                           <a onClick={() => onClickDelete(row)} className="managerUserLink managerUserButton">
+                           <a style={{ fontSize: '13px' }} onClick={() => onClickDelete(row)} className="managerUserLink managerUserButton">
                               delete
                            </a>
                         ) : (

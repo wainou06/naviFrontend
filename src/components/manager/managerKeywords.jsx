@@ -78,6 +78,10 @@ const ManagerKeywords = () => {
          })
    }
 
+   const onKeydownAdd = (e) => {
+      if (e.key === 'Enter') onClickAdd()
+   }
+
    return (
       <div>
          {!loading ? (
@@ -119,7 +123,7 @@ const ManagerKeywords = () => {
                         <span className="managerKeywordsTitleBetween"> </span>
                         <span className="managerKeywordsSubtitle">Add keyword</span>
                      </div>
-                     <input style={{ marginBottom: '35px' }} className="managerKeywordsSelectKeyword" value={keyword} type="text" placeholder="추가할 키워드를 입력해주세요." onChange={(e) => setKeyword(e.target.value)}></input>
+                     <input style={{ marginBottom: '35px' }} className="managerKeywordsSelectKeyword" value={keyword} type="text" placeholder="추가할 키워드를 입력해주세요." onKeyDown={(e) => onKeydownAdd(e)} onChange={(e) => setKeyword(e.target.value)}></input>
                      <button className="managerKeywordsSave" onClick={onClickAdd}>
                         저장하기
                      </button>
