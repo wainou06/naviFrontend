@@ -141,10 +141,11 @@ const RentalDetail = ({ onDeleteSubmit }) => {
                <div className="item-header">
                   <h1 className="item-title">{rentalItemDetail.rentalItemNm}</h1>
                   <div className="item-status">
-                     <span className={`status-badge ${rentalItemDetail.rentalStatus?.toLowerCase()}`}>
-                        {rentalItemDetail.rentalStatus === 'Y' && '렌탈가능'}
-                        {rentalItemDetail.rentalStatus === 'N' && '렌탈불가'}
-                        {rentalItemDetail.rentalStatus === 'RENTED' && '렌탈중'}
+                     <span className={`status-badge ${rentalItemDetail.rentalStatus === 'N' || rentalItemDetail.quantity === 0 ? 'n' : rentalItemDetail.rentalStatus === 'Y' ? 'y' : rentalItemDetail.rentalStatus === 'RENTED' ? 'rented' : ''}`}>
+                        {rentalItemDetail.quantity === 0 && '렌탈불가'}
+                        {rentalItemDetail.quantity > 0 && rentalItemDetail.rentalStatus === 'Y' && '렌탈가능'}
+                        {rentalItemDetail.quantity > 0 && rentalItemDetail.rentalStatus === 'N' && '렌탈불가'}
+                        {rentalItemDetail.quantity > 0 && rentalItemDetail.rentalStatus === 'RENTED' && '렌탈중'}
                      </span>
                      {isManager && !isOwner && <span className="manager-badge">관리자 권한</span>}
                   </div>

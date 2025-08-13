@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Save, X } from 'lucide-react'
 import { fetchItem, updateItem } from '../../features/itemsSlice'
-import { Container, Box, IconButton, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress } from '@mui/material'
-import '../../styles/ItemCreate.css'
+import { Container, Box, IconButton, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress, Typography } from '@mui/material'
+import styles from '../../styles/itemCreate.module.css'
 
 const ItemEdit = () => {
    const dispatch = useDispatch()
@@ -164,12 +164,13 @@ const ItemEdit = () => {
    const displayImages = imageList.filter((img) => !deleteImages.includes(img.id))
 
    return (
-      <div className="item-create-container">
+      <div className={styles.itemCreateContainer}>
          <Container maxWidth="md" sx={{ py: 4 }}>
             {/* 헤더 */}
-            <Box display="flex" alignItems="center" className="item-create-header">
+            <Box display="flex" alignItems="center" className={styles.itemCreateHeader}>
                <IconButton onClick={() => navigate('/items/list')}>
                   <ArrowLeft />
+                  <Typography className={styles.itemCreateTitle}>상품 수정</Typography>
                </IconButton>
             </Box>
 
@@ -180,20 +181,20 @@ const ItemEdit = () => {
                </Alert>
             )}
 
-            <Paper className="item-create-paper">
+            <Paper className={styles.itemCreatePaper}>
                <form onSubmit={handleSubmit}>
                   {/* 제목 */}
-                  <div className="form-section-card">
-                     <div className="section-header">제목</div>
-                     <div className="section-content">
+                  <div className={styles.formSectionCard}>
+                     <div className={styles.sectionHeader}>제목</div>
+                     <div className={styles.sectionContent}>
                         <TextField fullWidth name="name" value={formData.name} onChange={handleInputChange} error={!!formErrors.name} helperText={formErrors.name} placeholder="상품명을 입력하세요" variant="outlined" />
                      </div>
                   </div>
 
                   {/* 가격 */}
-                  <div className="form-section-card">
-                     <div className="section-header">가격</div>
-                     <div className="section-content">
+                  <div className={styles.formSectionCard}>
+                     <div className={styles.sectionHeader}>가격</div>
+                     <div className={styles.sectionContent}>
                         <Grid container spacing={2}>
                            <Grid item xs={12} sm={6}>
                               <TextField fullWidth label="가격" name="price" type="number" value={formData.price} onChange={handleInputChange} error={!!formErrors.price} helperText={formErrors.price} InputProps={{ endAdornment: '원' }} />
@@ -203,12 +204,12 @@ const ItemEdit = () => {
                   </div>
 
                   {/* 이미지 업로드 */}
-                  <div className="form-section-card">
-                     <div className="section-header">이미지</div>
-                     <div className="section-content">
-                        <div className="image-grid-container">
+                  <div className={styles.formSectionCard}>
+                     <div className={styles.sectionHeader}>이미지</div>
+                     <div className={styles.sectionContent}>
+                        <div className={styles.imageGridContainer}>
                            {displayImages.map((image) => (
-                              <div key={image.id} className="image-preview-item">
+                              <div key={image.id} className={styles.imagePreviewItem}>
                                  <img src={image.url} alt={`preview-${image.id}`} />
                                  <IconButton
                                     sx={{
@@ -238,17 +239,17 @@ const ItemEdit = () => {
                   </div>
 
                   {/* 상세 설명 */}
-                  <div className="form-section-card">
-                     <div className="section-header">상세 설명</div>
-                     <div className="section-content">
+                  <div className={styles.formSectionCard}>
+                     <div className={styles.sectionHeader}>상세 설명</div>
+                     <div className={styles.sectionContent}>
                         <TextField fullWidth name="content" value={formData.content} onChange={handleInputChange} multiline rows={6} placeholder="상세 설명을 작성해주세요." variant="outlined" />
                      </div>
                   </div>
 
                   {/* 상태 */}
-                  <div className="form-section-card">
-                     <div className="section-header">판매 상태</div>
-                     <div className="section-content">
+                  <div className={styles.formSectionCard}>
+                     <div className={styles.sectionHeader}>판매 상태</div>
+                     <div className={styles.sectionContent}>
                         <FormControl fullWidth>
                            <InputLabel>판매상태</InputLabel>
                            <Select name="status" value={formData.status} label="판매상태" onChange={handleInputChange}>
@@ -261,7 +262,7 @@ const ItemEdit = () => {
                   </div>
 
                   {/* 제출 버튼 */}
-                  <div className="button-section">
+                  <div className={styles.buttonSection}>
                      <Box display="flex" gap={2}>
                         <Button type="submit" variant="contained" startIcon={loading ? <CircularProgress size={16} /> : <Save />} disabled={loading}>
                            {loading ? '수정 중...' : '상품 수정'}
