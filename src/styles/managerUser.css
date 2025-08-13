@@ -1,6 +1,12 @@
 .managerUserLink {
    cursor: pointer;
+   font-size: 30.03px;
+   font-weight: 400;
+   word-wrap: break-word;
 }
 .managerUserLink:hover {
    text-decoration: underline;
+}
+.managerUserButton {
+   color: #f0907f;
 }

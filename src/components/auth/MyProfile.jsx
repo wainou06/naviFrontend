@@ -1,26 +1,42 @@
-import { TextField, Button, CircularProgress } from '@mui/material'
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import axios from 'axios' // ★ axios import 추가
+import { TextField, Button, CircularProgress, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+// import axios from 'axios' // ★ axios import 추가
+import { updateUser, checkAuthStatusThunk } from '../../features/authSlice'
 
 function MyProfile() {
-   const [nick, setNick] = useState('')
-   const [phone, setPhone] = useState('')
-   const [address, setAddress] = useState('')
-   const { loading, error } = useSelector((state) => state.auth) // error 제거
+   const dispatch = useDispatch()
+   const { loading, error, user } = useSelector((state) => state.auth)
+
+   const [nick, setNick] = useState(user?.nick || '')
+   const [phone, setPhone] = useState(user?.phone || '')
+   const [address, setAddress] = useState(user?.address || '')
+
+   useEffect(() => {
+      setNick(user?.nick || '')
+      setPhone(user?.phone || '')
+      setAddress(user?.address || '')
+   }, [user])
 
    const handleEdit = async (e) => {
       e.preventDefault()
 
-      if (!nick.trim()) return alert('닉네임을 입력하세요!')
-      if (!phone.trim()) return alert('전화번호를 입력하세요!')
-      if (!address.trim()) return alert('주소를 입력하세요!')
+      const updateData = {}
+      if (nick.trim()) updateData.nick = nick.trim()
+      if (phone.trim()) updateData.phone = phone.trim()
+      if (address.trim()) updateData.address = address.trim()
+
+      if (Object.keys(updateData).length === 0) {
+         return alert('수정한 정보가 없습니다!')
+      }
 
       try {
-         const res = await axios.put('http://localhost:8000/api/auth/my', { nick, phone, address }, { withCredentials: true })
-         console.log('수정 완료:', res.data)
+         await dispatch(updateUser(updateData)).unwrap()
+         // console.log('수정 완료:', res.data)
+         alert('회원 정보가 수정되었습니다!')
       } catch (err) {
          console.error(err)
+         alert('수정 중 오류가 발생했습니다. 다시 시도해주세요.')
       }
    }
 

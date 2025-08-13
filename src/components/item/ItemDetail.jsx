@@ -111,8 +111,18 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
 
    const isOwner = user && localItem && user.id === localItem.userId
 
+   // 매니저 권한 확인
+   const isManager = user && user.access === 'MANAGER'
+
    const handleDelete = () => {
-      if (window.confirm('정말로 이 아이템을 삭제하시겠습니까?')) {
+      let confirmMessage = '정말로 이 아이템을 삭제하시겠습니까?'
+
+      // 매니저가 다른 사람의 글을 삭제하는 경우 추가 확인
+      if (isManager && !isOwner) {
+         confirmMessage = '[관리자 권한] 다른 사용자의 아이템을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.'
+      }
+
+      if (window.confirm(confirmMessage)) {
          onDeleteSubmit()
       }
    }
@@ -210,6 +220,8 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                         {localItem.itemSellStatus === 'SOLD_OUT' && '판매완료'}
                         {localItem.itemSellStatus === 'ON_SALE' && '예약중'}
                      </span>
+                     {/* 매니저 표시 */}
+                     {isManager && !isOwner && <span className="manager-badge">관리자 권한</span>}
                   </div>
                </div>
 
@@ -244,13 +256,28 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                            삭제하기
                         </button>
                      </div>
+                  ) : isManager ? (
+                     // 매니저이지만 소유자가 아닌 경우
+                     <div className="manager-buttons">
+                        <button className="delete-btn manager-delete" onClick={handleDelete}>
+                           [관리자] 삭제하기
+                        </button>
+                     </div>
                   ) : (
                      <div className="buyer-buttons">
                         <button className="price-proposal-btn" onClick={() => setShowPriceModal(true)} disabled={localItem.itemSellStatus === 'SOLD_OUT'}>
-                           가격 제안하기
+                           제시하기
                         </button>
                      </div>
                   )}
+               </div>
+
+               {/* 주의사항 섹션 */}
+               <div className="rental-notice-section">
+                  <h3>주의사항</h3>
+                  <div className="notice-content">
+                     <p>판매자가 등록한 제시가 보다 가격을 높게 부를 수는 없습니다. 판매자가 제안을 승낙할 시, 1:1 채팅이 이루어집니다.</p>
+                  </div>
                </div>
 
                {/* 가격 제안 모달 */}
@@ -273,9 +300,6 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                               <span>
                                  선택된 구매방법: <strong>{deliveryMethod}</strong>
                               </span>
-                           </div>
-                           <div className="proposal-note">
-                              <p>판매자가 등록한 게시자 보다 가격을 높게 할 수 있습니다. 판매자가 제안을 수락하면 시스템에서 이메일로 알려줍니다.</p>
                            </div>
                         </div>
                         <div className="modal-footer">
@@ -303,44 +327,110 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
             </div>
          </div>
 
-         {/* 가격 제안 현황 (판매자만 볼 수 있음) */}
-         {isOwner && (
-            <div className="price-proposals-section">
-               <h2>가격 제안 Price Proposal</h2>
-               <div className="proposals-list">
-                  {proposals.filter((proposal) => proposal.status !== 'rejected').length === 0 ? (
-                     <p>제안된 가격이 없습니다.</p>
-                  ) : (
-                     proposals
-                        .filter((proposal) => proposal.status !== 'rejected')
-                        .map((proposal) => (
-                           <div key={proposal.id} className="proposal-card">
-                              <div className="proposal-price">{proposal.price ? proposal.price.toLocaleString() : '-'}원</div>
-                              <div className="proposal-user">
-                                 <img src={proposal.userAvatar || '/default-avatar.png'} alt={proposal.userName || '사용자'} className="user-avatar" />
-                                 <span>{proposal.userName || '익명'}</span>
-                              </div>
-                              <div className="proposal-actions">
-                                 {proposal.status === 'pending' && (
-                                    <>
-                                       <button onClick={() => handleProposalStatusChange(proposal.id, 'accepted')} className="btn-accept">
-                                          수락
-                                       </button>
-                                       <button onClick={() => handleProposalStatusChange(proposal.id, 'rejected')} className="btn-reject">
-                                          거절
-                                       </button>
-                                    </>
-                                 )}
-                                 {proposal.status === 'accepted' && <span className="status accepted">수락됨</span>}
-                              </div>
-                           </div>
-                        ))
-                  )}
+         {/* 가격 제안 현황 (판매자나 매니저만 볼 수 있음) */}
+{(isOwner || isManager) && (
+  <div className="price-proposals-section">
+    <h2>가격 제안 Price Proposal</h2>
+    {isManager && !isOwner && (
+      <p className="manager-notice">관리자 권한으로 조회 중입니다.</p>
+    )}
+
+    <div className="proposals-list">
+      {proposals.filter((p) => p.status !== 'rejected').length === 0 ? (
+        <p>제안된 가격이 없습니다.</p>
+      ) : (
+        proposals
+          .filter((p) => p.status !== 'rejected')
+          .map((proposal) => (
+            <div key={proposal.id} className="proposal-card">
+              <div className="proposal-price">
+                {proposal.price ? proposal.price.toLocaleString() : '-'}원
+              </div>
+
+              <div className="proposal-user">
+                <img
+                  src={proposal.userAvatar || '/default-avatar.png'}
+                  alt={proposal.userName || '사용자'}
+                  className="user-avatar"
+                />
+                <span>{proposal.userName || '익명'}</span>
+              </div>
+
+              <div className="proposal-actions">
+                {/* 소유자만 제안 상태 변경 가능 */}
+                {proposal.status === 'pending' && isOwner && (
+                  <>
+                    <button
+                      onClick={() =>
+                        handleProposalStatusChange(proposal.id, 'accepted')
+                      }
+                      className="btn-accept"
+                    >
+                      수락
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleProposalStatusChange(proposal.id, 'rejected')
+                      }
+                      className="btn-reject"
+                    >
+                      거절
+                    </button>
+                  </>
+                )}
+
+                {proposal.status === 'accepted' && (
+                  <span className="status accepted">수락됨</span>
+                )}
+                {proposal.status === 'rejected' && (
+                  <span className="status rejected">거절됨</span>
+                )}
+                {proposal.status === 'pending' && !isOwner && (
+                  <span className="status pending">대기중</span>
+                )}
+              </div>
+            </div>
+          ))
+      )}
+    </div>
+  </div>
+)}
+
+         
+         {/* 상품 이미지 갤러리 */}
+         {localItem.imgs && localItem.imgs.length > 0 && (
+            <div className="item-gallery-section">
+               <h2>상품 상세 Detail</h2>
+               <div className="gallery-container">
+                  {localItem.imgs.map((img, index) => {
+                     const rawPath = img.imgUrl.replace(/\\/g, '/')
+                     const cleanPath = rawPath.startsWith('/') ? rawPath.slice(1) : rawPath
+                     const fullImgUrl = `${baseURL}/${cleanPath}`
+
+                     return (
+                        <div key={index} className="gallery-image-container">
+                           <img src={fullImgUrl} alt={`${localItem.itemNm} ${index + 1}`} className="gallery-image" />
+                        </div>
+                     )
+                  })}
                </div>
             </div>
          )}
 
-         {/* 채팅폼은 chatId가 있을 때만 렌더링 */}
+         {/* 상품 상세 설명 */}
+         {localItem.itemDetail && (
+            <div className="item-description-section">
+               <h2>상세 설명</h2>
+               <div className="description-content">
+                  <div className="description-text">
+                     {localItem.itemDetail.split('\n').map((line, index) => (
+                        <p key={index}>{line}</p>
+                     ))}
+                  </div>
+               </div>
+            </div>
+         )}
+          {/* 채팅폼은 chatId가 있을 때만 렌더링 */}
          {chatId && chatUserId && user && <ChatForm chatId={chatId} currentUserId={user.id} />}
       </div>
    )

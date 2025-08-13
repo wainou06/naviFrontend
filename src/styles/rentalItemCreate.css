@@ -267,19 +267,3 @@
    margin-bottom: 16px !important;
    box-shadow: 0 2px 8px rgba(255, 209, 186, 0.15) !important;
 }
-
-/* 반응형 */
-/* 고정형으로 진행하는 중임 (삭제 필요) */
-@media (max-width: 768px) {
-   .image-grid-container {
-      grid-template-columns: repeat(3, 1fr) !important;
-   }
-
-   .rental-create-title {
-      font-size: 24px !important;
-   }
-
-   .section-content {
-      padding: 16px !important;
-   }
-}

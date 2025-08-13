@@ -7,7 +7,7 @@ import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { logoutUserThunk } from '../../features/authSlice'
 
 import Modal from '../chat/Modal'
@@ -20,6 +20,9 @@ function Navbar({ isAuthenticated, user, onSearch }) {
    const userMenuAnchorRef = useRef(null)
    const [searchTerm, setSearchTerm] = useState('')
    const [isChatOpen, setIsChatOpen] = useState(false)
+
+   const reduxUser = useSelector((state) => state.auth.user)
+   const reduxIsAuthenticated = useSelector((state) => state.auth.isAuthenticated)
 
    const handleLogout = () => {
       dispatch(logoutUserThunk())

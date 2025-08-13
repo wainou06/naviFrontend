@@ -1,12 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, CloudUpload, X, Save, AlertCircle } from 'lucide-react'
-import { useDispatch } from 'react-redux'
-import { Container, Box, IconButton, Typography, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import { getKeywordThunk } from '../../features/keywordSlice' // 키워드 가져오는 액션
+import { Container, Box, IconButton, Typography, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress, Chip } from '@mui/material'
 import '../../styles/rentalItemCreate.css'
 
 const RentalItemCreate = ({ onCreateSubmit }) => {
+   const dispatch = useDispatch()
    const navigate = useNavigate()
+   const { keywords } = useSelector((state) => state.keywords)
    const [loading, setLoading] = useState(false)
    const [error, setError] = useState('')
 
@@ -16,12 +19,17 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
       quantity: '',
       rentalDetail: '',
       rentalStatus: 'Y',
-      keywords: '',
+      keywords: [], // 문자열에서 배열로 변경
       images: [],
    })
 
    const [imagePreviews, setImagePreviews] = useState([])
    const [formErrors, setFormErrors] = useState({})
+
+   useEffect(() => {
+      // 컴포넌트가 마운트되면 키워드 목록을 가져옵니다.
+      dispatch(getKeywordThunk())
+   }, [dispatch])
 
    const handleInputChange = (e) => {
       const { name, value } = e.target
@@ -36,6 +44,14 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
             [name]: '',
          }))
       }
+   }
+
+   const handleKeywordChange = (event) => {
+      const { value } = event.target
+      setFormData((prev) => ({
+         ...prev,
+         keywords: value,
+      }))
    }
 
    const handleImageUpload = (e) => {
@@ -231,12 +247,21 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
                      </div>
                   </div>
 
-                  {/* 키워드 섹션 */}
+                  {/* 키워드 선택 섹션 */}
                   <div className="form-section-card">
-                     <div className="section-header">키워드</div>
-                     <div className="section-description">검색에 도움이 되는 키워드를 입력해주세요.</div>
+                     <div className="section-header">키워드 선택 ▼</div>
+                     <div className="section-description">검색에 도움이 되는 키워드를 선택해주세요.</div>
                      <div className="section-content">
-                        <TextField fullWidth name="keywords" value={formData.keywords} onChange={handleInputChange} placeholder="예: 캠핑, 텐트, 아웃도어" variant="outlined" />
+                        <FormControl fullWidth>
+                           <InputLabel>키워드 선택</InputLabel>
+                           <Select name="keywords" value={formData.keywords} multiple onChange={handleKeywordChange} renderValue={(selected) => selected.join(', ')}>
+                              {keywords?.keywords?.map((keyword) => (
+                                 <MenuItem key={keyword.id} value={keyword.name}>
+                                    <Chip label={keyword.name} />
+                                 </MenuItem>
+                              ))}
+                           </Select>
+                        </FormControl>
                      </div>
                   </div>
 
