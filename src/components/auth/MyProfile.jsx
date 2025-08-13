@@ -1,8 +1,7 @@
 import { TextField, Button, CircularProgress, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-// import axios from 'axios' // ★ axios import 추가
-import { updateUser, checkAuthStatusThunk } from '../../features/authSlice'
+import { updateUser } from '../../features/authSlice'
 
 function MyProfile() {
    const dispatch = useDispatch()

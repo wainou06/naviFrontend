@@ -10,6 +10,8 @@ import Box from '@mui/material/Box'
 import '../../styles/userParts.css'
 import MyProfile from '../auth/MyProfile'
 import MySecret from '../user/mySecret'
+import MyItems from '../my/MyItems'
+import MyRental from '../my/MyRental'
 
 function TabPanel(props) {
    const { children, value, index, ...other } = props
@@ -105,9 +107,11 @@ export default function UserParts({ user }) {
             </TabPanel>
             <TabPanel value={value} index={3} className="form">
                <h1>나의 상품</h1>
+               <MyItems />
             </TabPanel>
             <TabPanel value={value} index={4} className="form">
                <h1>렌탈 내역</h1>
+               <MyRental />
             </TabPanel>
             <TabPanel value={value} index={5} className="form">
                <h1>거래 내역</h1>
