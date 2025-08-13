@@ -25,7 +25,7 @@ export const fetchPriceProposalsThunk = createAsyncThunk('priceProposal/fetchPri
 export const updateProposalStatusThunk = createAsyncThunk('priceProposal/updateStatus', async ({ proposalId, status }, thunkAPI) => {
    try {
       const data = await updatePriceProposalStatus(proposalId, status)
-      return { proposalId, status, updatedProposal: data.proposal }
+      return { proposalId, status, updatedProposal: data.updatedProposal }
    } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message)
    }
@@ -75,21 +75,25 @@ const priceProposalSlice = createSlice({
             state.error = null
          })
          .addCase(updateProposalStatusThunk.fulfilled, (state, action) => {
+            state.loading = false
+
             const updatedProposal = action.payload.updatedProposal
             if (updatedProposal) {
-               // item 필드가 없으면 그냥 updatedProposal에서 직접 사용
+               // proposals 배열 업데이트
+               const idx = state.proposals.findIndex((p) => p.id === updatedProposal.id)
+               if (idx !== -1) {
+                  state.proposals[idx] = updatedProposal
+               }
+
+               // 현재 아이템 정보 업데이트
                state.currentItem = {
                   ...state.currentItem,
-                  ...updatedProposal,
-                  itemSellStatus: updatedProposal.itemSellStatus || updatedProposal.status,
+                  ...updatedProposal.item,
+                  itemSellStatus: updatedProposal.item.itemSellStatus,
                }
             }
-            const { proposalId, status } = action.payload
-            const proposal = state.proposals.find((p) => p.id === proposalId)
-            if (proposal) {
-               proposal.status = status
-            }
          })
+
          .addCase(updateProposalStatusThunk.rejected, (state, action) => {
             state.loading = false
             state.error = action.payload || '상태 변경 실패'

@@ -5,6 +5,7 @@ import keywordsReducer from '../features/keywordSlice'
 import rentalReducer from '../features/rentalSlice'
 import orderReducer from '../features/orderSlice'
 import priceProposalReducer from '../features/priceProposalSlice'
+import chatReducer from '../features/chatSlice'
 import infoReducer from '../features/infoSlice'
 import rentalOrderReducer from '../features/rentalOrderSlice'
 
@@ -16,6 +17,7 @@ const store = configureStore({
       rental: rentalReducer,
       order: orderReducer,
       priceProposal: priceProposalReducer,
+      chat: chatReducer,
       info: infoReducer,
       rentalOrder: rentalOrderReducer,
    },
