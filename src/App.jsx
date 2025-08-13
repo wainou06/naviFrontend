@@ -3,6 +3,7 @@ import { checkAuthStatusThunk } from './features/authSlice'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
+import useSocket from './hooks/useSocket'
 
 import './styles/common.css'
 import './styles/itemCreate.css'
@@ -27,6 +28,8 @@ function App() {
    const dispatch = useDispatch()
    const location = useLocation()
    const { isAuthenticated, user } = useSelector((state) => state.auth)
+
+   useSocket(isAuthenticated ? user?.id : null)
 
    const [searchTerm, setSearchTerm] = useState('')
    const onSearch = (search) => {

@@ -5,6 +5,7 @@ import keywordsReducer from '../features/keywordSlice'
 import rentalReducer from '../features/rentalSlice'
 import orderReducer from '../features/orderSlice'
 import priceProposalReducer from '../features/priceProposalSlice'
+import chatReducer from '../features/chatSlice'
 
 const store = configureStore({
    reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
       rental: rentalReducer,
       order: orderReducer,
       priceProposal: priceProposalReducer,
+      chat: chatReducer,
    },
 })
 
