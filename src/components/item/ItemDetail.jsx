@@ -38,8 +38,18 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
    // 로그인한 유저가 상품 등록자인지 판단
    const isOwner = user && localItem && user.id === localItem.userId
 
+   // 매니저 권한 확인
+   const isManager = user && user.access === 'MANAGER'
+
    const handleDelete = () => {
-      if (window.confirm('정말로 이 아이템을 삭제하시겠습니까?')) {
+      let confirmMessage = '정말로 이 아이템을 삭제하시겠습니까?'
+
+      // 매니저가 다른 사람의 글을 삭제하는 경우 추가 확인
+      if (isManager && !isOwner) {
+         confirmMessage = '[관리자 권한] 다른 사용자의 아이템을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.'
+      }
+
+      if (window.confirm(confirmMessage)) {
          onDeleteSubmit()
       }
    }
@@ -126,6 +136,8 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                         {localItem.itemSellStatus === 'SOLD_OUT' && '판매완료'}
                         {localItem.itemSellStatus === 'ON_SALE' && '예약중'}
                      </span>
+                     {/* 매니저 표시 */}
+                     {isManager && !isOwner && <span className="manager-badge">관리자 권한</span>}
                   </div>
                </div>
 
@@ -160,6 +172,13 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                            삭제하기
                         </button>
                      </div>
+                  ) : isManager ? (
+                     // 매니저이지만 소유자가 아닌 경우
+                     <div className="manager-buttons">
+                        <button className="delete-btn manager-delete" onClick={handleDelete}>
+                           [관리자] 삭제하기
+                        </button>
+                     </div>
                   ) : (
                      <div className="buyer-buttons">
                         <button className="price-proposal-btn" onClick={() => setShowPriceModal(true)} disabled={localItem.itemSellStatus === 'SOLD_OUT'}>
@@ -168,6 +187,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                      </div>
                   )}
                </div>
+
                {/* 주의사항 섹션 */}
                <div className="rental-notice-section">
                   <h3>주의사항</h3>
@@ -223,10 +243,11 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
             </div>
          </div>
 
-         {/* 가격 제안 현황 (판매자만 볼 수 있음) */}
-         {isOwner && (
+         {/* 가격 제안 현황 (판매자나 매니저만 볼 수 있음) */}
+         {(isOwner || isManager) && (
             <div className="price-proposals-section">
                <h2>가격 제안 Price Proposal</h2>
+               {isManager && !isOwner && <p className="manager-notice">관리자 권한으로 조회 중입니다.</p>}
                <div className="proposals-list">
                   {proposals.length === 0 ? (
                      <p>제안된 가격이 없습니다.</p>
@@ -239,7 +260,8 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                               <span>{proposal.userName || '익명'}</span>
                            </div>
                            <div className="proposal-actions">
-                              {proposal.status === 'pending' && (
+                              {/* 소유자만 제안 상태를 변경할 수 있음 (매니저는 조회만 가능) */}
+                              {isOwner && proposal.status === 'pending' && (
                                  <>
                                     <button onClick={() => handleProposalStatusChange(proposal.id, 'accepted')} className="btn-accept">
                                        수락
@@ -251,6 +273,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                               )}
                               {proposal.status === 'accepted' && <span className="status accepted">수락됨</span>}
                               {proposal.status === 'rejected' && <span className="status rejected">거절됨</span>}
+                              {proposal.status === 'pending' && !isOwner && <span className="status pending">대기중</span>}
                            </div>
                         </div>
                      ))

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import '../../styles/rentalDetail.css'
 
-const RentalDetail = ({ onDeleteSubmit, onEditSubmit, onRentalSubmit }) => {
+const RentalDetail = ({ onDeleteSubmit, onRentalSubmit }) => {
    const { rentalItemDetail, loading, error } = useSelector((state) => state.rental)
    const { user } = useSelector((state) => state.auth)
 
@@ -13,14 +13,26 @@ const RentalDetail = ({ onDeleteSubmit, onEditSubmit, onRentalSubmit }) => {
    const [showRentalModal, setShowRentalModal] = useState(false)
 
    const isOwner = user && rentalItemDetail && user.id === rentalItemDetail.userId
+
+   // 매니저 권한 확인
+   const isManager = user && user.access === 'MANAGER'
+
    console.log('Is Owner:', isOwner) // 확인
+   console.log('Is Manager:', isManager) // 확인
    console.log('User:', user) // 확인
    console.log('Current Rental Item:', rentalItemDetail) // 확인
 
    const navigate = useNavigate()
 
    const handleDelete = () => {
-      if (window.confirm('정말로 이 렌탈 상품을 삭제하시겠습니까?')) {
+      let confirmMessage = '정말로 이 렌탈 상품을 삭제하시겠습니까?'
+
+      // 매니저가 다른 사람의 글을 삭제하는 경우 추가 확인
+      if (isManager && !isOwner) {
+         confirmMessage = '[관리자 권한] 다른 사용자의 렌탈 상품을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.'
+      }
+
+      if (window.confirm(confirmMessage)) {
          onDeleteSubmit()
       }
    }
@@ -108,6 +120,8 @@ const RentalDetail = ({ onDeleteSubmit, onEditSubmit, onRentalSubmit }) => {
                         {rentalItemDetail.rentalStatus === 'N' && '렌탈불가'}
                         {rentalItemDetail.rentalStatus === 'RENTED' && '렌탈중'}
                      </span>
+                     {/* 매니저 표시 */}
+                     {isManager && !isOwner && <span className="manager-badge">관리자 권한</span>}
                   </div>
                </div>
 
@@ -155,6 +169,13 @@ const RentalDetail = ({ onDeleteSubmit, onEditSubmit, onRentalSubmit }) => {
                         </button>
                         <button className="delete-btn" onClick={handleDelete}>
                            삭제하기
+                        </button>
+                     </div>
+                  ) : isManager ? (
+                     // 매니저이지만 소유자가 아닌 경우
+                     <div className="manager-buttons">
+                        <button className="delete-btn manager-delete" onClick={handleDelete}>
+                           [관리자] 삭제하기
                         </button>
                      </div>
                   ) : (
@@ -238,10 +259,11 @@ const RentalDetail = ({ onDeleteSubmit, onEditSubmit, onRentalSubmit }) => {
             </div>
          </div>
 
-         {/* 렌탈 현황 */}
-         {isOwner && (
+         {/* 렌탈 현황 (소유자나 매니저만 볼 수 있음) */}
+         {(isOwner || isManager) && (
             <div className="rental-status-section">
                <h2>렌탈 현황</h2>
+               {isManager && !isOwner && <p className="manager-notice">관리자 권한으로 조회 중입니다.</p>}
                <div className="rentals-list">
                   <div className="rental-card">
                      <div className="rental-period">2024.01.15 ~ 2024.01.20</div>
