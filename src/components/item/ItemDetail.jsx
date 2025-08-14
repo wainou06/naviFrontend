@@ -4,7 +4,7 @@ import { updateProposalStatusThunk } from '../../features/priceProposalSlice'
 import { createChatRoomThunk } from '../../features/chatSlice'
 import '../../styles/itemDetail.css'
 
-import Modal from '../chat/Modal'
+import Popup from '../chat/Popup'
 import ChatRoomList from '../chat/ChatRoomList'
 
 const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
@@ -348,10 +348,10 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
             </div>
          )}
 
-         {/* 채팅 모달 */}
-         <Modal isOpen={isChatOpen} onClose={handleChatClose}>
+         {/* 채팅 */}
+         <Popup isOpen={isChatOpen} onClose={handleChatClose}>
             <ChatRoomList initialSelectedChatId={newChatId} />
-         </Modal>
+         </Popup>
       </div>
    )
 }

@@ -10,7 +10,7 @@ import { useState, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { logoutUserThunk } from '../../features/authSlice'
 
-import Modal from '../chat/Modal'
+import Popup from '../chat/Popup'
 import ChatRoomList from '../chat/ChatRoomList'
 
 function Navbar({ isAuthenticated, user, onSearch }) {
@@ -149,10 +149,10 @@ function Navbar({ isAuthenticated, user, onSearch }) {
                </nav>
             </div>
          </header>
-         {/* 채팅 모달 */}
-         <Modal isOpen={isChatOpen} onClose={handleChatClose}>
+         {/* 채팅 */}
+         <Popup isOpen={isChatOpen} onClose={handleChatClose}>
             <ChatRoomList />
-         </Modal>
+         </Popup>
       </>
    )
 }
