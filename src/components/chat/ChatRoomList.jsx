@@ -47,7 +47,7 @@ const ChatRoomList = ({ initialSelectedChatId = null }) => {
                      >
                         {participants
                            .filter((p) => p.id !== user.id)
-                           .map((p) => p.name || p.nick || '익명')
+                           .map((p) => p.nick + '님과의 채팅' || '익명')
                            .join(', ') || '알 수 없는 상대'}
                      </li>
                   )

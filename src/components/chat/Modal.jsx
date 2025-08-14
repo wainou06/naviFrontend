@@ -3,39 +3,9 @@ const Modal = ({ isOpen, onClose, children }) => {
 
    return (
       <>
-         <div
-            onClick={onClose}
-            style={{
-               position: 'fixed',
-               inset: 0,
-               backgroundColor: 'rgba(0, 0, 0, 0.5)',
-               zIndex: 40,
-            }}
-         />
-         <div
-            style={{
-               position: 'fixed',
-               inset: 0,
-               display: 'flex',
-               alignItems: 'center',
-               justifyContent: 'center',
-               zIndex: 50,
-               padding: 16,
-            }}
-         >
-            <div
-               onClick={(e) => e.stopPropagation()}
-               style={{
-                  backgroundColor: 'white',
-                  borderRadius: 8,
-                  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
-                  maxWidth: '64rem', // 4xl ~ 1024px (tailwind), close enough
-                  width: '100%',
-                  maxHeight: '80vh',
-                  overflow: 'auto',
-                  position: 'relative',
-               }}
-            >
+         <div onClick={onClose} className="chatbg" />
+         <div className="chat">
+            <div onClick={(e) => e.stopPropagation()} className="chatroom">
                <button
                   onClick={onClose}
                   aria-label="Close"

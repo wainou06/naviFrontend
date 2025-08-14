@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { SocketProvider } from './context/SocketContext'
 
 import './styles/common.css'
+import './styles/chat.css'
 
 import Home from './pages/Home'
 import Navbar from './components/shared/Navbar'
