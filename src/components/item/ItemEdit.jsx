@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Save, X } from 'lucide-react'
 import { fetchItem, updateItem } from '../../features/itemsSlice'
-import { Container, Box, IconButton, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress, Typography } from '@mui/material'
+import { getKeywordThunk } from '../../features/keywordSlice'
+import { Container, Box, IconButton, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress, Typography, Chip } from '@mui/material'
 import styles from '../../styles/itemCreate.module.css'
 
 const ItemEdit = () => {
@@ -11,17 +12,18 @@ const ItemEdit = () => {
    const navigate = useNavigate()
    const { id } = useParams()
    const { currentItem, loading, error } = useSelector((state) => state.items)
+   const { keywords } = useSelector((state) => state.keywords)
 
    const [formData, setFormData] = useState({
       name: '',
       price: '',
       content: '',
-      status: 'available',
+      status: 'sell',
       keywords: [],
       images: [], // 새로 추가할 이미지만 저장
    })
 
-   const [imageList, setImageList] = useState([]) // { id, url, isExisting, file? }
+   const [imageList, setImageList] = useState([])
    const [formErrors, setFormErrors] = useState({})
    const [deleteImages, setDeleteImages] = useState([])
 
@@ -29,16 +31,29 @@ const ItemEdit = () => {
       if (id) {
          dispatch(fetchItem(id))
       }
+      dispatch(getKeywordThunk())
    }, [dispatch, id])
 
    useEffect(() => {
       if (currentItem) {
+         const existingKeywords = currentItem.ItemKeywords?.map((ik) => ik.Keyword.name) || []
+         const mapStatusValue = (serverStatus) => {
+            const statusMap = {
+               available: 'sell',
+               sell: 'sell',
+               reservation: 'reservation',
+               sold_out: 'sold_out',
+               'sold-out': 'sold_out',
+            }
+            return statusMap[serverStatus?.toLowerCase()] || 'sell'
+         }
+
          setFormData({
             name: currentItem.itemNm,
             price: currentItem.price,
             content: currentItem.itemDetail,
-            status: currentItem.itemSellStatus?.toLowerCase(),
-            keywords: currentItem.keywords || [],
+            status: mapStatusValue(currentItem.itemSellStatus),
+            keywords: existingKeywords,
             images: [],
          })
 
@@ -123,6 +138,14 @@ const ItemEdit = () => {
       setImageList((prev) => prev.filter((img) => img.id !== imageId))
    }
 
+   const handleKeywordChange = (event) => {
+      const { value } = event.target
+      setFormData((prev) => ({
+         ...prev,
+         keywords: value,
+      }))
+   }
+
    const validateForm = () => {
       const errors = {}
 
@@ -196,7 +219,8 @@ const ItemEdit = () => {
                      <div className={styles.sectionHeader}>가격</div>
                      <div className={styles.sectionContent}>
                         <Grid container spacing={2}>
-                           <Grid item xs={12} sm={6}>
+                           {/* Grid v2 문법: item prop 제거, xs/sm props 유지 */}
+                           <Grid xs={12} sm={6}>
                               <TextField fullWidth label="가격" name="price" type="number" value={formData.price} onChange={handleInputChange} error={!!formErrors.price} helperText={formErrors.price} InputProps={{ endAdornment: '원' }} />
                            </Grid>
                         </Grid>
@@ -234,6 +258,27 @@ const ItemEdit = () => {
                               이미지 추가
                               <input type="file" accept="image/*" hidden multiple onChange={handleImageUpload} />
                            </Button>
+                        )}
+                     </div>
+                  </div>
+
+                  {/* 키워드 선택 섹션 */}
+                  <div className={styles.formSectionCard}>
+                     <div className={styles.sectionHeader}>키워드 선택 ▼</div>
+                     <div className={styles.sectionContent}>
+                        {keywords?.keywords && keywords.keywords.length > 0 ? (
+                           <FormControl fullWidth>
+                              <InputLabel>키워드 선택</InputLabel>
+                              <Select name="keywords" value={formData.keywords} multiple onChange={handleKeywordChange} renderValue={(selected) => selected.join(', ')}>
+                                 {keywords.keywords.map((keyword) => (
+                                    <MenuItem key={keyword.id} value={keyword.name}>
+                                       <Chip label={keyword.name} />
+                                    </MenuItem>
+                                 ))}
+                              </Select>
+                           </FormControl>
+                        ) : (
+                           <div style={{ textAlign: 'center', color: '#666', padding: '20px', fontStyle: 'italic' }}>키워드가 존재하지 않습니다</div>
                         )}
                      </div>
                   </div>
