@@ -60,6 +60,7 @@ const itemsSlice = createSlice({
    name: 'items',
    initialState: {
       items: [],
+      filteredItems: [], // 필터된 아이템들
       currentItem: null,
       myItems: [], // 나의 상품 목록을 위한 새로운 상태
       pagination: {
@@ -68,6 +69,11 @@ const itemsSlice = createSlice({
          totalItems: 0,
          hasNext: false,
          hasPrev: false,
+      },
+      // 필터 상태
+      sortOptions: {
+         sortBy: 'updatedAt',
+         sortOrder: 'desc',
       },
       loading: false,
       myItemsLoading: false, // 나의 상품 로딩 상태
@@ -85,7 +91,41 @@ const itemsSlice = createSlice({
       clearCurrentItem: (state) => {
          state.currentItem = null
       },
+      // 필터
+      updateSort: (state, action) => {
+         const { sortBy, sortOrder } = action.payload
+         state.sortOptions.sortBy = sortBy
+         state.sortOptions.sortOrder = sortOrder
+      },
+      // 필터
+      resetSort: (state) => {
+         state.sortOptions = {
+            sortBy: 'updatedAt',
+            sortOrder: 'desc',
+         }
+      },
+      // 정렬 액션 추가
+      sortItemsLocally: (state, action) => {
+         const { sortBy, sortOrder } = action.payload
+
+         // 정렬 옵션 업데이트
+         state.sortOptions.sortBy = sortBy
+         state.sortOptions.sortOrder = sortOrder
+
+         // items 배열 정렬
+         state.items.sort((a, b) => {
+            if (sortBy === 'price') {
+               return sortOrder === 'asc' ? a.price - b.price : b.price - a.price
+            } else if (sortBy === 'updatedAt') {
+               const dateA = new Date(a.updatedAt)
+               const dateB = new Date(b.updatedAt)
+               return sortOrder === 'asc' ? dateA - dateB : dateB - dateA
+            }
+            return 0
+         })
+      },
    },
+
    extraReducers: (builder) => {
       builder
          // fetchItems - 원래대로 복원
@@ -107,14 +147,13 @@ const itemsSlice = createSlice({
 
          // fetchItem - currentItem만 업데이트 (items 건드리지 않음)
          .addCase(fetchItem.pending, (state) => {
-            state.loading = true // detailLoading 없으니까 그냥 loading 사용
+            state.loading = true
             state.error = null
          })
          .addCase(fetchItem.fulfilled, (state, action) => {
             state.loading = false
             state.currentItem = action.payload
-            state.error = null
-            // items 배열은 절대 건드리지 않음!
+            state.error = null // items 배열은 절대 건드리지 않음!
          })
          .addCase(fetchItem.rejected, (state, action) => {
             state.loading = false
@@ -195,5 +234,5 @@ const itemsSlice = createSlice({
    },
 })
 
-export const { setCurrentPage, clearError, clearCurrentItem } = itemsSlice.actions
+export const { setCurrentPage, clearError, clearCurrentItem, updateSort, resetSort, sortItemsLocally } = itemsSlice.actions
 export default itemsSlice.reducer

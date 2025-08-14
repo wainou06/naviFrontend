@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Typography, Button, Pagination, Alert, CircularProgress } from '@mui/material'
-import { Add, Edit, Delete, Visibility, ShoppingCart } from '@mui/icons-material'
-import { fetchItems, setCurrentPage } from '../../features/itemsSlice'
+import { Add, Edit, Visibility, ShoppingCart } from '@mui/icons-material'
+import { fetchItems, setCurrentPage, sortItemsLocally } from '../../features/itemsSlice'
 import { Link } from 'react-router-dom'
 import '../../styles/itemList.css'
 
 const ItemsList = () => {
    const dispatch = useDispatch()
    const navigate = useNavigate()
-   const { items, pagination, loading, error } = useSelector((state) => state.items)
+   const { items, pagination, loading, error, sortOptions } = useSelector((state) => state.items)
 
-   const [filters, setFilters] = useState({
+   const [localFilters, setLocalFilters] = useState({
       keyword: '',
       searchCategory: 'name',
       status: '',
@@ -27,27 +27,25 @@ const ItemsList = () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [])
 
-   const loadItems = (newFilters = filters) => {
-      dispatch(fetchItems(newFilters))
-   }
-
-   const _handleSearch = () => {
-      const newFilters = { ...filters, page: 1 }
-      setFilters(newFilters)
-      loadItems(newFilters)
-   }
-
-   const _handleReset = () => {
-      const resetFilters = {
-         keyword: '',
-         searchCategory: 'name',
-         status: '',
-         page: 1,
-         limit: 10,
+   const loadItems = (newFilters = localFilters) => {
+      const params = {
+         ...newFilters,
+         sortBy: sortOptions.sortBy,
+         sortOrder: sortOptions.sortOrder,
       }
-      setFilters(resetFilters)
-      setActiveFilter('전체')
-      loadItems(resetFilters)
+      dispatch(fetchItems(params))
+   }
+
+   // 가격순 정렬
+   const handlePriceSort = () => {
+      const newSortOrder = sortOptions.sortBy === 'price' && sortOptions.sortOrder === 'asc' ? 'desc' : 'asc'
+      dispatch(sortItemsLocally({ sortBy: 'price', sortOrder: newSortOrder }))
+   }
+
+   // 날짜순 정렬
+   const handleDateSort = () => {
+      const newSortOrder = sortOptions.sortBy === 'updatedAt' && sortOptions.sortOrder === 'asc' ? 'desc' : 'asc'
+      dispatch(sortItemsLocally({ sortBy: 'updatedAt', sortOrder: newSortOrder }))
    }
 
    const handleFilterClick = (filterType) => {
@@ -57,16 +55,23 @@ const ItemsList = () => {
       if (filterType === '품절') status = 'SOLD_OUT'
       if (filterType === '할인중') status = 'ON_SALE'
 
-      const newFilters = { ...filters, status, page: 1 }
-      setFilters(newFilters)
+      const newFilters = { ...localFilters, status, page: 1 }
+      setLocalFilters(newFilters)
       loadItems(newFilters)
    }
 
-   const handlePageChange = (page) => {
-      const newFilters = { ...filters, page }
-      setFilters(newFilters)
+   const handlePageChange = (event, page) => {
+      const newFilters = { ...localFilters, page }
+      setLocalFilters(newFilters)
       dispatch(setCurrentPage(page))
-      loadItems(newFilters)
+
+      // 현재 정렬 옵션과 함께 불러오기
+      const params = {
+         ...newFilters,
+         sortBy: sortOptions.sortBy,
+         sortOrder: sortOptions.sortOrder,
+      }
+      dispatch(fetchItems(params))
    }
 
    const formatPrice = (price) => {
@@ -99,6 +104,13 @@ const ItemsList = () => {
       }
    }
 
+   const getSortIndicator = (sortType) => {
+      if (sortOptions.sortBy === sortType) {
+         return sortOptions.sortOrder === 'asc' ? ' ↑' : ' ↓'
+      }
+      return ''
+   }
+
    return (
       <div className="items-list-container">
          <div className="main-container">
@@ -112,18 +124,24 @@ const ItemsList = () => {
                </div>
             </div>
 
-            {/* 구분선 */}
             <hr className="section-divider" />
             <div className="section-title">Share & Release</div>
             <hr className="section-divider" />
 
             {/* 필터 버튼들 */}
             <div className="filter-section">
-               {['필터', '가격순', '날짜순'].map((filter) => (
-                  <Button key={filter} className={`filter-btn ${activeFilter === filter ? 'active' : ''}`} onClick={() => handleFilterClick(filter)}>
-                     {filter}
-                  </Button>
-               ))}
+               <Button className={`filter-btn ${activeFilter === '필터' ? 'active' : ''}`} onClick={() => handleFilterClick('필터')}>
+                  필터
+               </Button>
+
+               <Button className="filter-btn" onClick={handlePriceSort}>
+                  가격순{getSortIndicator('price')}
+               </Button>
+
+               <Button className="filter-btn" onClick={handleDateSort}>
+                  날짜순{getSortIndicator('updatedAt')}
+               </Button>
+
                <div className="search-actions">
                   <Button className="search-btn" startIcon={<Add />} onClick={() => navigate('/items/create')}>
                      상품등록
@@ -158,10 +176,8 @@ const ItemsList = () => {
                   <div className="products-grid">
                      {items.map((item) => (
                         <div key={item.id} className="product-card">
-                           {/* 상태 라벨 */}
                            <div className={`product-status-label ${getStatusClass(item.itemSellStatus)}`}>{getStatusText(item.itemSellStatus)}</div>
 
-                           {/* 액션 버튼들 */}
                            <div className="product-actions">
                               <button className="action-btn view" onClick={() => navigate(`/items/detail/${item.id}`)} title="상세보기">
                                  <Visibility style={{ fontSize: 14 }} />
@@ -171,7 +187,6 @@ const ItemsList = () => {
                               </button>
                            </div>
 
-                           {/* 상품 이미지 */}
                            <div className="product-image" onClick={() => navigate(`/items/detail/${item.id}`)}>
                               {item.imgs && item.imgs.length > 0 ? (
                                  (() => {
@@ -179,7 +194,6 @@ const ItemsList = () => {
                                     const cleanPath = rawPath.startsWith('/') ? rawPath.slice(1) : rawPath
                                     const baseURL = import.meta.env.VITE_APP_API_URL.replace(/\/$/, '')
                                     const imageUrl = `${baseURL}/${cleanPath}`
-
                                     return <img src={imageUrl} alt={item.itemNm} />
                                  })()
                               ) : (
@@ -187,7 +201,6 @@ const ItemsList = () => {
                               )}
                            </div>
 
-                           {/* 상품 정보 */}
                            <div className="product-info">
                               <div className="product-title">{item.itemNm}</div>
                               <div className="product-price">{formatPrice(item.price)}원</div>
