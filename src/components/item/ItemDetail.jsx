@@ -1,33 +1,26 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { useSearchParams } from 'react-router-dom'
 import { updateProposalStatusThunk } from '../../features/priceProposalSlice'
-import { fetchMyChatsThunk, createChatRoomThunk } from '../../features/chatSlice'
+import { createChatRoomThunk } from '../../features/chatSlice'
 import '../../styles/itemDetail.css'
-// import ChatForm from '../chat/ChatForm'
+
+import Modal from '../chat/Modal'
+import ChatRoomList from '../chat/ChatRoomList'
 
 const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
    const dispatch = useDispatch()
-   const navigate = useNavigate()
-   const location = useLocation()
 
    const { currentItem, loading, error } = useSelector((state) => state.items)
    const { user } = useSelector((state) => state.auth)
    const proposals = useSelector((state) => state.priceProposal.proposals)
-   const chats = useSelector((state) => state.chat.chats)
 
    const [localItem, setLocalItem] = useState(null)
    const [selectedImage, setSelectedImage] = useState(0)
    const [deliveryMethod, setDeliveryMethod] = useState('직거래')
    const [priceProposal, setPriceProposal] = useState('')
    const [showPriceModal, setShowPriceModal] = useState(false)
-
-   // 채팅방 ID 상태
-   const [chatId, setChatId] = useState(null)
-
-   const [searchParams] = useSearchParams()
-   const chatUserId = searchParams.get('chatUser')
+   const [isChatOpen, setIsChatOpen] = useState(false)
+   const [newChatId, setNewChatId] = useState(null)
 
    useEffect(() => {
       if (currentItem) {
@@ -45,68 +38,6 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
          setSelectedImage(0)
       }
    }, [localItem, selectedImage])
-
-   useEffect(() => {
-      if (user) {
-         dispatch(fetchMyChatsThunk())
-      }
-   }, [dispatch, user])
-
-   // chatUserId 변경 및 관련 상태 변경 시 채팅방 설정 로직
-   useEffect(() => {
-      console.log('=== chatUserId, user, localItem, chats 상태 확인 ===')
-      console.log('chatUserId:', chatUserId)
-      console.log('user:', user)
-      console.log('localItem:', localItem)
-      console.log('chats:', chats)
-
-      // 필수 조건 없으면 초기화
-      if (!chatUserId || !user) {
-         setChatId(null)
-         return
-      }
-
-      // 자기 자신에게 채팅 못 하도록 처리
-      if (chatUserId === user.id.toString()) {
-         setChatId(null)
-         return
-      }
-
-      if (!localItem?.id) {
-         setChatId(null)
-         return
-      }
-
-      // 기존 채팅방 검색
-      const existingChat = Array.isArray(chats) ? chats.find((chat) => Array.isArray(chat.participants) && chat.participants.some((p) => p?.id?.toString() === chatUserId)) : null
-
-      console.log('existingChat:', existingChat)
-
-      if (existingChat) {
-         setChatId(existingChat.id)
-      } else {
-         // 새 채팅방 생성 시 sellerId가 맞는지 API 확인 필요
-         dispatch(
-            createChatRoomThunk({
-               itemId: localItem.id,
-               sellerId: chatUserId,
-            })
-         )
-            .unwrap()
-            .then((newChat) => {
-               if (!newChat?.chat?.id) {
-                  console.error('채팅방 id가 없습니다!')
-                  setChatId(null)
-                  return
-               }
-               setChatId(newChat.chat.id)
-            })
-            .catch((err) => {
-               console.error('채팅방 생성 실패:', err)
-               setChatId(null)
-            })
-      }
-   }, [chatUserId, chats, user, dispatch, localItem])
 
    const isOwner = user && localItem && user.id === localItem.userId
 
@@ -156,31 +87,38 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
       return price ? price.toLocaleString() + '원' : '-'
    }
 
-   const handleProposalStatusChange = async (proposalId, status) => {
+   const handleProposalStatusChange = async (proposalId, status, buyerId) => {
       try {
          const result = await dispatch(updateProposalStatusThunk({ proposalId, status })).unwrap()
 
+         if (status === 'accepted') {
+            // 채팅방 생성
+            const chatRoom = await dispatch(
+               createChatRoomThunk({
+                  itemId: localItem.id,
+                  buyerId,
+               })
+            ).unwrap()
+
+            setNewChatId(chatRoom.id) // 새 채팅방 ID 저장
+            setIsChatOpen(true) // 모달 열기
+         }
+
+         // 아이템 상태 업데이트
          if (result.updatedProposal) {
             const updatedItemSellStatus = result.updatedProposal.item?.itemSellStatus
             const prevItemSellStatus = localItem?.itemSellStatus || 'SELL'
-
             setLocalItem((prev) => ({
                ...prev,
                itemSellStatus: updatedItemSellStatus || prevItemSellStatus,
             }))
-
-            if (status === 'accepted') {
-               if (result.updatedProposal.user?.id) {
-                  const searchParams = new URLSearchParams(location.search)
-                  searchParams.set('chatUser', result.updatedProposal.user.id)
-                  navigate(`${location.pathname}?${searchParams.toString()}`, { replace: true })
-               }
-            }
          }
       } catch (error) {
          alert('상태 변경 실패: ' + (error.message || error))
       }
    }
+
+   const handleChatClose = () => setIsChatOpen(false)
 
    if (loading) return <div className="loading">로딩중...</div>
    if (error) return <div className="error">오류: {error}</div>
@@ -356,7 +294,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                                  {/* 소유자만 제안 상태 변경 가능 */}
                                  {proposal.status === 'pending' && isOwner && (
                                     <>
-                                       <button onClick={() => handleProposalStatusChange(proposal.id, 'accepted')} className="btn-accept">
+                                       <button onClick={() => handleProposalStatusChange(proposal.id, 'accepted', proposal.userId)} className="btn-accept">
                                           수락
                                        </button>
                                        <button onClick={() => handleProposalStatusChange(proposal.id, 'rejected')} className="btn-reject">
@@ -409,8 +347,11 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                </div>
             </div>
          )}
-         {/* 채팅폼은 chatId가 있을 때만 렌더링 */}
-         {chatId && chatUserId && user && <ChatForm chatId={chatId} currentUserId={user.id} />}
+
+         {/* 채팅 모달 */}
+         <Modal isOpen={isChatOpen} onClose={handleChatClose}>
+            <ChatRoomList initialSelectedChatId={newChatId} />
+         </Modal>
       </div>
    )
 }
