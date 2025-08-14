@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Typography, Button, Pagination, Dialog, DialogTitle, DialogContent, DialogActions, Alert, CircularProgress } from '@mui/material'
 import { Add, Edit, Delete, Visibility } from '@mui/icons-material'
 import { fetchRentalItems, deleteRentalItem } from '../../features/rentalSlice'
+import { Link } from 'react-router-dom'
 
 const RentalList = () => {
    const dispatch = useDispatch()
@@ -86,13 +87,29 @@ const RentalList = () => {
       <div className="rental-list-container">
          <div className="main-container">
             <div className="register-button-section">
-               <Button className="register-btn" startIcon={<Add />} onClick={() => navigate('/items/list')}>
-                  나누go! 비우go! &gt;
-               </Button>
+               <div className="togo" style={{ width: '350px', height: '80px', marginLeft: '0' }}>
+                  <Link to="/items/list">
+                     <div
+                        style={{
+                           backgroundColor: '#AEE9F5',
+                           color: '#016CFF',
+                           width: '100%',
+                           height: '100%',
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'center',
+                           borderRadius: '70px',
+                        }}
+                     >
+                        <img src="/images/상품.png" alt="상품 리스트 페이지로" style={{ width: '320px', height: '90px' }} />
+                     </div>
+                  </Link>
+               </div>
             </div>
 
             <hr className="section-divider" />
             <div className="section-title">Share & Release</div>
+            <hr className="section-divider" />
 
             {/* 필터 버튼들 */}
             <div className="filter-section">
@@ -197,8 +214,6 @@ const RentalList = () => {
                   </Button>
                </DialogActions>
             </Dialog>
-
-            <hr className="section-divider" />
          </div>
       </div>
    )

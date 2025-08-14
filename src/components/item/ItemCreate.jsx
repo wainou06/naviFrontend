@@ -17,7 +17,7 @@ const ItemCreate = ({ onCreateSubmit }) => {
       price: '',
       stock: '',
       content: '',
-      status: 'sell',
+      status: 'available',
       keywords: [],
       images: [],
    })

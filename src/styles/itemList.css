@@ -2,8 +2,6 @@
 
 /* 전체 배경 */
 .items-list-container {
-   background: #f8f9fa;
-   min-height: 100vh;
    padding: 0;
 }
 

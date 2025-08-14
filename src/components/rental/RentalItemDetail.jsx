@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { createRentalOrderThunk, fetchRentalOrdersByItemThunk } from '../../features/rentalOrderSlice'
 import '../../styles/rentalDetail.css'
-import loginStatusImg from '../../../public/images/로그인상태.png'
 
 const RentalDetail = ({ onDeleteSubmit }) => {
    const dispatch = useDispatch()
@@ -163,7 +162,6 @@ const RentalDetail = ({ onDeleteSubmit }) => {
                </div>
 
                {/* 렌트 날짜 및 수량 선택 */}
-               {/* 렌트 날짜 및 수량 선택 */}
                {!isOwner && (
                   <div className="rental-date-section">
                      <h3>렌트 기간 및 수량 선택</h3>
@@ -319,7 +317,7 @@ const RentalDetail = ({ onDeleteSubmit }) => {
                               {new Date(order.useStart).toLocaleDateString()} ~ {new Date(order.useEnd).toLocaleDateString()}
                            </div>
                            <div className="rental-user">
-                              <img src={loginStatusImg} alt={order.user?.name || '사용자'} className="user-avatar" />
+                              <img src="/images/로그인상태.png" alt={order.user?.name || '사용자'} className="user-avatar" />
                               <span>{order.user?.name || '익명'}</span>
                            </div>
                            <div className="rental-info">
