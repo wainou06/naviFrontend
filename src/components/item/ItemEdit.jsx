@@ -153,7 +153,7 @@ const ItemEdit = () => {
                },
             })
          ).unwrap()
-         alert('상품이 성공적으로 수정되었습니다.')
+         // alert('상품이 성공적으로 수정되었습니다.')
          navigate(`/items/detail/${id}`)
       } catch (error) {
          console.error('상품 수정 실패:', error)
@@ -264,7 +264,7 @@ const ItemEdit = () => {
                   {/* 제출 버튼 */}
                   <div className={styles.buttonSection}>
                      <Box display="flex" gap={2}>
-                        <Button type="submit" variant="contained" startIcon={loading ? <CircularProgress size={16} /> : <Save />} disabled={loading}>
+                        <Button type="submit" variant="contained" startIcon={loading ? <CircularProgress size={16} /> : <Save />} disabled={loading} sx={{ flex: 2 }}>
                            {loading ? '수정 중...' : '상품 수정'}
                         </Button>
                      </Box>

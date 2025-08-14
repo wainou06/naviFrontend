@@ -175,12 +175,6 @@ const RentalItemEdit = ({ onUpdateSubmit }) => {
             })
          }
 
-         console.log('📝 수정할 데이터:')
-         console.log('- 상품명:', formData.rentalItemNm)
-         console.log('- 키워드:', formData.keywords)
-         console.log('- 삭제할 이미지 ID:', deleteImages)
-         console.log('- 새 이미지 개수:', newImagesToUpload.length)
-
          if (onUpdateSubmit) {
             await onUpdateSubmit(formDataToSend)
          } else {
