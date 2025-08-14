@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { Typography, Button, Pagination, Dialog, DialogTitle, DialogContent, DialogActions, Alert, CircularProgress } from '@mui/material'
+import { Typography, Button, Pagination, Alert, CircularProgress } from '@mui/material'
 import { Add, Edit, Delete, Visibility } from '@mui/icons-material'
-import { fetchRentalItems, deleteRentalItem } from '../../features/rentalSlice'
+import { fetchRentalItems, setCurrentPage, sortRentalItemsLocally } from '../../features/rentalSlice'
 import { Link } from 'react-router-dom'
 
 const RentalList = () => {
@@ -14,12 +14,13 @@ const RentalList = () => {
       pagination = { totalPages: 1, currentPage: 1 },
       loading,
       error,
-      deleteLoading,
+      sortOptions,
    } = useSelector((state) => {
       return state.rental || {}
    })
 
-   const [filters, setFilters] = useState({
+   // 로컬 필터 상태 (아이템 리스트와 동일한 구조로 변경)
+   const [localFilters, setLocalFilters] = useState({
       keyword: '',
       searchCategory: 'rentalItemNm',
       rentalStatus: '',
@@ -27,40 +28,66 @@ const RentalList = () => {
       limit: 10,
    })
 
-   const [deleteDialog, setDeleteDialog] = useState({ open: false, item: null })
+   const [setDeleteDialog] = useState({ open: false, item: null })
    const [activeFilter, setActiveFilter] = useState('전체')
 
    useEffect(() => {
-      const promise = dispatch(fetchRentalItems(filters))
+      loadRentalItems()
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [])
 
-      promise
-         .then((result) => {
-            console.log('🔍결과:', result)
-         })
-         .catch((error) => {
-            console.log('🔍에러:', error)
-         })
-   }, [dispatch, filters])
+   const loadRentalItems = (newFilters = localFilters) => {
+      const params = {
+         ...newFilters,
+         sortBy: sortOptions.sortBy,
+         sortOrder: sortOptions.sortOrder,
+      }
+      dispatch(fetchRentalItems(params))
+   }
+
+   // 가격순 정렬
+   const handlePriceSort = () => {
+      const newSortOrder = sortOptions.sortBy === 'oneDayPrice' && sortOptions.sortOrder === 'asc' ? 'desc' : 'asc'
+      dispatch(sortRentalItemsLocally({ sortBy: 'oneDayPrice', sortOrder: newSortOrder }))
+   }
+
+   // 날짜순 정렬
+   const handleDateSort = () => {
+      const newSortOrder = sortOptions.sortBy === 'createdAt' && sortOptions.sortOrder === 'asc' ? 'desc' : 'asc'
+      dispatch(sortRentalItemsLocally({ sortBy: 'createdAt', sortOrder: newSortOrder }))
+   }
 
    const handleFilterClick = (filterType) => {
       setActiveFilter(filterType)
-      const rentalStatus = filterType === '렌탈가능' ? 'Y' : filterType === '렌탈불가' ? 'N' : ''
-      setFilters({ ...filters, rentalStatus, page: 1 })
+      let rentalStatus = ''
+
+      if (filterType === '렌탈가능') rentalStatus = 'Y'
+      if (filterType === '렌탈불가') rentalStatus = 'N'
+
+      const newFilters = { ...localFilters, rentalStatus, page: 1 }
+      setLocalFilters(newFilters)
+      loadRentalItems(newFilters)
    }
 
    const handlePageChange = (event, page) => {
-      setFilters((prev) => ({ ...prev, page }))
-   }
+      const newFilters = { ...localFilters, page }
+      setLocalFilters(newFilters)
+      dispatch(setCurrentPage(page))
 
-   const handleDelete = async (itemId) => {
-      dispatch(deleteRentalItem(itemId))
-      setDeleteDialog({ open: false, item: null })
+      // 현재 정렬 옵션과 함께 불러오기
+      const params = {
+         ...newFilters,
+         sortBy: sortOptions.sortBy,
+         sortOrder: sortOptions.sortOrder,
+      }
+      dispatch(fetchRentalItems(params))
    }
 
    const formatPrice = (price) => {
       return new Intl.NumberFormat('ko-KR').format(price)
    }
 
+   // 상태 텍스트 반환
    const getStatusText = (status, quantity = 0) => {
       switch (status) {
          case 'Y':
@@ -72,6 +99,7 @@ const RentalList = () => {
       }
    }
 
+   // 상태 클래스 반환
    const getStatusClass = (status, quantity = 0) => {
       switch (status) {
          case 'Y':
@@ -81,6 +109,14 @@ const RentalList = () => {
          default:
             return 'status-unknown'
       }
+   }
+
+   //화살표 표시
+   const getSortIndicator = (sortType) => {
+      if (sortOptions.sortBy === sortType) {
+         return sortOptions.sortOrder === 'asc' ? ' ↑' : ' ↓'
+      }
+      return ''
    }
 
    return (
@@ -106,6 +142,7 @@ const RentalList = () => {
                   </Link>
                </div>
             </div>
+
             {/* 구분선 */}
             <hr style={{ border: 'none', height: '1px', background: 'rgba(240, 144, 127, 1)', margin: '10px' }} />
             <div style={{ textAlign: 'center', color: 'rgba(240, 144, 127, 1)', fontWeight: '600', margin: '10px 0', fontSize: '14px', fontFamily: 'Arial, Black, sans-serif' }}>Rental</div>
@@ -113,65 +150,33 @@ const RentalList = () => {
 
             {/* 필터 버튼들 */}
             <div className="filter-section">
-               {['필터', '가격순', '날짜순'].map((filter) => (
-                  <Button
-                     key={filter}
-                     className={`${activeFilter === filter ? 'active' : ''}`}
-                     onClick={() => handleFilterClick(filter)}
-                     style={{
-                        color: activeFilter === filter ? 'white' : 'rgba(240, 144, 127, 1)',
-                        border: '1px solid rgba(240, 144, 127, 1)',
-                        borderRadius: '16px',
-                        padding: '6px 16px',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        textTransform: 'none',
-                        transition: 'all 0.2s ease',
-                        background: activeFilter === filter ? 'rgba(240, 144, 127, 1)' : 'transparent',
-                     }}
-                     onMouseEnter={(e) => {
-                        if (activeFilter !== filter) {
-                           e.target.style.background = 'rgba(240, 144, 127, 1)'
-                           e.target.style.color = 'white'
-                           e.target.style.transform = 'translateY(-1px)'
-                        }
-                     }}
-                     onMouseLeave={(e) => {
-                        if (activeFilter !== filter) {
-                           e.target.style.background = 'transparent'
-                           e.target.style.color = 'rgba(240, 144, 127, 1)'
-                           e.target.style.transform = 'translateY(0)'
-                        }
-                     }}
-                  >
-                     {filter}
-                  </Button>
-               ))}
+               <Button className={`filter-btn ${activeFilter === '필터' ? 'active' : ''}`} onClick={() => handleFilterClick('필터')}>
+                  필터
+               </Button>
+
+               <Button className="filter-btn" onClick={handlePriceSort}>
+                  가격순{getSortIndicator('oneDayPrice')}
+               </Button>
+
+               <Button className="filter-btn" onClick={handleDateSort}>
+                  날짜순{getSortIndicator('createdAt')}
+               </Button>
+
                <div className="search-actions">
-                  <Button
-                     startIcon={<Add />}
-                     onClick={() => navigate('/rental/create')}
-                     style={{ background: 'rgba(255, 209, 186, 1)', color: 'rgb(8, 8, 8)', borderRadius: '16px', padding: '6px 20px', fontSize: '12px', fontWeight: '600', border: 'none' }}
-                     onMouseEnter={(e) => {
-                        e.target.style.background = '#00b894'
-                        e.target.style.transform = 'translateY(-1px)'
-                     }}
-                     onMouseLeave={(e) => {
-                        e.target.style.background = 'rgba(255, 209, 186, 1)'
-                        e.target.style.transform = 'translateY(0)'
-                     }}
-                  >
+                  <Button className="search-btn" startIcon={<Add />} onClick={() => navigate('/rental/create')}>
                      렌탈 상품등록
                   </Button>
                </div>
             </div>
 
+            {/* 에러 메시지 */}
             {error && (
                <Alert severity="error" sx={{ mb: 3 }}>
                   {error}
                </Alert>
             )}
 
+            {/* 로딩 및 빈 상태 */}
             {loading && rentalItems.length === 0 ? (
                <div className="loading-state">
                   <CircularProgress />
@@ -179,19 +184,20 @@ const RentalList = () => {
             ) : rentalItems.length === 0 ? (
                <div className="empty-state">
                   <Typography className="empty-state-title">등록된 상품이 없습니다</Typography>
+                  <Typography className="empty-state-subtitle">첫 번째 렌탈 상품을 등록해보세요!</Typography>
                   <Button className="register-btn" startIcon={<Add />} onClick={() => navigate('/rental/create')}>
                      렌탈 상품 등록하기
                   </Button>
                </div>
             ) : (
                <>
-                  {/* 상품 */}
+                  {/* 상품 그리드 */}
                   <div className="products-grid">
                      {rentalItems
                         .filter((item) => item && item.id) // item이 존재하고, id 속성이 있는 경우만 필터링
                         .map((item) => (
                            <div key={item.id} className="product-card">
-                              {/* 상태라벨  */}
+                              {/* 상태 라벨 */}
                               <div className={`product-status-label ${getStatusClass(item?.rentalStatus, item?.quantity)}`}>{getStatusText(item?.rentalStatus, item?.quantity)}</div>
 
                               <div className="product-actions">
@@ -225,7 +231,7 @@ const RentalList = () => {
                               <div className="product-info">
                                  <div className="product-title">{item?.rentalItemNm}</div>
                                  <div className="product-price">{formatPrice(item?.oneDayPrice)}원</div>
-                                 <div className="product-meta">{new Date(item?.createdAt).toLocaleString()}</div>
+                                 <div className="product-meta">{item?.createdAt ? new Date(item.createdAt).toLocaleString() : '정보 없음'}</div>
                               </div>
                            </div>
                         ))}
@@ -239,22 +245,6 @@ const RentalList = () => {
                   )}
                </>
             )}
-
-            {/* 삭제 다이얼로그 */}
-            <Dialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, item: null })}>
-               <DialogTitle>삭제 확인</DialogTitle>
-               <DialogContent>
-                  <Typography>정말 이 상품을 삭제하시겠습니까?</Typography>
-               </DialogContent>
-               <DialogActions>
-                  <Button onClick={() => setDeleteDialog({ open: false, item: null })} color="primary">
-                     취소
-                  </Button>
-                  <Button onClick={() => handleDelete(deleteDialog.item?.id)} color="secondary" disabled={deleteLoading}>
-                     {deleteLoading ? <CircularProgress size={24} /> : '삭제'}
-                  </Button>
-               </DialogActions>
-            </Dialog>
          </div>
       </div>
    )

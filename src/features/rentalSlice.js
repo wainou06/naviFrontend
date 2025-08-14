@@ -84,8 +84,61 @@ const rentalSlice = createSlice({
          currentPage: 1,
          limit: 5,
       },
+      // 필터
+      sortOptions: {
+         sortBy: 'createdAt',
+         sortOrder: 'desc',
+      },
    },
-   reducers: {},
+   reducers: {
+      // 현재 페이지 설정
+      setCurrentPage: (state, action) => {
+         state.pagination.currentPage = action.payload
+      },
+      // 에러 초기화
+      clearError: (state) => {
+         state.error = null
+         state.myRentalItemsError = null
+      },
+      // 현재 아이템 초기화
+      clearCurrentItem: (state) => {
+         state.currentItem = null
+         state.rentalItemDetail = null
+      },
+      // 정렬 옵션 업데이트
+      updateSort: (state, action) => {
+         const { sortBy, sortOrder } = action.payload
+         state.sortOptions.sortBy = sortBy
+         state.sortOptions.sortOrder = sortOrder
+      },
+      // 정렬 초기화
+      resetSort: (state) => {
+         state.sortOptions = {
+            sortBy: 'createdAt',
+            sortOrder: 'desc',
+         }
+      },
+      // 로컬 정렬 (클라이언트 사이드)
+      sortRentalItemsLocally: (state, action) => {
+         const { sortBy, sortOrder } = action.payload
+
+         // 정렬 옵션 업데이트
+         state.sortOptions.sortBy = sortBy
+         state.sortOptions.sortOrder = sortOrder
+
+         // rentalItems 배열 정렬
+         state.rentalItems.sort((a, b) => {
+            if (sortBy === 'oneDayPrice') {
+               return sortOrder === 'asc' ? a.oneDayPrice - b.oneDayPrice : b.oneDayPrice - a.oneDayPrice
+            } else if (sortBy === 'createdAt' || sortBy === 'updatedAt') {
+               const dateA = new Date(a[sortBy])
+               const dateB = new Date(b[sortBy])
+               return sortOrder === 'asc' ? dateA - dateB : dateB - dateA
+            }
+            return 0
+         })
+      },
+   },
    extraReducers: (builder) => {
       // 렌탈상품 목록 조회
       builder.addCase(fetchRentalItems.pending, (state) => {
@@ -195,4 +248,5 @@ const rentalSlice = createSlice({
    },
 })
 
+export const { setCurrentPage, clearError, clearCurrentItem, updateSort, resetSort, sortRentalItemsLocally } = rentalSlice.actions
 export default rentalSlice.reducer
