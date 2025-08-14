@@ -48,7 +48,7 @@
    padding-left: 50.27px;
 }
 .managerKeywordsSelect {
-   background: url('../../public/images/shav.png') no-repeat;
+   background: url('/images/shav.png') no-repeat;
    background-size: 35px 35px;
    background-position: 791px 38px;
    appearance: none;

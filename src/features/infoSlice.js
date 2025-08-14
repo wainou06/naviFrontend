@@ -32,7 +32,6 @@ export const suspendUserInfoThunk = createAsyncThunk('info/suspendUserInfo', asy
 
 export const userPasswordEditThunk = createAsyncThunk('info/userPasswordEdit', async (data, { rejectWithValue }) => {
    try {
-      console.log(data)
       const response = await userPasswordEdit(data)
       return response.data
    } catch (error) {
@@ -71,7 +70,7 @@ const slice = createSlice({
             state.loading = true
             state.error = null
          })
-         .addCase(deleteUserInfoThunk.fulfilled, (state, action) => {
+         .addCase(deleteUserInfoThunk.fulfilled, (state) => {
             state.loading = false
          })
          .addCase(deleteUserInfoThunk.rejected, (state, action) => {
