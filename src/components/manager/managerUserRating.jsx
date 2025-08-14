@@ -1,20 +1,19 @@
 import { LineChart } from '@mui/x-charts/LineChart'
 
-export function BasicLineChart() {
-   return (
-      <LineChart
-         xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-         series={[
-            {
-               data: [2, 5.5, 2, 8.5, 1.5, 5],
-            },
-         ]}
-         height={600}
-      />
-   )
-}
-
 function ManagerUserRating() {
+   function BasicLineChart() {
+      return (
+         <LineChart
+            xAxis={[{ data: [0, 1, 2, 3, 4, 5] }]}
+            series={[
+               {
+                  data: [2.5, 2.5, 2.5, 2.5, 2.5, 2.5],
+               },
+            ]}
+            height={600}
+         />
+      )
+   }
    return (
       <>
          <BasicLineChart />

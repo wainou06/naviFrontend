@@ -7,7 +7,7 @@ const ManagerKeywords = () => {
    const [keyword, setKeyword] = useState('')
    const [selected, setSelected] = useState('')
    const dispatch = useDispatch()
-   const { keywords, loading } = useSelector((state) => state.keywords)
+   const { keywords, loading, error } = useSelector((state) => state.keywords)
 
    useEffect(() => {
       dispatch(getKeywordThunk())
@@ -24,8 +24,8 @@ const ManagerKeywords = () => {
          .then(() => {
             dispatch(getKeywordThunk())
          })
-         .catch(() => {
-            alert('키워드 등록 실패')
+         .catch((error) => {
+            alert(`키워드 등록 실패: ${error}`)
          })
       setKeyword('')
    }
@@ -59,7 +59,7 @@ const ManagerKeywords = () => {
             setSelected('')
          })
          .catch((error) => {
-            alert('키워드 수정 실패: ', error)
+            alert(`키워드 수정 실패: ${error}`)
          })
    }
 

@@ -52,23 +52,10 @@ function MySecret() {
             alert('완료!')
          })
          .catch((error) => console.error('비밀번호 수정 실패: ', error))
+   }
 
-      // const updateData = {}
-      // if (nick.trim()) updateData.nick = nick.trim()
-      // if (phone.trim()) updateData.phone = phone.trim()
-      // if (address.trim()) updateData.address = address.trim()
-
-      //   if (Object.keys(updateData).length === 0) {
-      //      return alert('수정한 정보가 없습니다!')
-      //   }
-
-      //   try {
-      //      await dispatch(updateUser(updateData)).unwrap()
-      //      alert('회원 정보가 수정되었습니다!')
-      //   } catch (err) {
-      //      console.error(err)
-      //      alert('수정 중 오류가 발생했습니다. 다시 시도해주세요.')
-      //   }
+   const onKeyDownEdit = (e) => {
+      if (e.key === 'Enter') handleEdit()
    }
 
    return (
@@ -171,6 +158,7 @@ function MySecret() {
             새 비밀번호 확인 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Check your new password</p>
          </div>
          <TextField
+            onKeyDown={(e) => onKeyDownEdit(e)}
             type="password"
             label="비밀번호 확인."
             value={checkNewPassword}
