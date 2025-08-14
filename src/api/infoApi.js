@@ -34,3 +34,16 @@ export const suspendUserInfo = async (id, date) => {
       throw error
    }
 }
+
+//비밀번호 수정
+
+export const userPasswordEdit = async (data) => {
+   try {
+      console.log(data)
+      const response = await api.put('/info/userPasswordEdit', data)
+      return response
+   } catch (error) {
+      console.error(`API Request 오류: ${error}`)
+      throw error
+   }
+}

@@ -1,15 +1,25 @@
 import { TextField, Button, CircularProgress, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { updateUser, checkAuthStatusThunk } from '../../features/authSlice'
+import { userPasswordEditThunk } from '../../features/infoSlice'
+import { checkAuthStatusThunk } from '../../features/authSlice'
 
 function MySecret() {
    const dispatch = useDispatch()
    const { loading, error, user } = useSelector((state) => state.auth)
 
+   useEffect(() => {
+      dispatch(checkAuthStatusThunk())
+   }, [dispatch])
+
    const [currentPassword, setCurrentPassword] = useState('')
    const [newPassword, setNewPassword] = useState('')
    const [checkNewPassword, setCheckNewPassword] = useState('')
+
+   const validatePassword = (password) => {
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/
+      return passwordRegex.test(password)
+   }
 
    const handleEdit = async () => {
       if (!currentPassword.trim() || !newPassword.trim() || !checkNewPassword.trim()) {
@@ -17,12 +27,36 @@ function MySecret() {
          return
       }
 
+      if (currentPassword == newPassword) {
+         alert('현재 비밀번호와 바꾸려는 번호가 같아요.')
+         return
+      }
+
+      if (newPassword != checkNewPassword) {
+         alert('새 비밀번호 확인이 일치하지 않습니다.')
+         return
+      }
+
+      if (!validatePassword(newPassword)) {
+         alert('비밀번호는 8자리 이상이고, 영문자와 특수문자를 포함해야 합니다.')
+         return
+      }
+
+      const id = user.id
+
+      dispatch(userPasswordEditThunk({ id, currentPassword, newPassword }))
+         .then(() => {
+            setCurrentPassword('')
+            setCheckNewPassword('')
+            setNewPassword('')
+            alert('완료!')
+         })
+         .catch((error) => console.error('비밀번호 수정 실패: ', error))
+
       // const updateData = {}
       // if (nick.trim()) updateData.nick = nick.trim()
       // if (phone.trim()) updateData.phone = phone.trim()
       // if (address.trim()) updateData.address = address.trim()
-
-      const updateData = {}
 
       //   if (Object.keys(updateData).length === 0) {
       //      return alert('수정한 정보가 없습니다!')
@@ -137,6 +171,7 @@ function MySecret() {
             새 비밀번호 확인 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Check your new password</p>
          </div>
          <TextField
+            type="password"
             label="비밀번호 확인."
             value={checkNewPassword}
             onChange={(e) => setCheckNewPassword(e.target.value)}
