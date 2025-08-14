@@ -30,7 +30,6 @@ function RentalEditPage() {
 
    return (
       <Container maxWidth="md" sx={{ marginTop: 10, marginBottom: 13 }}>
-         <h1>렌탈상품 수정</h1>
          <RentalItemEdit onUpdateSubmit={onUpdateSubmit} />
       </Container>
    )
