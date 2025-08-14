@@ -1,0 +1,138 @@
+/* 컨테이너 & 타이틀 */
+.login-container {
+   margin: 0 auto;
+   width: 880.5px;
+   margin-top: 187px;
+   margin-bottom: 320px;
+   display: flex;
+   flex-direction: column;
+}
+
+.login-title {
+   margin: 20px 0;
+   font-size: 36px;
+   font-weight: 700;
+}
+
+.login-title-sub {
+   display: inline-block;
+   font-size: 26px;
+   font-weight: 500;
+}
+
+/* TextField 공통 */
+.login-textfield .MuiInputBase-root {
+   height: 113px;
+   border-radius: 30px;
+   font-size: 30px;
+   padding-left: 50px;
+}
+.login-textfield .MuiInputLabel-root {
+   font-size: 30px;
+   font-weight: 400;
+   padding-left: 40px;
+   line-height: 84px;
+}
+
+/* 옵션 영역 (아이디 저장/비번 찾기) */
+.login-options {
+   margin: 20px 0;
+}
+
+.login-remember-label {
+   font-size: 31px;
+   font-weight: 400;
+   cursor: pointer;
+   position: relative;
+   display: inline-flex;
+   align-items: center;
+}
+
+/* 커스텀 체크박스 */
+.login-checkbox {
+   position: absolute;
+   opacity: 0;
+   width: 31px;
+   height: 31px;
+   cursor: pointer;
+}
+
+.login-checkbox-custom {
+   display: inline-block;
+   width: 31px;
+   height: 31px;
+   border: 2px solid #ccc;
+   margin-right: 10px;
+   vertical-align: middle;
+   transition: 0.2s;
+   background-color: #fff;
+}
+.login-checkbox:checked + .login-checkbox-custom {
+   background-color: #f0907f;
+   border-color: #f0907f;
+}
+
+/* 비번 찾기 버튼 */
+.login-forgot-btn {
+   border: none;
+   background: transparent;
+   float: right;
+   color: #f0907f;
+   font-size: 31px;
+   font-weight: 700;
+   cursor: pointer;
+}
+
+/* 제출 버튼 */
+.login-submit-btn {
+   position: relative !important;
+   margin-top: 20px !important;
+   margin-bottom: 20px !important;
+   background-color: #f0907f !important;
+   border-radius: 30px !important;
+   height: 112px !important;
+   font-size: 36px !important;
+   font-weight: 500 !important;
+}
+
+/* 하단 가이드/기타 로그인 */
+.signup-guide {
+   font-size: 31px;
+   font-weight: 400;
+   margin: 20px 0;
+}
+.signup-link {
+   float: right;
+   color: #f0907f;
+   font-weight: 700;
+   text-decoration: none;
+}
+.other-login-text {
+   text-align: center;
+   font-size: 31px;
+   font-weight: 400;
+   margin: 20px 0;
+}
+
+/* 구글 로그인 버튼 */
+.google-login-btn {
+   background: #fff !important;
+   border-radius: 22.5px !important;
+   position: relative !important;
+   margin-top: 20px !important;
+   margin-bottom: 20px !important;
+   padding: 10px 0 !important;
+   color: #000 !important;
+}
+.google-login-content {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 10px;
+   font-size: 30px;
+   font-weight: 600;
+}
+.google-login-content .MuiSvgIcon-root {
+   width: 45px;
+   height: 45px;
+}

@@ -1,34 +1,137 @@
-/* 전체 배경 어둡게 */
+/* === 공통 오버레이/팝업 === */
 .overlay {
-   position: fixed;  /* fixed로 바꿈 */
-   top: 0;
-   left: 0;
-   width: 100vw;     /* 화면 전체 너비 */
-   height: 100vh;    /* 화면 전체 높이 */
-   background-color: rgba(0, 0, 0, 0.5); /* 배경 반투명 검정 */
+   position: fixed;
+   inset: 0;
+   background: rgba(0, 0, 0, 0.45);
    display: flex;
-   justify-content: center;
    align-items: center;
-   z-index: 1000;
+   justify-content: center;
+   z-index: 1400; /* AppBar 등 위로 */
 }
 
-/* 중앙 팝업 */
 .popup {
-   background-color: white;
-   padding: 30px;
-   border-radius: 12px;
-   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-   text-align: center;
-   min-width: 300px;
+   position: relative;
+   width: 880px;
+   height: 405px;
+   border-radius: 100px;
+   background-color: #f0907f;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 24px;
 }
 
-/* 닫기 버튼 */
-.close-btn {
-   margin-top: 20px;
-   padding: 8px 16px;
-   background-color: #ff5c5c;
-   color: white;
+/* 닫기/뒤로가기 버튼 */
+.close-btn,
+.back-btn {
+   position: absolute;
+   top: 35px;
    border: none;
-   border-radius: 6px;
+   border-radius: 50%;
+   background: #fff;
+   color: #f0907f;
+   width: 48px;
+   height: 48px;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
    cursor: pointer;
+}
+.close-btn {
+   right: 50px;
+}
+.back-btn {
+   left: 50px;
+}
+
+/* 팝업 내부 공통 레이아웃 */
+.popup-content,
+.popup-inner {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 20px;
+   width: 690px;
+}
+
+/* 선택 버튼 + 입력 섹션 공통 */
+.popup-btn,
+.popup-section {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 14px;
+   width: 100%;
+   height: 88px;
+   border: none;
+   border-radius: 8px;
+   background: #fff;
+   padding: 10px 20px;
+   font-size: 23.55px;
+   font-weight: 500;
+   cursor: pointer;
+}
+
+/* 아이콘 공통 */
+.icon-accent {
+   color: #f0907f !important;
+   font-size: 44px !important;
+}
+
+/* 팝업 내 TextField 스타일 */
+.popup-textfield .MuiInputBase-root {
+   height: 88px;
+   border-radius: 8px;
+   background: #fff;
+   font-size: 21px;
+   padding-left: 40px;
+}
+.popup-textfield .MuiInputLabel-root {
+   font-size: 21px;
+   font-weight: 400;
+   padding-left: 40px;
+   line-height: 55px;
+}
+
+/* 로딩 스피너 가운데 정렬 */
+.centered-spinner {
+   position: absolute !important;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+}
+
+.popup-content {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 20px;
+}
+
+.popup-message {
+   background-color: white;
+   width: 690px;
+   height: 88px;
+   border-radius: 8px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 23.55px;
+   font-weight: 500;
+   text-align: center;
+}
+
+.popup-link {
+   background-color: white;
+   width: 690px;
+   height: 88px;
+   border-radius: 8px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 23.55px;
+   font-weight: 500;
+   text-decoration: none;
+   color: black;
+   gap: 10px;
 }
