@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { createPriceProposal, fetchPriceProposals, updatePriceProposalStatus } from '../api/priceProposalApi'
+import { createPriceProposal, fetchPriceProposals, updatePriceProposalStatus, getMyProposals, getReceivedProposals, getCompletedDeals } from '../api/priceProposalApi'
 
 // 가격 제안 생성 thunk
 export const createPriceProposalThunk = createAsyncThunk('priceProposal/createPriceProposal', async (proposalData, thunkAPI) => {
@@ -31,10 +31,41 @@ export const updateProposalStatusThunk = createAsyncThunk('priceProposal/updateS
    }
 })
 
+//추가
+export const getMyProposalsThunk = createAsyncThunk('priceProposal/getMyProposals', async (_, thunkAPI) => {
+   try {
+      const data = await getMyProposals()
+      return data
+   } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message)
+   }
+})
+
+export const getReceivedProposalsThunk = createAsyncThunk('priceProposal/getReceivedProposals', async (_, thunkAPI) => {
+   try {
+      const data = await getReceivedProposals()
+      return data
+   } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message)
+   }
+})
+
+export const getCompletedDealsThunk = createAsyncThunk('priceProposal/getCompletedDeals', async (_, thunkAPI) => {
+   try {
+      const data = await getCompletedDeals()
+      return data
+   } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message)
+   }
+})
+
 const priceProposalSlice = createSlice({
    name: 'priceProposal',
    initialState: {
       proposals: [],
+      myProposals: [], // 내가 보낸 제안들
+      receivedProposals: [], // 내가 받은 제안들
+      completedDeals: [], // 완료된 거래들
       loading: false,
       error: null,
    },
@@ -97,6 +128,46 @@ const priceProposalSlice = createSlice({
          .addCase(updateProposalStatusThunk.rejected, (state, action) => {
             state.loading = false
             state.error = action.payload || '상태 변경 실패'
+         })
+
+         //추가
+         .addCase(getMyProposalsThunk.pending, (state) => {
+            state.loading = true
+            state.error = null
+         })
+         .addCase(getMyProposalsThunk.fulfilled, (state, action) => {
+            state.loading = false
+            state.myProposals = action.payload
+         })
+         .addCase(getMyProposalsThunk.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload || '내 제안 조회 실패'
+         })
+
+         .addCase(getReceivedProposalsThunk.pending, (state) => {
+            state.loading = true
+            state.error = null
+         })
+         .addCase(getReceivedProposalsThunk.fulfilled, (state, action) => {
+            state.loading = false
+            state.receivedProposals = action.payload
+         })
+         .addCase(getReceivedProposalsThunk.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload || '받은 제안 조회 실패'
+         })
+
+         .addCase(getCompletedDealsThunk.pending, (state) => {
+            state.loading = true
+            state.error = null
+         })
+         .addCase(getCompletedDealsThunk.fulfilled, (state, action) => {
+            state.loading = false
+            state.completedDeals = action.payload
+         })
+         .addCase(getCompletedDealsThunk.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload || '완료된 거래 조회 실패'
          })
    },
 })

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import PropTypes from 'prop-types'
 import Tabs from '@mui/material/Tabs'
@@ -12,6 +12,7 @@ import MyProfile from '../auth/MyProfile'
 import MySecret from '../user/mySecret'
 import MyItems from '../my/MyItems'
 import MyRental from '../my/MyRental'
+import MyDeal from '../my/Mydeal'
 
 function TabPanel(props) {
    const { children, value, index, ...other } = props
@@ -115,6 +116,7 @@ export default function UserParts({ user }) {
             </TabPanel>
             <TabPanel value={value} index={5} className="form">
                <h1>거래 내역</h1>
+               <MyDeal />
             </TabPanel>
          </div>
       </>

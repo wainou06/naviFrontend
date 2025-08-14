@@ -43,19 +43,11 @@ export const updateRentalItem = createAsyncThunk('rental/updateRentalItem', asyn
       return rejectWithValue(error.message || '상품 수정 실패')
    }
 })
-// export const updateRentalItem = createAsyncThunk('rental/updateRentalItem', async ({ id, rentalItemData }, { rejectWithValue }) => {
-//    try {
-//       const response = await rentalItemsAPI.updateRentalItem(id, rentalItemData)
-//       return response.data
-//    } catch (error) {
-//       return rejectWithValue(error.message || '상품 수정 실패')
-//    }
-// })
 
 // 렌탈상품 삭제
 export const deleteRentalItem = createAsyncThunk('rental/deleteRentalItem', async (id, { rejectWithValue }) => {
    try {
-      const response = await rentalItemsAPI.deleteRentalItem(id)
+      await rentalItemsAPI.deleteRentalItem(id)
       return id // 삭제된 아이디 반환
    } catch (error) {
       return rejectWithValue(error.message || '상품 삭제 실패')

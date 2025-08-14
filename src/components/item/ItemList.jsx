@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { Typography, Button, Pagination, Dialog, DialogTitle, DialogContent, DialogActions, Alert, CircularProgress } from '@mui/material'
+import { Typography, Button, Pagination, Alert, CircularProgress } from '@mui/material'
 import { Add, Edit, Delete, Visibility, ShoppingCart } from '@mui/icons-material'
-import { fetchItems, deleteItem, setCurrentPage } from '../../features/itemsSlice'
+import { fetchItems, setCurrentPage } from '../../features/itemsSlice'
 import '../../styles/itemList.css'
 
 const ItemsList = () => {
    const dispatch = useDispatch()
    const navigate = useNavigate()
-   const { items, pagination, loading, error, deleteLoading } = useSelector((state) => state.items)
+   const { items, pagination, loading, error } = useSelector((state) => state.items)
 
    const [filters, setFilters] = useState({
       keyword: '',
@@ -19,24 +19,24 @@ const ItemsList = () => {
       limit: 10,
    })
 
-   const [deleteDialog, setDeleteDialog] = useState({ open: false, item: null })
    const [activeFilter, setActiveFilter] = useState('전체')
 
    useEffect(() => {
       loadItems()
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [])
 
    const loadItems = (newFilters = filters) => {
       dispatch(fetchItems(newFilters))
    }
 
-   const handleSearch = () => {
+   const _handleSearch = () => {
       const newFilters = { ...filters, page: 1 }
       setFilters(newFilters)
       loadItems(newFilters)
    }
 
-   const handleReset = () => {
+   const _handleReset = () => {
       const resetFilters = {
          keyword: '',
          searchCategory: 'name',
@@ -61,23 +61,11 @@ const ItemsList = () => {
       loadItems(newFilters)
    }
 
-   const handlePageChange = (event, page) => {
+   const handlePageChange = (page) => {
       const newFilters = { ...filters, page }
       setFilters(newFilters)
       dispatch(setCurrentPage(page))
       loadItems(newFilters)
-   }
-
-   const handleDelete = async () => {
-      if (deleteDialog.item) {
-         try {
-            await dispatch(deleteItem(deleteDialog.item.id)).unwrap()
-            setDeleteDialog({ open: false, item: null })
-            loadItems()
-         } catch (error) {
-            console.error('삭제 실패:', error)
-         }
-      }
    }
 
    const formatPrice = (price) => {
@@ -174,9 +162,6 @@ const ItemsList = () => {
                               </button>
                               <button className="action-btn edit" onClick={() => navigate(`/items/edit/${item.id}`)} title="수정">
                                  <Edit style={{ fontSize: 14 }} />
-                              </button>
-                              <button className="action-btn delete" onClick={() => setDeleteDialog({ open: true, item })} title="삭제">
-                                 <Delete style={{ fontSize: 14 }} />
                               </button>
                            </div>
 
