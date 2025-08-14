@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-
 import { fetchMyRentalItems } from '../../features/rentalSlice'
 import { Typography, CircularProgress, Box, Alert, Card, CardMedia } from '@mui/material'
 
-const MyItems = () => {
+const MyRental = () => {
    const dispatch = useDispatch()
    const navigate = useNavigate()
    const { user } = useSelector((state) => state.auth)
@@ -80,7 +79,7 @@ const MyItems = () => {
                   >
                      {/* 렌탈 상태 라벨 */}
                      <Box
-                        className="product-status-label"
+                        className="my-items-section product-status-label"
                         sx={{
                            position: 'absolute !important',
                            top: '8px !important',
@@ -162,4 +161,4 @@ const MyItems = () => {
    )
 }
 
-export default MyItems
+export default MyRental
