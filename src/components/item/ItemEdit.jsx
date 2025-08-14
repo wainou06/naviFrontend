@@ -44,7 +44,7 @@ const ItemEdit = () => {
 
          // 기존 이미지들을 imageList에 설정
          const existingImages =
-            currentItem.imgs?.map((img, index) => ({
+            currentItem.imgs?.map((img) => ({
                id: img.id,
                url: (() => {
                   const rawPath = img.imgUrl.replace(/\\/g, '/')
