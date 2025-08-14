@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Typography, Button, Pagination, Alert, CircularProgress } from '@mui/material'
 import { Add, Edit, Delete, Visibility, ShoppingCart } from '@mui/icons-material'
 import { fetchItems, setCurrentPage } from '../../features/itemsSlice'
+import { Link } from 'react-router-dom'
 import '../../styles/itemList.css'
 
 const ItemsList = () => {
@@ -102,14 +103,19 @@ const ItemsList = () => {
       <div className="items-list-container">
          <div className="main-container">
             <div className="register-button-section">
-               <Button className="register-btn" startIcon={<Add />} onClick={() => navigate('/rental/list')}>
-                  물건 렌탈하러 가기 &gt;
-               </Button>
+               <div className="togo" style={{ width: '350px', height: '80px', marginLeft: '0' }}>
+                  <Link to="/rental/list">
+                     <div style={{ backgroundColor: '#FFD1BA', color: '#AA3900', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '70px' }}>
+                        <img src="/images/렌탈.png" alt="렌탈 리스트 페이지로" style={{ width: '320px', height: '90px' }} />
+                     </div>
+                  </Link>
+               </div>
             </div>
 
             {/* 구분선 */}
             <hr className="section-divider" />
             <div className="section-title">Share & Release</div>
+            <hr className="section-divider" />
 
             {/* 필터 버튼들 */}
             <div className="filter-section">
@@ -199,10 +205,6 @@ const ItemsList = () => {
                   )}
                </>
             )}
-
-            {/* 구분선 */}
-            <hr className="section-divider" />
-            <div className="section-title">Share & Release</div>
          </div>
       </div>
    )
