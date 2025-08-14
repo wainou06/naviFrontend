@@ -125,7 +125,8 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
          await onCreateSubmit(formData)
          navigate('/rental/list')
       } catch (error) {
-         setError('렌탈 상품 등록에 실패했습니다.')
+         console.error('렌탈 상품 등록 오류:', error)
+         setError(error.message || '렌탈 상품 등록에 실패했습니다.')
       } finally {
          setLoading(false)
       }
