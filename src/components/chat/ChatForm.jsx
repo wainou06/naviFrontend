@@ -24,7 +24,7 @@ const ChatForm = ({ chatId, currentUserId }) => {
          .catch((err) => console.error('메시지 불러오기 실패:', err))
    }, [chatId])
 
-   // Socket.io 연결
+   // Socket.io 연결 및 방(join) 이벤트
    useEffect(() => {
       if (!chatId || !currentUserId) return
 
@@ -32,11 +32,16 @@ const ChatForm = ({ chatId, currentUserId }) => {
       const socket = io(SOCKET_SERVER_URL, { auth: { chatId, userId: currentUserId }, withCredentials: true })
       socketRef.current = socket
 
-      socket.on('connect', () => console.log('Socket connected:', socket.id))
+      socket.on('connect', () => {
+         console.log('Socket connected:', socket.id)
+         socket.emit('joinChat', chatId) // 🔑 방 입장
+      })
+
       socket.on('receiveMessage', (msg) => {
          setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]))
          dispatch(addLocalMessage({ chatId, message: msg }))
       })
+
       socket.on('disconnect', () => console.log('Socket disconnected'))
 
       return () => socket.disconnect()
@@ -53,12 +58,16 @@ const ChatForm = ({ chatId, currentUserId }) => {
       if (!trimmed || !chatId) return
 
       const tempId = `temp-${Date.now()}`
-      const tempMessage = { id: tempId, content: trimmed, senderId: currentUserId }
+      const tempMessage = { id: tempId, content: trimmed, senderId: currentUserId, chatId }
 
       setMessages((prev) => [...prev, tempMessage])
       setNewMessage('')
 
+      // 1️⃣ 소켓으로 실시간 전송
+      socketRef.current.emit('sendMessage', tempMessage)
+
       try {
+         // 2️⃣ API로 저장
          const res = await sendMessage(chatId, trimmed)
          const savedMessage = res.message
          setMessages((prev) => prev.map((m) => (m.id === tempId ? savedMessage : m)))
@@ -72,8 +81,26 @@ const ChatForm = ({ chatId, currentUserId }) => {
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
          <div style={{ flexGrow: 1, overflowY: 'auto', padding: '12px' }}>
             {messages.map((msg) => (
-               <div key={msg.id} style={{ display: 'flex', justifyContent: msg.senderId === currentUserId ? 'flex-end' : 'flex-start', marginBottom: '8px' }}>
-                  <div style={{ backgroundColor: msg.senderId === currentUserId ? '#3b82f6' : '#e5e7eb', color: msg.senderId === currentUserId ? '#fff' : '#000', padding: '8px 12px', borderRadius: '12px', maxWidth: '70%', wordBreak: 'break-word' }}>{msg.content}</div>
+               <div
+                  key={msg.id}
+                  style={{
+                     display: 'flex',
+                     justifyContent: msg.senderId === currentUserId ? 'flex-end' : 'flex-start',
+                     marginBottom: '8px',
+                  }}
+               >
+                  <div
+                     style={{
+                        backgroundColor: msg.senderId === currentUserId ? '#3b82f6' : '#e5e7eb',
+                        color: msg.senderId === currentUserId ? '#fff' : '#000',
+                        padding: '8px 12px',
+                        borderRadius: '12px',
+                        maxWidth: '70%',
+                        wordBreak: 'break-word',
+                     }}
+                  >
+                     {msg.content}
+                  </div>
                </div>
             ))}
             <div ref={messagesEndRef} />

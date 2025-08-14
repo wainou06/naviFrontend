@@ -3,7 +3,7 @@ import { checkAuthStatusThunk } from './features/authSlice'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
-import useSocket from './hooks/useSocket'
+import { SocketProvider } from './context/SocketContext'
 
 import './styles/common.css'
 
@@ -28,8 +28,6 @@ function App() {
    const location = useLocation()
    const { isAuthenticated, user } = useSelector((state) => state.auth)
 
-   useSocket(isAuthenticated ? user?.id : null)
-
    const [searchTerm, setSearchTerm] = useState('')
    const onSearch = (search) => {
       setSearchTerm(search)
@@ -40,40 +38,29 @@ function App() {
    }, [dispatch])
 
    return (
-      <>
+      <SocketProvider userId={isAuthenticated ? user?.id : null}>
          <Navbar isAuthenticated={isAuthenticated} user={user} onSearch={onSearch} />
          <Routes>
             <Route path="/" element={<Home searchTerm={searchTerm} />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
 
-            <Route path="/my" element={<MyPage user={user} />} />
-            <Route path="/my/items" element={<MyPage user={user} />} />
-            <Route path="/my/rental" element={<MyPage user={user} />} />
-            <Route path="/my/deal" element={<MyPage user={user} />} />
+            <Route path="/my/*" element={<MyPage user={user} />} />
 
             <Route path="/items/list" element={<ItemListPage key={location.key} />} />
             <Route path="/items/create" element={<ItemCreatePage />} />
             <Route path="/items/edit/:id" element={<ItemEditPage />} />
             <Route path="/items/detail/:id" element={<ItemDetailPage />} />
 
-            <Route path="/manager" element={<ManagerPage user={user} />} />
-            <Route path="/manager/keywords" element={<ManagerPage user={user} />} />
-            <Route path="/manager/user" element={<ManagerPage user={user} />} />
-            <Route path="/manager/user/:id/rating" element={<ManagerPage user={user} />} />
+            <Route path="/manager/*" element={<ManagerPage user={user} />} />
 
             <Route path="/rental/list" element={<RentalListPage />} />
             <Route path="/rental/create" element={<RentalCreatePage />} />
             <Route path="/rental/detail/:id" element={<RentalDetailPage />} />
             <Route path="/rental/edit/:id" element={<RentalEditPage />} />
-
-            <Route path="/manager" element={<ManagerPage user={user} />} />
-            <Route path="/manager/keywords" element={<ManagerPage user={user} />} />
-            <Route path="/manager/user" element={<ManagerPage user={user} />} />
-            <Route path="/manager/user/:id/rating" element={<ManagerPage user={user} />} />
          </Routes>
          <Footer />
-      </>
+      </SocketProvider>
    )
 }
 
