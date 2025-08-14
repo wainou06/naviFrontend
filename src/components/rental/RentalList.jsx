@@ -106,20 +106,61 @@ const RentalList = () => {
                   </Link>
                </div>
             </div>
-
-            <hr className="section-divider" />
-            <div className="section-title">Share & Release</div>
-            <hr className="section-divider" />
+            {/* 구분선 */}
+            <hr style={{ border: 'none', height: '1px', background: 'rgba(240, 144, 127, 1)', margin: '10px' }} />
+            <div style={{ textAlign: 'center', color: 'rgba(240, 144, 127, 1)', fontWeight: '600', margin: '10px 0', fontSize: '14px', fontFamily: 'Arial, Black, sans-serif' }}>Rental</div>
+            <hr style={{ border: 'none', height: '1px', background: 'rgba(240, 144, 127, 1)', margin: '10px' }} />
 
             {/* 필터 버튼들 */}
             <div className="filter-section">
                {['필터', '가격순', '날짜순'].map((filter) => (
-                  <Button key={filter} className={`filter-btn ${activeFilter === filter ? 'active' : ''}`} onClick={() => handleFilterClick(filter)}>
+                  <Button
+                     key={filter}
+                     className={`${activeFilter === filter ? 'active' : ''}`}
+                     onClick={() => handleFilterClick(filter)}
+                     style={{
+                        color: activeFilter === filter ? 'white' : 'rgba(240, 144, 127, 1)',
+                        border: '1px solid rgba(240, 144, 127, 1)',
+                        borderRadius: '16px',
+                        padding: '6px 16px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        textTransform: 'none',
+                        transition: 'all 0.2s ease',
+                        background: activeFilter === filter ? 'rgba(240, 144, 127, 1)' : 'transparent',
+                     }}
+                     onMouseEnter={(e) => {
+                        if (activeFilter !== filter) {
+                           e.target.style.background = 'rgba(240, 144, 127, 1)'
+                           e.target.style.color = 'white'
+                           e.target.style.transform = 'translateY(-1px)'
+                        }
+                     }}
+                     onMouseLeave={(e) => {
+                        if (activeFilter !== filter) {
+                           e.target.style.background = 'transparent'
+                           e.target.style.color = 'rgba(240, 144, 127, 1)'
+                           e.target.style.transform = 'translateY(0)'
+                        }
+                     }}
+                  >
                      {filter}
                   </Button>
                ))}
                <div className="search-actions">
-                  <Button className="search-btn" startIcon={<Add />} onClick={() => navigate('/rental/create')}>
+                  <Button
+                     startIcon={<Add />}
+                     onClick={() => navigate('/rental/create')}
+                     style={{ background: 'rgba(255, 209, 186, 1)', color: 'rgb(8, 8, 8)', borderRadius: '16px', padding: '6px 20px', fontSize: '12px', fontWeight: '600', border: 'none' }}
+                     onMouseEnter={(e) => {
+                        e.target.style.background = '#00b894'
+                        e.target.style.transform = 'translateY(-1px)'
+                     }}
+                     onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(255, 209, 186, 1)'
+                        e.target.style.transform = 'translateY(0)'
+                     }}
+                  >
                      렌탈 상품등록
                   </Button>
                </div>
