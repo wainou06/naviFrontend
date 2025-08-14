@@ -24,13 +24,6 @@ const MyItems = () => {
       return myRentalItems.filter((item) => {
          const itemUserId = item.userId || item.user_id || item.ownerId || item.owner_id || item.sellerId || item.seller_id || item.memberId || item.member_id || item.regId || item.reg_id
 
-         console.log('렌탈 아이템 필터링:', {
-            itemId: item.id,
-            itemName: item.rentalItemNm,
-            itemUserId,
-            currentUserId: user.id,
-            전체아이템: item,
-         })
          return itemUserId == user.id
       })
    }, [myRentalItems, user?.id])
