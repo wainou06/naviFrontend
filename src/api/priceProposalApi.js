@@ -36,3 +36,42 @@ export const updatePriceProposalStatus = async (proposalId, status) => {
       throw error
    }
 }
+
+// 내가 보낸 가격 제안들 조회
+export async function getMyProposals() {
+   try {
+      const response = await naviApi.get(`/priceProposal/user/sent`, {
+         withCredentials: true,
+      })
+      return response.data
+   } catch (error) {
+      console.error('내가 보낸 가격 제안 조회 실패:', error.response?.data || error.message)
+      throw error
+   }
+}
+
+// 내가 받은 가격 제안들 조회
+export async function getReceivedProposals() {
+   try {
+      const response = await naviApi.get(`/priceProposal/user/received`, {
+         withCredentials: true,
+      })
+      return response.data
+   } catch (error) {
+      console.error('받은 가격 제안 조회 실패:', error.response?.data || error.message)
+      throw error
+   }
+}
+
+// 거래 완료된 내역 조회
+export async function getCompletedDeals() {
+   try {
+      const response = await naviApi.get(`/priceProposal/user/completed`, {
+         withCredentials: true,
+      })
+      return response.data
+   } catch (error) {
+      console.error('완료된 거래 조회 실패:', error.response?.data || error.message)
+      throw error
+   }
+}

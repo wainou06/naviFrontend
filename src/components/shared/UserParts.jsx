@@ -11,6 +11,7 @@ import '../../styles/userParts.css'
 import MyProfile from '../auth/MyProfile'
 import MyItems from '../my/MyItems'
 import MyRental from '../my/MyRental'
+import MyDeal from '../my/Mydeal'
 
 function TabPanel(props) {
    const { children, value, index, ...other } = props
@@ -113,6 +114,7 @@ export default function UserParts({ user }) {
             </TabPanel>
             <TabPanel value={value} index={5} className="form">
                <h1>거래 내역</h1>
+               <MyDeal />
             </TabPanel>
          </div>
       </>
