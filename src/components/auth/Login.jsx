@@ -11,8 +11,8 @@ import AlternateEmailIcon from '@mui/icons-material/AlternateEmail'
 import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone'
 import GoogleIcon from '@mui/icons-material/Google'
 
-import '../../styles/popup.css'
 import '../../styles/Login.css'
+import '../../styles/popup.css'
 
 function Login() {
    const [email, setEmail] = useState('')

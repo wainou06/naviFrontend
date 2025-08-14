@@ -125,6 +125,7 @@
    background-color: white;
    width: 690px;
    height: 88px;
+   border: none;
    border-radius: 8px;
    display: flex;
    align-items: center;
