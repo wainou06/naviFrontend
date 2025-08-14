@@ -1,1 +1,153 @@
-/* Signup.jsx */
+/* signup.css */
+
+.signup-container {
+   margin: 100px auto 320px auto;
+   width: 880px;
+   display: flex;
+   flex-direction: column;
+}
+
+.signup-title {
+   font-size: 64px;
+   font-weight: 400;
+   margin-bottom: 80px;
+}
+
+.signup-subtitle {
+   font-size: 31.5px;
+   font-weight: 400;
+   text-align: center;
+   margin-bottom: 20px;
+}
+
+/* 구글 로그인 버튼 */
+.google-login-btn {
+   background: #fff !important;
+   border-radius: 22.5px !important;
+   position: relative !important;
+   margin-top: 20px !important;
+   margin-bottom: 20px !important;
+   padding: 10px 0 !important;
+   color: #000 !important;
+   height: 112px !important;
+}
+.google-login-content {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 10px;
+   font-size: 30px;
+   font-weight: 600;
+}
+.google-login-content .MuiSvgIcon-root {
+   width: 45px;
+   height: 45px;
+}
+
+.signup-form {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+}
+
+.login-title {
+   font-size: 31px;
+   font-weight: 400;
+   margin-bottom: 10px;
+}
+
+.login-title-sub {
+   font-size: 20px;
+   font-weight: 300;
+   margin: 0;
+}
+
+.login-textfield .MuiInputBase-root {
+   height: 113px;
+   border-radius: 30px;
+   font-size: 30px;
+   padding-left: 50px;
+}
+
+.login-textfield .MuiInputLabel-root {
+   font-size: 30px;
+   font-weight: 400;
+   padding-left: 40px;
+   line-height: 84px;
+}
+
+.signup-submit-btn {
+   position: relative !important;
+   margin-top: 45px !important;
+   background-color: #f0907f !important;
+   border-radius: 30px !important;
+   height: 112px !important;
+   font-size: 36px !important;
+   font-weight: 500 !important;
+}
+
+.signup-loading {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+}
+
+/* 팝업 관련 */
+.overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.5);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 1000;
+}
+
+.popup {
+   background-color: #f0907f;
+   border-radius: 100px;
+   width: 880px;
+   height: 405px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.popup-content {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 20px;
+}
+
+.popup-message {
+   background-color: white;
+   width: 690px;
+   height: 88px;
+   border-radius: 8px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 23.55px;
+   font-weight: 500;
+   text-align: center;
+}
+
+.popup-link {
+   background-color: white;
+   width: 690px;
+   height: 88px;
+   border-radius: 8px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 23.55px;
+   font-weight: 500;
+   text-decoration: none;
+   color: black;
+   gap: 10px;
+}
