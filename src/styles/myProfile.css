@@ -1,0 +1,56 @@
+/* 컨테이너 */
+.myprofile-form {
+   margin: 40px auto 320px auto;
+   width: 880.5px;
+   height: 935.69px;
+   display: flex;
+   flex-direction: column;
+}
+
+/* 필드 제목 */
+.myprofile-field-title {
+   margin: 20px 0;
+   font-size: 36px;
+   font-weight: 700;
+}
+
+.myprofile-field-subtitle {
+   font-size: 26px;
+   display: inline-block;
+   font-weight: 500;
+   font-style: normal;
+}
+
+/* 텍스트필드 */
+.myprofile-textfield .MuiInputBase-root {
+   height: 113px;
+   border-radius: 30px;
+   font-size: 30px;
+   padding-left: 50px;
+}
+
+.myprofile-textfield .MuiInputLabel-root {
+   font-size: 30px;
+   font-weight: 400;
+   padding-left: 40px;
+   line-height: 84px;
+}
+
+/* 버튼 */
+.myprofile-submit-btn {
+   background-color: #f0907f !important;
+   border-radius: 30px !important;
+   height: 112px !important;
+   margin: 20px 0 !important;
+   position: relative !important;
+   font-size: 36px !important;
+   font-weight: 500 !important;
+}
+
+/* 로딩 스피너 */
+.myprofile-loading-spinner {
+   position: absolute !important;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+}

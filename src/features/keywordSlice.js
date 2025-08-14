@@ -82,7 +82,7 @@ const slice = createSlice({
             state.loading = true
             state.error = null
          })
-         .addCase(putKeywordThunk.fulfilled, (state, action) => {
+         .addCase(putKeywordThunk.fulfilled, (state) => {
             state.loading = false
          })
          .addCase(putKeywordThunk.rejected, (state, action) => {
@@ -93,7 +93,7 @@ const slice = createSlice({
             state.loading = true
             state.error = null
          })
-         .addCase(deleteKeywordThunk.fulfilled, (state, action) => {
+         .addCase(deleteKeywordThunk.fulfilled, (state) => {
             state.loading = false
          })
          .addCase(deleteKeywordThunk.rejected, (state, action) => {

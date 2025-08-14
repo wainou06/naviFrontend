@@ -212,16 +212,20 @@ const ItemCreate = ({ onCreateSubmit }) => {
                   <div className={styles.formSectionCard}>
                      <div className={styles.sectionHeader}>키워드 선택 ▼</div>
                      <div className={styles.sectionContent}>
-                        <FormControl fullWidth>
-                           <InputLabel>키워드 선택</InputLabel>
-                           <Select name="keywords" value={formData.keywords} multiple onChange={handleKeywordChange} renderValue={(selected) => selected.join(', ')}>
-                              {keywords?.keywords?.map((keyword) => (
-                                 <MenuItem key={keyword.id} value={keyword.name}>
-                                    <Chip label={keyword.name} />
-                                 </MenuItem>
-                              ))}
-                           </Select>
-                        </FormControl>
+                        {keywords?.keywords && keywords.keywords.length > 0 ? (
+                           <FormControl fullWidth>
+                              <InputLabel>키워드 선택</InputLabel>
+                              <Select name="keywords" value={formData.keywords} multiple onChange={handleKeywordChange} renderValue={(selected) => selected.join(', ')}>
+                                 {keywords.keywords.map((keyword) => (
+                                    <MenuItem key={keyword.id} value={keyword.name}>
+                                       <Chip label={keyword.name} />
+                                    </MenuItem>
+                                 ))}
+                              </Select>
+                           </FormControl>
+                        ) : (
+                           <div style={{ textAlign: 'center', color: '#666', padding: '20px', fontStyle: 'italic' }}> 키워드가 존재하지 않습니다</div>
+                        )}
                      </div>
                   </div>
                   {/* 상세설명 섹션 */}

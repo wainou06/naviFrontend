@@ -7,7 +7,7 @@ const ManagerKeywords = () => {
    const [keyword, setKeyword] = useState('')
    const [selected, setSelected] = useState('')
    const dispatch = useDispatch()
-   const { keywords, loading, error } = useSelector((state) => state.keywords)
+   const { keywords, loading } = useSelector((state) => state.keywords)
 
    useEffect(() => {
       dispatch(getKeywordThunk())
