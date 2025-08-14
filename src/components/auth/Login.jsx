@@ -1,11 +1,9 @@
 import { TextField, Button, Typography, CircularProgress } from '@mui/material'
-
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUserThunk } from '../../features/authSlice'
-
-import axios from 'axios' // ★ axios import 추가
+import axios from 'axios'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import CloseIcon from '@mui/icons-material/Close'
@@ -14,10 +12,12 @@ import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone'
 import GoogleIcon from '@mui/icons-material/Google'
 
 import '../../styles/popup.css'
+import '../../styles/Login.css'
 
 function Login() {
-   const [email, setEmail] = useState('') // 이메일 상태
-   const [password, setPassword] = useState('') // 비밀번호 상태
+   const [email, setEmail] = useState('')
+   const [password, setPassword] = useState('')
+   const [tempPasswordMsg, setTempPasswordMsg] = useState('')
    const dispatch = useDispatch()
    const navigate = useNavigate()
    const { loading, error } = useSelector((state) => state.auth)
@@ -26,21 +26,16 @@ function Login() {
    const [isEmail, setOpenEmail] = useState(false)
    const [isPhone, setOpenPhone] = useState(false)
 
-   // 아이디 저장
    const [rememberMe, setRememberMe] = useState(false)
-
    const [emailInput, setEmailInput] = useState('')
    const [phoneInput, setPhoneInput] = useState('')
 
    const handleSendEmail = async () => {
       try {
-         const res = await axios.post('http://localhost:8000/auth/forgot-password-email', {
-            email: emailInput,
-         })
-         alert(`${res.data.message}\n임시 비밀번호: ${res.data.tempPassword}`) // 성공 메시지
-         setEmailInput('') // 입력 초기화
-         setOpenEmail(false) // 팝업 닫기
-         setIsOpen(false)
+         const res = await axios.post('http://localhost:8000/auth/forgot-password-email', { email: emailInput })
+         setTempPasswordMsg(`임시 비밀번호: ${res.data.tempPassword}`)
+         setEmailInput('')
+         setOpenEmail(false)
       } catch (err) {
          alert(err.response?.data?.message || '오류 발생')
       }
@@ -48,13 +43,10 @@ function Login() {
 
    const handleSendPhone = async () => {
       try {
-         const res = await axios.post('http://localhost:8000/auth/forgot-password-phone', {
-            phone: phoneInput,
-         })
-         alert(`${res.data.message}\n임시 비밀번호: ${res.data.tempPassword}`) // 성공 메시지
-         setPhoneInput('') // 입력 초기화
-         setOpenPhone(false) // 팝업 닫기
-         setIsOpen(false)
+         const res = await axios.post('http://localhost:8000/auth/forgot-password-phone', { phone: phoneInput })
+         setTempPasswordMsg(`임시 비밀번호: ${res.data.tempPassword}`)
+         setPhoneInput('')
+         setOpenPhone(false)
       } catch (err) {
          alert(err.response?.data?.message || '오류 발생')
       }
@@ -68,548 +60,172 @@ function Login() {
       }
    }, [])
 
-   const openPopup = () => setIsOpen(true)
-   const closePopup = () => setIsOpen(false)
-   const openEmail = () => setOpenEmail(true)
-   const closeEmail = () => setOpenEmail(false)
-   const openPhone = () => setOpenPhone(true)
-   const closePhone = () => setOpenPhone(false)
-
    const handleLogin = (e) => {
       e.preventDefault()
-
-      // 이메일과 패스워드가 둘다 공백이 아니라면 실행
-      if (email.trim() && password.trim()) {
-         // 아이디 저장
-         if (rememberMe) {
-            localStorage.setItem('savedEmail', email)
-         } else {
-            localStorage.removeItem('savedEmail')
-         }
-
-         dispatch(loginUserThunk({ email, password }))
-            .unwrap()
-            .then(() => {
-               navigate('/')
-            })
-            .catch((error) => console.error('로그인 실패: ', error))
-      } else {
+      if (!email.trim() || !password.trim()) {
          alert('이메일과 패스워드를 입력해주세요!')
          return
       }
+      if (rememberMe) {
+         localStorage.setItem('savedEmail', email)
+      } else {
+         localStorage.removeItem('savedEmail')
+      }
+      dispatch(loginUserThunk({ email, password }))
+         .unwrap()
+         .then(() => navigate('/'))
+         .catch((error) => console.error('로그인 실패: ', error))
    }
 
    return (
-      <div
-         style={{
-            margin: '0 auto',
-            width: '880.5px',
-            height: '935.69px',
-            marginTop: '187px',
-            marginBottom: '320px',
-            display: 'flex',
-            flexDirection: 'column',
-         }}
-      >
+      <div className="login-container">
          {error && (
             <Typography color="error" align="center">
                {error}
             </Typography>
          )}
 
-         <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
-            이메일 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Email</p>
-         </div>
-
          <form onSubmit={handleLogin}>
-            <TextField
-               label="이메일을 입력하세요. navi@example.com"
-               name="email"
-               fullWidth
-               margin="normal"
-               value={email}
-               onChange={(e) => setEmail(e.target.value)}
-               style={{ marginTop: '20px', marginBottom: '20px' }}
-               sx={{
-                  '& .MuiInputBase-root': {
-                     height: '113px',
-                     borderRadius: '30px',
-                     fontSize: '30px',
-                     paddingLeft: '50px',
-                  },
-                  '& .MuiInputLabel-root': {
-                     fontSize: '30px',
-                     fontWeight: 400,
-                     paddingLeft: '40px',
-                     lineHeight: '84px',
-                  },
-               }}
-            />
-
-            <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '36px', fontWeight: 700, fontStyle: 'bold' }}>
-               비밀번호 <p style={{ fontSize: '26px', display: 'inline-block', fontWeight: 500, fontStyle: 'none' }}>Password</p>
+            <div className="login-title">
+               이메일 <p className="login-title-sub">Email</p>
             </div>
 
-            <TextField
-               label="비밀번호를 입력하세요."
-               type="password"
-               name="password"
-               fullWidth
-               margin="normal"
-               value={password}
-               onChange={(e) => setPassword(e.target.value)}
-               style={{ marginTop: '20px', marginBottom: '20px' }}
-               sx={{
-                  '& .MuiInputBase-root': {
-                     height: '113px',
-                     borderRadius: '30px',
-                     fontSize: '30px',
-                     paddingLeft: '50px',
-                  },
-                  '& .MuiInputLabel-root': {
-                     fontSize: '30px',
-                     fontWeight: 400,
-                     paddingLeft: '40px',
-                     lineHeight: '84px',
-                  },
-               }}
-            />
-            <div style={{ marginTop: '20px', marginBottom: '20px' }}>
-               <label style={{ fontSize: '31px', fontWeight: 400, cursor: 'pointer' }}>
-                  <input
-                     type="checkbox"
-                     checked={rememberMe}
-                     onChange={(e) => setRememberMe(e.target.checked)}
-                     style={{
-                        position: 'absolute',
-                        opacity: 0 /* 완전히 투명 */,
-                        width: '31px' /* 클릭 영역 */,
-                        height: '31px',
-                        cursor: 'pointer',
-                     }}
-                  />
-                  <span
-                     style={{
-                        display: 'inline-block',
-                        width: '31px',
-                        height: '31px',
-                        border: '2px solid #ccc',
-                        marginRight: '10px',
-                        verticalAlign: 'middle',
-                        backgroundColor: rememberMe ? '#F0907F' : '#fff', // 체크 상태 표시
-                        transition: '0.2s',
-                     }}
-                  ></span>
+            <TextField placeholder="이메일을 입력하세요. navi@example.com" name="email" fullWidth margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} className="login-textfield" />
+
+            <div className="login-title">
+               비밀번호 <p className="login-title-sub">Password</p>
+            </div>
+
+            <TextField placeholder="비밀번호를 입력하세요." type="password" name="password" fullWidth margin="normal" value={password} onChange={(e) => setPassword(e.target.value)} className="login-textfield" />
+
+            <div className="login-options">
+               <label className="login-remember-label">
+                  <input type="checkbox" className="login-checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
+                  <span className="login-checkbox-custom"></span>
                   이메일 저장하기
                </label>
-               <button
-                  type="button"
-                  onClick={openPopup}
-                  style={{
-                     border: 'none',
-                     backgroundColor: 'transparent',
-                     float: 'right',
-                     color: '#F0907F',
-                     fontSize: '31px',
-                     fontWeight: 700,
-                     fontStyle: 'bold',
-                  }}
-               >
+
+               <button type="button" className="login-forgot-btn" onClick={() => setIsOpen(true)}>
                   비밀번호 찾기
                </button>
             </div>
 
-            {/* 비밀번호 찾기 */}
-            <div className="App" style={{ position: 'relative' }}>
-               {isOpen && (
-                  <div className="overlay">
-                     <div
-                        className="popup"
-                        style={{
-                           position: 'relative',
-                           width: '880px',
-                           height: '405px',
-                           borderRadius: '100px',
-                           backgroundColor: '#F0907F',
-                           display: 'flex',
-                           justifyContent: 'center', // 가로 중앙
-                           alignItems: 'center', // 세로 중앙
-                        }}
-                     >
-                        <button
-                           className="close-btn"
-                           onClick={closePopup}
-                           style={{
-                              borderRadius: '50px',
-                              backgroundColor: 'white',
-                              color: '#F0907F',
-                              position: 'absolute',
-                              top: '20px',
-                              right: '50px',
-                           }}
-                        >
-                           <p style={{ fontSize: '30px' }}>
-                              <CloseIcon />
-                           </p>
+            {isOpen && (
+               <div className="overlay">
+                  <div className="popup">
+                     <button className="close-btn" onClick={() => setIsOpen(false)}>
+                        <CloseIcon />
+                     </button>
+                     <div className="popup-content">
+                        <button type="button" className="popup-btn" onClick={() => setOpenEmail(true)}>
+                           <AlternateEmailIcon className="icon-accent" /> 이메일로 찾기
                         </button>
-                        <div
-                           style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              gap: '20px',
-                              width: '690px',
-                              height: '203px',
-                           }}
-                        >
-                           <button
-                              type="button"
-                              onClick={openEmail}
-                              style={{
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 gap: '8px',
-                                 border: 'none',
-                                 backgroundColor: 'white',
-                                 padding: '10px 20px',
-                                 borderRadius: '8px',
-                                 width: '100%',
-                                 height: '88px',
-                              }}
-                           >
-                              <p style={{ fontSize: '23.55px', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: 0, gap: '59px' }}>
-                                 <AlternateEmailIcon style={{ color: '#F0907F', fontSize: '44px' }} /> 이메일로 찾기
-                              </p>
-                           </button>
+                        <button type="button" className="popup-btn" onClick={() => setOpenPhone(true)}>
+                           <PhoneIphoneIcon className="icon-accent" /> 핸드폰 번호로 찾기
+                        </button>
+                     </div>
+                  </div>
+               </div>
+            )}
 
-                           <button
-                              type="button"
-                              onClick={openPhone}
-                              style={{
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 gap: '8px',
-                                 border: 'none',
-                                 backgroundColor: 'white',
-                                 padding: '10px 20px',
-                                 borderRadius: '8px',
-                                 width: '100%',
-                                 height: '88px',
-                              }}
-                           >
-                              <p style={{ fontSize: '23.55px', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: 0, gap: '14px' }}>
-                                 <PhoneIphoneIcon style={{ color: '#F0907F', fontSize: '44px' }} /> 핸드폰 번호로 찾기
-                              </p>
-                           </button>
-                        </div>
-                     </div>
-                  </div>
-               )}
-               {isEmail && (
-                  <div className="overlay">
-                     <div
-                        className="popup"
-                        style={{
-                           position: 'relative',
-                           width: '880px',
-                           height: '405px',
-                           borderRadius: '100px',
-                           backgroundColor: '#F0907F',
-                           display: 'flex',
-                           justifyContent: 'center', // 가로 중앙
-                           alignItems: 'center', // 세로 중앙
+            {isEmail && (
+               <div className="overlay">
+                  <div className="popup">
+                     <button className="back-btn" onClick={() => setOpenEmail(false)}>
+                        <ArrowBackIcon />
+                     </button>
+                     <button
+                        className="close-btn"
+                        onClick={() => {
+                           setOpenEmail(false)
+                           setIsOpen(false)
                         }}
                      >
-                        <button
-                           className="close-btn"
-                           onClick={closeEmail}
-                           style={{
-                              borderRadius: '50px',
-                              backgroundColor: 'white',
-                              color: '#F0907F',
-                              position: 'absolute',
-                              top: '20px',
-                              left: '50px',
-                           }}
-                        >
-                           <p style={{ fontSize: '30px' }}>
-                              <ArrowBackIcon />
-                           </p>
+                        <CloseIcon />
+                     </button>
+
+                     <div className="popup-inner">
+                        <TextField placeholder="회원가입 시 작성한 이메일을 입력해주세요. navi@example.com" variant="standard" InputProps={{ disableUnderline: true }} value={emailInput} onChange={(e) => setEmailInput(e.target.value)} fullWidth className="popup-textfield" />
+                        <button type="button" className="popup-section" onClick={handleSendEmail}>
+                           <AlternateEmailIcon className="icon-accent" /> 이메일로 찾기
                         </button>
-                        <button
-                           className="close-btn"
-                           onClick={() => {
-                              setOpenEmail(false)
-                              setIsOpen(false)
-                           }}
-                           style={{
-                              borderRadius: '50px',
-                              backgroundColor: 'white',
-                              color: '#F0907F',
-                              position: 'absolute',
-                              top: '20px',
-                              right: '50px',
-                           }}
-                        >
-                           <p style={{ fontSize: '30px' }}>
-                              <CloseIcon />
-                           </p>
-                        </button>
-                        <div
-                           style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              gap: '20px',
-                              width: '690px',
-                              height: '203px',
-                           }}
-                        >
-                           <TextField
-                              label="회원가입 시 작성한 이메일을 입력해주세요. navi@example.com"
-                              variant="standard"
-                              InputProps={{ disableUnderline: true }}
-                              sx={{
-                                 backgroundColor: 'white',
-                                 borderRadius: '8px',
-                                 height: '88px',
-                                 width: '100%', // 너비 100% 유지
-                                 minWidth: '400px', // 최소 너비 설정 (필요하면)
-                                 boxSizing: 'border-box',
-                                 '& .MuiInputBase-input': {
-                                    height: '100%',
-                                    boxSizing: 'border-box',
-                                 },
-                                 '& .MuiInputBase-root': {
-                                    fontSize: '21px',
-                                    fontWeight: 400,
-                                    paddingLeft: '40px',
-                                    top: '15px',
-                                 },
-                                 '& .MuiInputLabel-root': {
-                                    fontSize: '21px',
-                                    fontWeight: 400,
-                                    paddingLeft: '40px',
-                                    lineHeight: '55px',
-                                 },
-                              }}
-                              value={emailInput}
-                              onChange={(e) => setEmailInput(e.target.value)}
-                           />
-                           <button
-                              type="button"
-                              onClick={handleSendEmail}
-                              style={{
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 gap: '8px',
-                                 border: 'none',
-                                 backgroundColor: 'white',
-                                 padding: '10px 20px',
-                                 borderRadius: '8px',
-                                 width: '100%',
-                                 height: '88px',
-                              }}
-                           >
-                              <p style={{ fontSize: '23.55px', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: 0, gap: '59px' }}>
-                                 <AlternateEmailIcon style={{ color: '#F0907F', fontSize: '44px' }} /> 이메일로 찾기
-                              </p>
-                           </button>
-                        </div>
                      </div>
                   </div>
-               )}
-               {isPhone && (
-                  <div className="overlay">
-                     <div
-                        className="popup"
-                        style={{
-                           position: 'relative',
-                           width: '880px',
-                           height: '405px',
-                           borderRadius: '100px',
-                           backgroundColor: '#F0907F',
-                           display: 'flex',
-                           justifyContent: 'center', // 가로 중앙
-                           alignItems: 'center', // 세로 중앙
+               </div>
+            )}
+
+            {isPhone && (
+               <div className="overlay">
+                  <div className="popup">
+                     <button className="back-btn" onClick={() => setOpenPhone(false)}>
+                        <ArrowBackIcon />
+                     </button>
+                     <button
+                        className="close-btn"
+                        onClick={() => {
+                           setOpenPhone(false)
+                           setIsOpen(false)
                         }}
                      >
-                        <button
-                           className="close-btn"
-                           onClick={closePhone}
-                           style={{
-                              borderRadius: '50px',
-                              backgroundColor: 'white',
-                              color: '#F0907F',
-                              position: 'absolute',
-                              top: '20px',
-                              left: '50px',
-                           }}
-                        >
-                           <p style={{ fontSize: '30px' }}>
-                              <ArrowBackIcon />
-                           </p>
+                        <CloseIcon />
+                     </button>
+
+                     <div className="popup-inner">
+                        <TextField placeholder="회원가입 시 작성한 핸드폰 번호를 입력해주세요. 010-XXXX-XXXX" variant="standard" InputProps={{ disableUnderline: true }} value={phoneInput} onChange={(e) => setPhoneInput(e.target.value)} fullWidth className="popup-textfield" />
+                        <button type="button" className="popup-section" onClick={handleSendPhone}>
+                           <PhoneIphoneIcon className="icon-accent" /> 핸드폰 번호로 찾기
                         </button>
-                        <button
-                           className="close-btn"
-                           onClick={() => {
-                              setOpenPhone(false)
-                              setIsOpen(false)
-                           }}
-                           style={{
-                              borderRadius: '50px',
-                              backgroundColor: 'white',
-                              color: '#F0907F',
-                              position: 'absolute',
-                              top: '20px',
-                              right: '50px',
-                           }}
-                        >
-                           <p style={{ fontSize: '30px' }}>
-                              <CloseIcon />
-                           </p>
-                        </button>
-                        <div
-                           style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              gap: '20px',
-                              width: '690px',
-                              height: '203px',
-                           }}
-                        >
-                           <TextField
-                              label="회원가입 시 작성한 핸드폰 번호를 입력해주세요. 010-XXXX-XXXX"
-                              variant="standard"
-                              InputProps={{ disableUnderline: true }}
-                              sx={{
-                                 backgroundColor: 'white',
-                                 borderRadius: '8px',
-                                 height: '88px',
-                                 width: '100%', // 너비 100% 유지
-                                 minWidth: '400px', // 최소 너비 설정 (필요하면)
-                                 boxSizing: 'border-box',
-                                 '& .MuiInputBase-input': {
-                                    height: '100%',
-                                    boxSizing: 'border-box',
-                                 },
-                                 '& .MuiInputBase-root': {
-                                    fontSize: '21px',
-                                    fontWeight: 400,
-                                    paddingLeft: '28px',
-                                    top: '15px',
-                                 },
-                                 '& .MuiInputLabel-root': {
-                                    fontSize: '21px',
-                                    fontWeight: 400,
-                                    paddingLeft: '28px',
-                                    lineHeight: '55px',
-                                 },
-                              }}
-                              value={phoneInput}
-                              onChange={(e) => setPhoneInput(e.target.value)}
-                           />
-                           <button
-                              type="button"
-                              onClick={handleSendPhone}
-                              style={{
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 gap: '8px',
-                                 border: 'none',
-                                 backgroundColor: 'white',
-                                 padding: '10px 20px',
-                                 borderRadius: '8px',
-                                 width: '100%',
-                                 height: '88px',
-                              }}
-                           >
-                              <p style={{ fontSize: '23.55px', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', margin: 0, gap: '59px' }}>
-                                 <PhoneIphoneIcon style={{ color: '#F0907F', fontSize: '44px' }} /> 핸드폰 번호로 찾기
-                              </p>
-                           </button>
-                        </div>
                      </div>
                   </div>
-               )}
-            </div>
-            <Button
-               variant="contained"
-               type="submit"
-               fullWidth
-               disabled={loading}
-               sx={{ position: 'relative', marginTop: '20px' }}
-               style={{
-                  backgroundColor: '#F0907F',
-                  borderRadius: '30px',
-                  height: '112px',
-                  marginTop: '20px',
-                  marginBottom: '20px',
-               }}
-            >
-               {loading ? (
-                  <CircularProgress
-                     size={24}
-                     sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                     }}
-                  />
-               ) : (
-                  <p
-                     style={{
-                        fontSize: '36px',
-                        fontStyle: 'medium',
-                        fontWeight: 500,
-                     }}
-                  >
-                     로그인
-                  </p>
-               )}
+               </div>
+            )}
+
+            {tempPasswordMsg && (
+               <div className="overlay">
+                  <div className="popup">
+                     <button
+                        className="close-btn"
+                        onClick={() => {
+                           setTempPasswordMsg('')
+                           setIsOpen(false) // 이전 팝업도 같이 닫기
+                           setOpenEmail(false)
+                           setOpenPhone(false)
+                        }}
+                     >
+                        <CloseIcon />
+                     </button>
+                     <div className="popup-content">
+                        <p className="popup-message">{tempPasswordMsg}</p>
+                        <p className="popup-message">임시 비밀번호를 이용해 로그인 해주세요!</p>
+                     </div>
+                  </div>
+               </div>
+            )}
+
+            <Button variant="contained" type="submit" fullWidth disabled={loading} className="login-submit-btn">
+               {loading ? <CircularProgress size={24} className="centered-spinner" /> : '로그인'}
             </Button>
          </form>
 
-         <p style={{ fontSize: '31px', fontWeight: 400, fontStyle: 'rehular', marginTop: '20px', marginBottom: '20px' }}>
+         <p className="signup-guide">
             처음이시군요! 계정이 없으신가요?
-            <Link to="/signup" style={{ float: 'right', color: '#F0907F', fontWeight: 700, fontStyle: 'bold' }}>
+            <Link to="/signup" className="signup-link">
                회원가입 하기
             </Link>
          </p>
-         <p style={{ textAlign: 'center', fontSize: '31px', fontWeight: 400, fontStyle: 'regular', marginTop: '20px', marginBottom: '20px' }}>다른 계정으로 로그인</p>
+
+         <p className="other-login-text">다른 계정으로 로그인</p>
 
          <Button
-            style={{
-               backgroundColor: 'white',
-               borderRadius: '22.5px',
-            }}
             variant="contained"
             fullWidth
-            sx={{
-               position: 'relative',
-               marginTop: '20px',
-               marginBottom: '20px',
-               padding: '10px 0', // 버튼 높이 여유
-            }}
+            className="google-login-btn"
             onClick={() => {
                window.location.href = 'http://localhost:8000/auth/google'
             }}
          >
-            <span
-               style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '10px', // 아이콘과 텍스트 간격
-                  color: 'black',
-                  fontSize: '30px',
-                  fontWeight: 600,
-               }}
-            >
-               <GoogleIcon style={{ width: '45px', height: '45px' }} />
-               Google
+            <span className="google-login-content">
+               <GoogleIcon /> Google
             </span>
          </Button>
       </div>
