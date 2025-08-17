@@ -30,6 +30,8 @@ function Login() {
    const [emailInput, setEmailInput] = useState('')
    const [phoneInput, setPhoneInput] = useState('')
 
+   const [errors, setErrors] = useState({}) // 에러객체 추가
+
    const handleSendEmail = async () => {
       try {
          const res = await axios.post('http://localhost:8000/auth/forgot-password-email', { email: emailInput })
@@ -62,10 +64,17 @@ function Login() {
 
    const handleLogin = (e) => {
       e.preventDefault()
-      if (!email.trim() || !password.trim()) {
-         alert('이메일과 패스워드를 입력해주세요!')
+
+      let newErrors = {}
+
+      if (!email.trim()) newErrors.email = '이메일을 입력해주세요.'
+      if (!password.trim()) newErrors.password = '비밀번호를 입력해주세요.'
+
+      if (Object.keys(newErrors).length > 0) {
+         setErrors(newErrors)
          return
       }
+
       if (rememberMe) {
          localStorage.setItem('savedEmail', email)
       } else {
@@ -90,11 +99,23 @@ function Login() {
                이메일 <p className="login-title-sub">Email</p>
             </div>
 
+            {errors.email && (
+               <Typography variant="body1" color="error" sx={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                  {errors.email}
+               </Typography>
+            )}
+
             <TextField placeholder="이메일을 입력하세요. navi@example.com" name="email" fullWidth margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} className="login-textfield" />
 
             <div className="login-title">
                비밀번호 <p className="login-title-sub">Password</p>
             </div>
+
+            {errors.password && (
+               <Typography variant="body1" color="error" sx={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                  {errors.password}
+               </Typography>
+            )}
 
             <TextField placeholder="비밀번호를 입력하세요." type="password" name="password" fullWidth margin="normal" value={password} onChange={(e) => setPassword(e.target.value)} className="login-textfield" />
 
