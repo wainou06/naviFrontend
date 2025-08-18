@@ -18,7 +18,7 @@ function RentalDetailPage() {
                console.log('성공:', result)
             })
             .catch((error) => {
-               console.log('에러:', error)
+               console.error('렌탈상품 조회 에러:', error)
             })
       }
    }, [id, dispatch])

@@ -90,7 +90,7 @@ const ItemCreate = ({ onCreateSubmit }) => {
          errors.price = '올바른 가격을 입력해주세요.'
       }
       setFormErrors(errors)
-      console.log('Errors:', errors)
+      console.error('에러:', errors)
       return Object.keys(errors).length === 0
    }
 
@@ -101,7 +101,6 @@ const ItemCreate = ({ onCreateSubmit }) => {
       }
       try {
          await onCreateSubmit(formData)
-         // alert 제거됨
       } catch (error) {
          console.error('상품 등록 실패:', error)
       }
