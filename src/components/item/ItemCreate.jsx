@@ -90,7 +90,6 @@ const ItemCreate = ({ onCreateSubmit }) => {
          errors.price = '올바른 가격을 입력해주세요.'
       }
       setFormErrors(errors)
-      console.error('에러:', errors)
       return Object.keys(errors).length === 0
    }
 
