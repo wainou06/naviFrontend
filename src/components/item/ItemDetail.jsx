@@ -13,7 +13,9 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
 
    const { currentItem, loading, error } = useSelector((state) => state.items)
    const { user } = useSelector((state) => state.auth)
-   const proposals = useSelector((state) => state.priceProposal.proposals)
+   const proposals = useSelector((state) => {
+      return state.priceProposal.proposals
+   })
 
    const [localItem, setLocalItem] = useState(null)
    const [selectedImage, setSelectedImage] = useState(0)
@@ -97,15 +99,16 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
       return price ? price.toLocaleString() + '원' : '-'
    }
 
-   const handleProposalStatusChange = async (proposalId, status, buyerId) => {
+   const handleProposalStatusChange = async (proposalId, status, buyerId, sellerId) => {
       try {
-         const result = await dispatch(updateProposalStatusThunk({ proposalId, status })).unwrap()
+         const result = await dispatch(updateProposalStatusThunk({ proposalId, status, buyerId, sellerId })).unwrap()
 
          if (status === 'accepted') {
             const chatRoom = await dispatch(
                createChatRoomThunk({
                   itemId: localItem.id,
                   buyerId,
+                  sellerId,
                })
             ).unwrap()
 
@@ -303,7 +306,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                                  {/* 소유자만 제안 상태 변경 가능 */}
                                  {proposal.status === 'pending' && isOwner && (
                                     <>
-                                       <button onClick={() => handleProposalStatusChange(proposal.id, 'accepted', proposal.userId)} className="btn-accept">
+                                       <button onClick={() => handleProposalStatusChange(proposal.id, 'accepted', proposal.userId, user.id)} className="btn-accept">
                                           수락
                                        </button>
                                        <button onClick={() => handleProposalStatusChange(proposal.id, 'rejected')} className="btn-reject">

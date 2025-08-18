@@ -1,4 +1,4 @@
-import naviApi from './axiosApi' // axios 인스턴스
+import naviApi from './axiosApi'
 
 // 1. 내 채팅방 목록 조회
 export async function fetchMyChats() {
@@ -25,8 +25,8 @@ export async function fetchChatMessages(chatId) {
 // 3. 채팅방 생성 (이미 있으면 기존 채팅방 반환)
 export async function createChatRoom(chatData) {
    try {
-      // 여기 경로를 /chats/create 로 수정
       const response = await naviApi.post('/chats/create', chatData, { withCredentials: true })
+      console.log('채팅방 생성:', response.data)
       return response.data
    } catch (error) {
       console.error('채팅방 생성 실패:', error.response?.data || error.message)
