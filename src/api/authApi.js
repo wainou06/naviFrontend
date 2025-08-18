@@ -1,6 +1,5 @@
 import naviApi from './axiosApi'
 
-// 회원가입
 export const registerUser = async (userData) => {
    try {
       const response = await naviApi.post('/auth/join', userData)
@@ -11,7 +10,6 @@ export const registerUser = async (userData) => {
    }
 }
 
-// 로그인
 export const loginUser = async (credentials) => {
    try {
       const response = await naviApi.post('/auth/login', credentials)
@@ -22,7 +20,6 @@ export const loginUser = async (credentials) => {
    }
 }
 
-// 로그아웃
 export const logoutUser = async () => {
    try {
       const response = await naviApi.get('/auth/logout')
@@ -33,7 +30,6 @@ export const logoutUser = async () => {
    }
 }
 
-// 상태확인
 export const checkAuthStatus = async () => {
    try {
       const response = await naviApi.get('/auth/status')

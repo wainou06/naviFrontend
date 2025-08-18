@@ -6,6 +6,7 @@ import '../../styles/itemDetail.css'
 
 import Popup from '../chat/Popup'
 import ChatRoomList from '../chat/ChatRoomList'
+import Modal from '../shared/Modal'
 
 const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
    const dispatch = useDispatch()
@@ -23,6 +24,12 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
    const [showPriceModal, setShowPriceModal] = useState(false)
    const [isChatOpen, setIsChatOpen] = useState(false)
    const [newChatId, setNewChatId] = useState(null)
+
+   // Modal 상태들 추가
+   const [showDeleteModal, setShowDeleteModal] = useState(false)
+   const [deleteMessage, setDeleteMessage] = useState('')
+   const [showErrorModal, setShowErrorModal] = useState(false)
+   const [errorMessage, setErrorMessage] = useState('')
 
    useEffect(() => {
       if (currentItem) {
@@ -42,21 +49,22 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
    }, [localItem, selectedImage])
 
    const isOwner = user && localItem && user.id === localItem.userId
-
-   // 매니저 권한 확인
    const isManager = user && user.access === 'MANAGER'
 
    const handleDelete = () => {
       let confirmMessage = '정말로 이 아이템을 삭제하시겠습니까?'
 
-      // 매니저가 다른 사람의 글을 삭제하는 경우 추가 확인
       if (isManager && !isOwner) {
          confirmMessage = '[관리자 권한] 다른 사용자의 아이템을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.'
       }
 
-      if (window.confirm(confirmMessage)) {
-         onDeleteSubmit()
-      }
+      setDeleteMessage(confirmMessage)
+      setShowDeleteModal(true)
+   }
+
+   const confirmDelete = () => {
+      onDeleteSubmit()
+      setShowDeleteModal(false)
    }
 
    const handleEdit = () => {
@@ -65,12 +73,14 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
 
    const handlePriceProposal = () => {
       if (!priceProposal || Number(priceProposal) <= 0) {
-         alert('올바른 가격을 입력해주세요.')
+         setErrorMessage('올바른 가격을 입력해주세요.')
+         setShowErrorModal(true)
          return
       }
 
       if (!localItem) {
-         alert('상품 정보가 없습니다.')
+         setErrorMessage('상품 정보가 없습니다.')
+         setShowErrorModal(true)
          return
       }
 
@@ -94,7 +104,6 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
          const result = await dispatch(updateProposalStatusThunk({ proposalId, status, buyerId, sellerId })).unwrap()
 
          if (status === 'accepted') {
-            // 채팅방 생성
             const chatRoom = await dispatch(
                createChatRoomThunk({
                   itemId: localItem.id,
@@ -103,11 +112,10 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                })
             ).unwrap()
 
-            setNewChatId(chatRoom.id) // 새 채팅방 ID 저장
-            setIsChatOpen(true) // 모달 열기
+            setNewChatId(chatRoom.id)
+            setIsChatOpen(true)
          }
 
-         // 아이템 상태 업데이트
          if (result.updatedProposal) {
             const updatedItemSellStatus = result.updatedProposal.item?.itemSellStatus
             const prevItemSellStatus = localItem?.itemSellStatus || 'SELL'
@@ -117,7 +125,8 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
             }))
          }
       } catch (error) {
-         console.error('상태 변경 실패: ' + (error.message || error))
+         setErrorMessage('상태 변경 실패: ' + (error.message || error))
+         setShowErrorModal(true)
       }
    }
 
@@ -355,6 +364,37 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
          <Popup isOpen={isChatOpen} onClose={handleChatClose}>
             <ChatRoomList initialSelectedChatId={newChatId} />
          </Popup>
+
+         {/* 삭제 확인 Modal */}
+         <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+            <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600' }}>
+               삭제 확인
+            </div>
+            <div className="popup-message" style={{ height: 'auto', minHeight: '88px', padding: '20px', whiteSpace: 'pre-line', lineHeight: '1.5' }}>
+               {deleteMessage}
+            </div>
+            <div style={{ display: 'flex', gap: '14px', width: '690px' }}>
+               <button className="popup-btn" onClick={confirmDelete} style={{ backgroundColor: '#ff4444', color: 'white' }}>
+                  삭제
+               </button>
+               <button className="popup-btn" onClick={() => setShowDeleteModal(false)} style={{ backgroundColor: '#f5f5f5', color: '#333' }}>
+                  취소
+               </button>
+            </div>
+         </Modal>
+
+         {/* 에러 Modal */}
+         <Modal isOpen={showErrorModal} onClose={() => setShowErrorModal(false)}>
+            <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600', color: '#dc3545' }}>
+               ⚠️ 오류
+            </div>
+            <div className="popup-message" style={{ height: 'auto', minHeight: '88px', padding: '20px' }}>
+               {errorMessage}
+            </div>
+            <button className="popup-btn" onClick={() => setShowErrorModal(false)} style={{ backgroundColor: '#007bff', color: 'white', width: '300px' }}>
+               확인
+            </button>
+         </Modal>
       </div>
    )
 }

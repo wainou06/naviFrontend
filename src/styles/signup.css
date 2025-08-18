@@ -1,5 +1,3 @@
-/* signup.css */
-
 .signup-container {
    margin: 100px auto 320px auto;
    width: 880px;
@@ -20,7 +18,6 @@
    margin-bottom: 20px;
 }
 
-/* 구글 로그인 버튼 */
 .google-login-btn {
    background: #fff !important;
    border-radius: 22.5px !important;
