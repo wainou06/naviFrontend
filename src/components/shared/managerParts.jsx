@@ -10,9 +10,9 @@ import Box from '@mui/material/Box'
 import '../../styles/managerParts.css'
 
 import ItemSellList from '../../components/item/ItemSellList'
-import ManagerKeywords from '../manager/managerKeywords'
-import ManagerUser from '../manager/managerUser'
-import ManagerUserRating from '../manager/managerUserRating'
+import ManagerKeywords from '../manager/ManagerKeywords'
+import ManagerUser from '../manager/ManagerUser'
+import ManagerUserRating from '../manager/ManagerUserRating'
 
 function TabPanel(props) {
    const { children, value, index, ...other } = props
