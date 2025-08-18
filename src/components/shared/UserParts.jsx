@@ -8,7 +8,7 @@ import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 
 import '../../styles/userParts.css'
-import MyProfile from '../auth/MyProfile'
+import MyProfile from '../user/MyProfile'
 import MySecret from '../user/mySecret'
 import MyItems from '../my/MyItems'
 import MyRental from '../my/MyRental'
