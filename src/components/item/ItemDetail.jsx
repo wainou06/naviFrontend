@@ -117,7 +117,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
             }))
          }
       } catch (error) {
-         alert('상태 변경 실패: ' + (error.message || error))
+         console.error('상태 변경 실패: ' + (error.message || error))
       }
    }
 
