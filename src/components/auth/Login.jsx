@@ -79,7 +79,7 @@ function Login() {
          setEmailInput('')
          setModalState('tempPassword')
       } catch (err) {
-         console.error('임시 비밀번호 에러: ', error)
+         setModalState('modalEmailErr')
       }
    }
 
@@ -90,7 +90,7 @@ function Login() {
          setPhoneInput('')
          setModalState('tempPassword')
       } catch (err) {
-         console.error('임시 비밀번호 에러: ', error)
+         setModalState('modalPhoneErr')
       }
    }
 
@@ -168,6 +168,20 @@ function Login() {
                   <div className="popup-content">
                      <p className="popup-message">{tempPasswordMsg}</p>
                      <p className="popup-message">임시 비밀번호를 이용해 로그인 해주세요!</p>
+                  </div>
+               )}
+
+               {modalState === 'modalEmailErr' && (
+                  <div className="popup-content">
+                     <p className="popup-message">등록된 이메일이 없습니다!</p>
+                     <p className="popup-message">이메일을 확인 후 다시 시도해주세요!</p>
+                  </div>
+               )}
+
+               {modalState === 'modalPhoneErr' && (
+                  <div className="popup-content">
+                     <p className="popup-message">등록된 번호가 없습니다!</p>
+                     <p className="popup-message">휴대폰 번호를 확인 후 다시 시도해주세요!</p>
                   </div>
                )}
             </Modal>
