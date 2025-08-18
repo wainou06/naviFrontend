@@ -1,35 +1,38 @@
 import { Container } from '@mui/material'
 import ItemDetail from '../components/item/ItemDetail'
+import Modal from '../components/shared/Modal'
 import { useDispatch } from 'react-redux'
 import { useParams, useNavigate } from 'react-router-dom'
 import { fetchItem, deleteItem } from '../features/itemsSlice'
 import { createPriceProposalThunk, fetchPriceProposalsThunk } from '../features/priceProposalSlice'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 function ItemDetailPage() {
    const dispatch = useDispatch()
    const navigate = useNavigate()
    const { id } = useParams()
 
+   const [showModal, setShowModal] = useState(false)
+   const [modalMessage, setModalMessage] = useState('')
+
    useEffect(() => {
       if (id) {
          dispatch(fetchItem(id))
-         dispatch(fetchPriceProposalsThunk(id)) // 해당 아이템 가격 제안도 같이 불러오기
+         dispatch(fetchPriceProposalsThunk(id))
       }
    }, [id, dispatch])
 
    const onDeleteSubmit = () => {
-      if (window.confirm('정말로 삭제하시겠습니까?')) {
-         dispatch(deleteItem(id))
-            .unwrap()
-            .then(() => {
-               navigate('/items/list')
-            })
-            .catch((error) => {
-               console.error('상품 삭제 에러: ', error)
-               alert('상품 삭제에 실패했습니다.' + error)
-            })
-      }
+      dispatch(deleteItem(id))
+         .unwrap()
+         .then(() => {
+            navigate('/items/list')
+         })
+         .catch((error) => {
+            console.error('상품 삭제 에러: ', error)
+            setModalMessage('상품 삭제에 실패했습니다.' + error)
+            setShowModal(true)
+         })
    }
 
    const onEditSubmit = () => {
@@ -37,7 +40,6 @@ function ItemDetailPage() {
    }
 
    const onPriceProposal = (proposalData) => {
-      // deliveryMethod -> purchaseMethod 매핑
       const purchaseMethod = proposalData.deliveryMethod === '택배' ? 'shipping' : proposalData.deliveryMethod === '직거래' ? 'meetup' : 'other'
 
       const proposalPayload = {
@@ -50,18 +52,25 @@ function ItemDetailPage() {
       dispatch(createPriceProposalThunk(proposalPayload))
          .unwrap()
          .then(() => {
-            alert('가격 제안이 성공적으로 등록되었습니다.')
-            dispatch(fetchPriceProposalsThunk(proposalData.itemId)) // 제안 목록 갱신
+            setModalMessage('가격 제안이 성공적으로 등록되었습니다.')
+            setShowModal(true)
+            dispatch(fetchPriceProposalsThunk(proposalData.itemId))
          })
          .catch((error) => {
             console.error('가격 제안 등록 실패:', error)
-            alert('가격 제안 등록에 실패했습니다.')
+            setModalMessage('가격 제안 등록에 실패했습니다.')
+            setShowModal(true)
          })
    }
 
    return (
       <Container maxWidth="lg" sx={{ marginTop: 4, marginBottom: 10 }}>
          <ItemDetail onDeleteSubmit={onDeleteSubmit} onEditSubmit={onEditSubmit} onPriceProposal={onPriceProposal} />
+
+         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+            <p>{modalMessage}</p>
+            <button onClick={() => setShowModal(false)}>확인</button>
+         </Modal>
       </Container>
    )
 }

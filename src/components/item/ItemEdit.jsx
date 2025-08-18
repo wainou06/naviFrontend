@@ -36,7 +36,9 @@ const ItemEdit = () => {
 
    useEffect(() => {
       if (currentItem) {
-         const existingKeywords = currentItem.ItemKeywords?.map((ik) => ik.Keyword.name) || []
+         const existingKeywords =
+            currentItem.ItemKeywords?.filter((ik) => ik && ik.Keyword) // null이나 Keyword가 없는 요소 필터링
+               ?.map((ik) => ik.Keyword.name) || []
          const mapStatusValue = (serverStatus) => {
             const statusMap = {
                available: 'sell',
@@ -176,7 +178,6 @@ const ItemEdit = () => {
                },
             })
          ).unwrap()
-         // alert('상품이 성공적으로 수정되었습니다.')
          navigate(`/items/detail/${id}`)
       } catch (error) {
          console.error('상품 수정 실패:', error)
