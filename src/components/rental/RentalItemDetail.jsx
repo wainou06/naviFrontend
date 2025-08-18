@@ -381,6 +381,19 @@ const RentalDetail = ({ onDeleteSubmit }) => {
                <p style={{ marginBottom: '30px', lineHeight: '1.5' }}>{isManager && !isOwner ? '다른 사용자의 렌탈 상품을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.' : '정말로 이 렌탈 상품을 삭제하시겠습니까?'}</p>
                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
                   <button
+                     onClick={handleConfirmDelete}
+                     style={{
+                        padding: '10px 20px',
+                        backgroundColor: '#ff4444',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                     }}
+                  >
+                     삭제
+                  </button>
+                  <button
                      onClick={() => setShowDeleteModal(false)}
                      style={{
                         padding: '10px 20px',
@@ -392,19 +405,6 @@ const RentalDetail = ({ onDeleteSubmit }) => {
                   >
                      취소
                   </button>
-                  <button
-                     onClick={handleConfirmDelete}
-                     style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#ff4444',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                     }}
-                  >
-                     삭제하기
-                  </button>
                </div>
             </div>
          </Modal>
@@ -412,25 +412,9 @@ const RentalDetail = ({ onDeleteSubmit }) => {
          {/* 성공 알림 Modal */}
          <Modal isOpen={showSuccessModal} onClose={handleSuccessModalClose}>
             <div style={{ padding: '20px', textAlign: 'center' }}>
-               <h3 style={{ marginBottom: '20px', color: '#28a745' }}>렌탈 주문 완료</h3>
-               <p style={{ marginBottom: '30px', lineHeight: '1.5' }}>
-                  렌탈 주문이 성공적으로 생성되었습니다!
-                  <br />
-                  주문 내역은 마이페이지에서 확인하실 수 있습니다.
-               </p>
-               <button
-                  onClick={handleSuccessModalClose}
-                  style={{
-                     padding: '10px 20px',
-                     backgroundColor: '#28a745',
-                     color: 'white',
-                     border: 'none',
-                     borderRadius: '4px',
-                     cursor: 'pointer',
-                  }}
-               >
-                  확인
-               </button>
+               <h3>렌탈 주문 완료</h3>
+               <p style={{ marginBottom: '30px', lineHeight: '1.5' }}>렌탈 주문이 성공적으로 생성되었습니다!</p>
+               <button>확인</button>
             </div>
          </Modal>
       </div>

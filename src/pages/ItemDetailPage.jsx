@@ -69,7 +69,18 @@ function ItemDetailPage() {
 
          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
             <p>{modalMessage}</p>
-            <button onClick={() => setShowModal(false)}>확인</button>
+            <button
+               onClick={() => setShowModal(false)}
+               style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#f5f5f5',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+               }}
+            >
+               확인
+            </button>
          </Modal>
       </Container>
    )

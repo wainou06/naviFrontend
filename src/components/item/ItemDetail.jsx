@@ -370,11 +370,11 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                <button
                   onClick={confirmDelete}
                   style={{
-                     background: '#dc3545',
+                     padding: '10px 20px',
+                     backgroundColor: '#ff4444',
                      color: 'white',
                      border: 'none',
-                     padding: '10px 20px',
-                     borderRadius: '5px',
+                     borderRadius: '4px',
                      cursor: 'pointer',
                   }}
                >
@@ -383,11 +383,10 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                <button
                   onClick={() => setShowDeleteModal(false)}
                   style={{
-                     background: '#6c757d',
-                     color: 'white',
-                     border: 'none',
                      padding: '10px 20px',
-                     borderRadius: '5px',
+                     backgroundColor: '#f5f5f5',
+                     border: '1px solid #ddd',
+                     borderRadius: '4px',
                      cursor: 'pointer',
                   }}
                >
