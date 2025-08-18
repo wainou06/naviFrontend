@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { createRentalOrderThunk, fetchRentalOrdersByItemThunk } from '../../features/rentalOrderSlice'
+import Modal from '../shared/Modal'
 import '../../styles/rentalDetail.css'
 
 const RentalDetail = ({ onDeleteSubmit }) => {
@@ -17,6 +18,10 @@ const RentalDetail = ({ onDeleteSubmit }) => {
    const [quantity, setQuantity] = useState(1)
    const [showRentalModal, setShowRentalModal] = useState(false)
 
+   // Modal 상태 추가
+   const [showDeleteModal, setShowDeleteModal] = useState(false)
+   const [showSuccessModal, setShowSuccessModal] = useState(false)
+
    const isOwner = user && rentalItemDetail && user.id === rentalItemDetail.userId
    const isManager = user && user.access === 'MANAGER'
 
@@ -27,16 +32,14 @@ const RentalDetail = ({ onDeleteSubmit }) => {
       }
    }, [dispatch, rentalItemDetail, isOwner, isManager])
 
+   // 삭제 확인 Modal 처리
    const handleDelete = () => {
-      let confirmMessage = '정말로 이 렌탈 상품을 삭제하시겠습니까?'
+      setShowDeleteModal(true)
+   }
 
-      if (isManager && !isOwner) {
-         confirmMessage = '[관리자 권한] 다른 사용자의 렌탈 상품을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.'
-      }
-
-      if (window.confirm(confirmMessage)) {
-         onDeleteSubmit()
-      }
+   const handleConfirmDelete = () => {
+      setShowDeleteModal(false)
+      onDeleteSubmit()
    }
 
    const handleEdit = () => {
@@ -64,7 +67,7 @@ const RentalDetail = ({ onDeleteSubmit }) => {
          return
       }
 
-      // 렌탈 주문 데이터 구성 (백엔드 API 스펙에 맞춤)
+      // 렌탈 주문 데이터 구성
       const rentalOrderData = {
          items: [
             {
@@ -81,14 +84,11 @@ const RentalDetail = ({ onDeleteSubmit }) => {
          const result = await dispatch(createRentalOrderThunk(rentalOrderData))
 
          if (createRentalOrderThunk.fulfilled.match(result)) {
-            alert('렌탈 주문이 성공적으로 생성되었습니다!')
             setShowRentalModal(false)
+            setShowSuccessModal(true)
             setStartDate('')
             setEndDate('')
             setQuantity(1)
-
-            // 주문 완료 후 상품 정보 새로고침 (재고 업데이트)
-            window.location.reload()
          } else {
             alert(result.payload || '렌탈 주문 생성에 실패했습니다.')
          }
@@ -96,6 +96,12 @@ const RentalDetail = ({ onDeleteSubmit }) => {
          console.error('렌탈 주문 생성 오류:', error)
          alert('렌탈 주문 생성 중 오류가 발생했습니다.')
       }
+   }
+
+   // 성공 Modal 닫기 후 페이지 새로고침
+   const handleSuccessModalClose = () => {
+      setShowSuccessModal(false)
+      window.location.reload()
    }
 
    const calculateDays = () => {
@@ -367,6 +373,37 @@ const RentalDetail = ({ onDeleteSubmit }) => {
                )}
             </div>
          </div>
+
+         {/* 삭제 확인 Modal */}
+         <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+            <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600' }}>
+               {isManager && !isOwner ? '관리자 권한으로 삭제' : '삭제 확인'}
+            </div>
+            <div className="popup-message" style={{ height: 'auto', minHeight: '88px', padding: '20px', whiteSpace: 'pre-line', lineHeight: '1.5' }}>
+               {isManager && !isOwner ? '다른 사용자의 렌탈 상품을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.' : '정말로 이 렌탈 상품을 삭제하시겠습니까?'}
+            </div>
+            <div style={{ display: 'flex', gap: '14px', width: '690px' }}>
+               <button className="popup-btn" onClick={handleConfirmDelete} style={{ backgroundColor: '#ff4444', color: 'white' }}>
+                  삭제
+               </button>
+               <button className="popup-btn" onClick={() => setShowDeleteModal(false)} style={{ backgroundColor: '#f5f5f5', border: '1px solid #ddd', color: 'black' }}>
+                  취소
+               </button>
+            </div>
+         </Modal>
+
+         {/* 성공 알림 Modal */}
+         <Modal isOpen={showSuccessModal} onClose={handleSuccessModalClose}>
+            <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600' }}>
+               렌탈 주문 완료
+            </div>
+            <div className="popup-message" style={{ height: 'auto', minHeight: '88px', padding: '20px', lineHeight: '1.5' }}>
+               렌탈 주문이 성공적으로 생성되었습니다!
+            </div>
+            <button className="popup-btn" onClick={handleSuccessModalClose} style={{ backgroundColor: '#f5f5f5', border: '1px solid #ddd', color: 'black', width: '200px' }}>
+               확인
+            </button>
+         </Modal>
       </div>
    )
 }

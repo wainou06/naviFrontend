@@ -37,7 +37,6 @@ export const createItem = async (itemData) => {
 // 상품 목록 조회 (검색, 페이징 기능)
 export const getItems = async (params = {}) => {
    try {
-      console.log('🌐 getItems API 호출:', params)
       const { page = 1, limit = 12, searchTerm = '', searchCategory = '', sellCategory = '' } = params
       const response = await naviApi.get(`/items/list`, {
          params: {
@@ -48,7 +47,6 @@ export const getItems = async (params = {}) => {
             sellCategory,
          },
       })
-      console.log('🌐 getItems API 응답:', response.data)
       return response.data
    } catch (error) {
       console.error('상품 목록 조회 오류:', error.response ? error.response.data : error.message)

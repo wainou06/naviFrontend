@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useState, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { logoutUserThunk } from '../../features/authSlice'
+import { createChatRoomThunk } from '../../features/chatSlice'
 
 import Popup from '../chat/Popup'
 import ChatRoomList from '../chat/ChatRoomList'
@@ -20,6 +21,7 @@ function Navbar({ isAuthenticated, user, onSearch }) {
    const userMenuAnchorRef = useRef(null)
    const [searchTerm, setSearchTerm] = useState('')
    const [isChatOpen, setIsChatOpen] = useState(false)
+   const [newChatId, setNewChatId] = useState(null)
 
    const handleLogout = () => {
       dispatch(logoutUserThunk())
@@ -47,6 +49,26 @@ function Navbar({ isAuthenticated, user, onSearch }) {
       handleCloseUserMenu()
    }
    const handleChatClose = () => setIsChatOpen(false)
+
+   // 고객센터
+   const handleCustomerServiceClick = async () => {
+      try {
+         // 새 채팅방 생성
+         const chatRoom = await dispatch(
+            createChatRoomThunk({
+               itemId: null,
+               buyerId: user.id,
+               sellerId: 3,
+            })
+         ).unwrap()
+         // 팝업 열기
+
+         setNewChatId(chatRoom.id)
+         setIsChatOpen(true)
+      } catch (error) {
+         console.error('채팅방 생성 실패: ' + error)
+      }
+   }
 
    // 메뉴 구성 데이터
    const managerMenu = [
@@ -116,7 +138,7 @@ function Navbar({ isAuthenticated, user, onSearch }) {
                   </form>
 
                   <ul className="nav_menu">
-                     <li>
+                     <li onClick={handleCustomerServiceClick}>
                         <img src="/images/고객센터.png" alt="고객센터" height="50" />
                         <span>고객센터</span>
                      </li>
@@ -151,7 +173,7 @@ function Navbar({ isAuthenticated, user, onSearch }) {
          </header>
          {/* 채팅 */}
          <Popup isOpen={isChatOpen} onClose={handleChatClose}>
-            <ChatRoomList />
+            <ChatRoomList initialSelectedChatId={newChatId} />
          </Popup>
       </>
    )

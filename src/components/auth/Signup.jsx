@@ -18,7 +18,7 @@ function Signup() {
    const [confirmPassword, setConfirmPassword] = useState('')
    const [address, setAddress] = useState('')
    const [isOpen, setIsOpen] = useState(false)
-   const [errors, setErrors] = useState({}) // 에러객체 추가
+   const [errors, setErrors] = useState({})
 
    const dispatch = useDispatch()
    const { loading, error } = useSelector((state) => state.auth)

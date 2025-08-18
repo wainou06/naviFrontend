@@ -14,29 +14,23 @@ function RentalDetailPage() {
       if (id) {
          dispatch(fetchRentalItem(id))
             .unwrap()
-            .then((result) => {
-               console.log('성공:', result)
-            })
             .catch((error) => {
-               console.log('에러:', error)
+               console.error('렌탈상품 조회 에러:', error)
             })
       }
    }, [id, dispatch])
 
    // 렌탈상품 삭제
    const onDeleteSubmit = () => {
-      if (window.confirm('정말로 삭제하시겠습니까?')) {
-         dispatch(deleteRentalItem(id))
-            .unwrap()
-            .then(() => {
-               alert('렌탈 상품이 삭제되었습니다.')
-               navigate('/rental/list') // 삭제 후 렌탈상품 리스트 페이지로 이동
-            })
-            .catch((error) => {
-               console.error('렌탈상품 삭제 에러: ', error)
-               alert('렌탈상품 삭제에 실패했습니다. ' + error)
-            })
-      }
+      dispatch(deleteRentalItem(id))
+         .unwrap()
+         .then(() => {
+            navigate('/rental/list') // 삭제 후 렌탈상품 리스트 페이지로 이동
+         })
+         .catch((error) => {
+            console.error('렌탈상품 삭제 에러: ', error)
+            alert('렌탈상품 삭제에 실패했습니다. ' + error)
+         })
    }
 
    return (

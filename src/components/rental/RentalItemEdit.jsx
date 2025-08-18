@@ -148,7 +148,6 @@ const RentalItemEdit = ({ onUpdateSubmit }) => {
       setFormErrors(errors)
       return Object.keys(errors).length === 0
    }
-
    const handleSubmit = async (e) => {
       e.preventDefault()
       if (!validateForm()) return
@@ -179,6 +178,8 @@ const RentalItemEdit = ({ onUpdateSubmit }) => {
             await onUpdateSubmit(formDataToSend)
          } else {
             await dispatch(updateRentalItem({ id, rentalItemData: formDataToSend })).unwrap()
+            await dispatch(fetchRentalItem(id)).unwrap()
+
             navigate('/rental/list')
          }
       } catch (error) {

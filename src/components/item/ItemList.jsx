@@ -174,8 +174,8 @@ const ItemsList = () => {
                <>
                   {/* 상품 그리드 */}
                   <div className="products-grid">
-                     {items.map((item) => (
-                        <div key={item.id} className="product-card">
+                     {items.map((item, index) => (
+                        <div key={item.id || `item-${index}`} className="product-card">
                            <div className={`product-status-label ${getStatusClass(item.itemSellStatus)}`}>{getStatusText(item.itemSellStatus)}</div>
 
                            <div className="product-actions">

@@ -11,7 +11,6 @@ function RentalEditPage() {
 
    // 렌탈상품 수정
    const onUpdateSubmit = (rentalItemData) => {
-      console.log('페이지에서 받은 수정 데이터:', rentalItemData)
       const updateData = {
          id: id,
          rentalItemData: rentalItemData,

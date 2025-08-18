@@ -66,7 +66,7 @@ function MyProfile() {
          <TextField placeholder="바뀐 주소를 입력해주세요." value={address} onChange={(e) => setAddress(e.target.value)} fullWidth margin="normal" className="myprofile-textfield" />
 
          <Button variant="contained" type="submit" fullWidth disabled={loading} className="myprofile-submit-btn">
-            {loading ? <CircularProgress size={24} className="myprofile-loading-spinner" /> : <p>저장하기</p>}
+            {loading ? <CircularProgress size={24} className="myprofile-loading-spinner" /> : '저장하기'}
          </Button>
 
          {showUpdatePopup && (
