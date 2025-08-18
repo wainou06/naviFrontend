@@ -98,7 +98,6 @@ const MyDeal = () => {
    }
 
    if (hasError) {
-      // 에러가 객체인 경우 처리
       const errorMessage = typeof hasError === 'string' ? hasError : hasError?.message || hasError?.error || '오류가 발생했습니다.'
       return <Alert severity="error">{errorMessage}</Alert>
    }
@@ -107,6 +106,11 @@ const MyDeal = () => {
       const isProposal = type === 'purchased' || type === 'completed'
       const displayItem = isProposal ? item.item : item
       const proposalInfo = isProposal ? item : null
+
+      // displayItem이나 itemNm이 없을 경우 안전하게 처리
+      if (!displayItem || !displayItem.itemNm) {
+         return null // 또는 fallback UI 처리
+      }
 
       return (
          <Card
@@ -162,7 +166,6 @@ const MyDeal = () => {
                height="200"
                image={(() => {
                   const baseUrl = import.meta.env.VITE_APP_API_URL || ''
-                  // 이미지 데이터는 항상 displayItem에서 가져오기
                   const imgs = displayItem?.imgs || []
                   const foundImg = imgs.find((img) => img.field === 'Y')?.imgUrl
 
@@ -174,7 +177,7 @@ const MyDeal = () => {
 
             <Box sx={{ p: 2 }}>
                <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
-                  {displayItem.itemNm}
+                  {displayItem?.itemNm || '상품명 없음'}
                </Typography>
 
                {/* 가격 정보 */}
