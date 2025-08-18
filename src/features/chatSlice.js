@@ -12,9 +12,10 @@ export const fetchMyChatsThunk = createAsyncThunk('chat/fetchMyChats', async (_,
 })
 
 // 2. 채팅방 생성
-export const createChatRoomThunk = createAsyncThunk('chat/createRoom', async ({ itemId, sellerId }, { rejectWithValue }) => {
+export const createChatRoomThunk = createAsyncThunk('chat/createRoom', async ({ itemId, buyerId, sellerId }, { rejectWithValue }) => {
    try {
-      const res = await chatApi.createChatRoom({ itemId, sellerId })
+      const res = await chatApi.createChatRoom({ itemId, buyerId, sellerId })
+      console.log('채팅방 생성: ', res.chat)
       return res.chat
    } catch (error) {
       return rejectWithValue(error.response?.data || error.message)
@@ -46,6 +47,8 @@ const chatSlice = createSlice({
    initialState: {
       chats: [],
       messagesByChatId: {},
+      currentChatId: null,
+      isChatOpen: false,
       loadingChats: false,
       loadingMessages: false,
       sendingMessage: false,
@@ -85,8 +88,15 @@ const chatSlice = createSlice({
          state.unreadCountByChatId[chatId] = (state.unreadCountByChatId[chatId] || 0) + 1
       },
 
-      resetUnreadCount(state, { payload: chatId }) {
+      openChatPopup: (state, { payload: chatId }) => {
+         state.currentChatId = chatId
+         state.isChatOpen = true
          state.unreadCountByChatId[chatId] = 0
+      },
+
+      closeChatPopup: (state) => {
+         state.currentChatId = null
+         state.isChatOpen = false
       },
    },
 
@@ -113,6 +123,10 @@ const chatSlice = createSlice({
          .addCase(createChatRoomThunk.fulfilled, (state, { payload }) => {
             if (!state.chats.find((c) => c.id === payload.id)) state.chats.push(payload)
             if (!state.messagesByChatId[payload.id]) state.messagesByChatId[payload.id] = payload.messages || []
+
+            // 방 생성 성공하면 자동으로 팝업 열기
+            state.currentChatId = payload.id
+            state.isChatOpen = true
          })
          .addCase(createChatRoomThunk.rejected, (state, { payload }) => {
             state.createChatError = payload
@@ -152,6 +166,6 @@ const chatSlice = createSlice({
    },
 })
 
-export const { clearLoadingChatsError, clearLoadingMessagesError, clearSendMessageError, clearCreateChatError, addLocalMessage, removeLocalMessage, incrementUnreadCount, resetUnreadCount } = chatSlice.actions
+export const { clearLoadingChatsError, clearLoadingMessagesError, clearSendMessageError, clearCreateChatError, addLocalMessage, removeLocalMessage, incrementUnreadCount, openChatPopup, closeChatPopup } = chatSlice.actions
 
 export default chatSlice.reducer
