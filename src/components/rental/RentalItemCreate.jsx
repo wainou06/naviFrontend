@@ -123,7 +123,7 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
       try {
          console.log('📝 등록할 데이터:', formData)
          await onCreateSubmit(formData)
-         navigate('/rental/list')
+         // navigate('/rental/list')
       } catch (error) {
          console.error('렌탈 상품 등록 오류:', error)
          setError(error.message || '렌탈 상품 등록에 실패했습니다.')
