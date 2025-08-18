@@ -364,32 +364,17 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
 
          {/* 삭제 확인 Modal */}
          <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-            <h3 style={{ marginBottom: '20px', color: '#333' }}>삭제 확인</h3>
-            <p style={{ whiteSpace: 'pre-line', marginBottom: '30px', lineHeight: '1.5' }}>{deleteMessage}</p>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-               <button
-                  onClick={confirmDelete}
-                  style={{
-                     padding: '10px 20px',
-                     backgroundColor: '#ff4444',
-                     color: 'white',
-                     border: 'none',
-                     borderRadius: '4px',
-                     cursor: 'pointer',
-                  }}
-               >
+            <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600' }}>
+               삭제 확인
+            </div>
+            <div className="popup-message" style={{ height: 'auto', minHeight: '88px', padding: '20px', whiteSpace: 'pre-line', lineHeight: '1.5' }}>
+               {deleteMessage}
+            </div>
+            <div style={{ display: 'flex', gap: '14px', width: '690px' }}>
+               <button className="popup-btn" onClick={confirmDelete} style={{ backgroundColor: '#ff4444', color: 'white' }}>
                   삭제
                </button>
-               <button
-                  onClick={() => setShowDeleteModal(false)}
-                  style={{
-                     padding: '10px 20px',
-                     backgroundColor: '#f5f5f5',
-                     border: '1px solid #ddd',
-                     borderRadius: '4px',
-                     cursor: 'pointer',
-                  }}
-               >
+               <button className="popup-btn" onClick={() => setShowDeleteModal(false)} style={{ backgroundColor: '#f5f5f5', color: '#333' }}>
                   취소
                </button>
             </div>
@@ -397,19 +382,13 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
 
          {/* 에러 Modal */}
          <Modal isOpen={showErrorModal} onClose={() => setShowErrorModal(false)}>
-            <h3 style={{ marginBottom: '20px', color: '#dc3545' }}>⚠️ 오류</h3>
-            <p style={{ marginBottom: '30px', fontSize: '16px' }}>{errorMessage}</p>
-            <button
-               onClick={() => setShowErrorModal(false)}
-               style={{
-                  background: '#007bff',
-                  color: 'white',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-               }}
-            >
+            <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600', color: '#dc3545' }}>
+               ⚠️ 오류
+            </div>
+            <div className="popup-message" style={{ height: 'auto', minHeight: '88px', padding: '20px' }}>
+               {errorMessage}
+            </div>
+            <button className="popup-btn" onClick={() => setShowErrorModal(false)} style={{ backgroundColor: '#007bff', color: 'white', width: '300px' }}>
                확인
             </button>
          </Modal>
