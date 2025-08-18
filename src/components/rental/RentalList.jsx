@@ -149,21 +149,34 @@ const RentalList = () => {
             <hr style={{ border: 'none', height: '1px', background: 'rgba(240, 144, 127, 1)', margin: '10px' }} />
 
             {/* 필터 버튼들 */}
-            <div className="filter-section">
-               <Button className={`filter-btn ${activeFilter === '필터' ? 'active' : ''}`} onClick={() => handleFilterClick('필터')}>
+            <div className="filter-section_rental">
+               <Button className={`filter-btn_rental ${activeFilter === '필터' ? 'active' : ''}`} onClick={() => handleFilterClick('필터')}>
                   필터
                </Button>
 
-               <Button className="filter-btn" onClick={handlePriceSort}>
+               <Button className="filter-btn_rental" onClick={handlePriceSort}>
                   가격순{getSortIndicator('oneDayPrice')}
                </Button>
 
-               <Button className="filter-btn" onClick={handleDateSort}>
+               <Button className="filter-btn_rental" onClick={handleDateSort}>
                   날짜순{getSortIndicator('createdAt')}
                </Button>
 
                <div className="search-actions">
-                  <Button className="search-btn" startIcon={<Add />} onClick={() => navigate('/rental/create')}>
+                  <Button
+                     className="search-btn_rental"
+                     startIcon={<Add />}
+                     onClick={() => navigate('/rental/create')}
+                     style={{ background: 'rgba(255, 209, 186, 1)', color: 'rgb(8, 8, 8)', borderRadius: '16px', padding: '6px 20px', fontSize: '12px', fontWeight: '600', border: 'none' }}
+                     onMouseEnter={(e) => {
+                        e.target.style.background = '#00b894'
+                        e.target.style.transform = 'translateY(-1px)'
+                     }}
+                     onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(255, 209, 186, 1)'
+                        e.target.style.transform = 'translateY(0)'
+                     }}
+                  >
                      렌탈 상품등록
                   </Button>
                </div>
