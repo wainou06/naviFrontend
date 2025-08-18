@@ -121,7 +121,6 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
       setError('')
 
       try {
-         console.log('📝 등록할 데이터:', formData)
          await onCreateSubmit(formData)
          // navigate('/rental/list')
       } catch (error) {

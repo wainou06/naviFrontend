@@ -34,9 +34,7 @@ export const createRentalItem = createAsyncThunk('rental/createRentalItem', asyn
 // 렌탈상품 수정
 export const updateRentalItem = createAsyncThunk('rental/updateRentalItem', async ({ id, rentalItemData }, { rejectWithValue }) => {
    try {
-      console.log('Redux thunk - 수정 요청:', { id, rentalItemData })
       const response = await rentalItemsAPI.updateRentalItem(id, rentalItemData)
-      console.log('Redux thunk - 서버 응답:', response.data)
       return response.data
    } catch (error) {
       console.error('Redux thunk - 에러:', error)
@@ -195,8 +193,6 @@ const rentalSlice = createSlice({
 
          // 서버 응답에서 실제 데이터 추출
          const updatedItem = action.payload.data || action.payload
-
-         console.log('Redux fulfilled - 받은 데이터:', updatedItem)
 
          if (updatedItem && updatedItem.id) {
             // 리스트에서 해당 아이템 찾아서 업데이트

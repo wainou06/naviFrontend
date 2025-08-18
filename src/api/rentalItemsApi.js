@@ -58,10 +58,7 @@ export const rentalItemsAPI = {
    // 렌탈상품 수정 (이미지 포함)
    updateRentalItem: async (id, rentalItemData) => {
       try {
-         // FormData가 이미 전달된 경우 그대로 서버에 전송
          if (rentalItemData instanceof FormData) {
-            console.log('FormData로 받음 - 그대로 전송')
-
             const response = await naviApi.put(`/rental/edit/${id}`, rentalItemData, {
                headers: {
                   'Content-Type': 'multipart/form-data',
@@ -70,8 +67,6 @@ export const rentalItemsAPI = {
             return response.data
          }
 
-         // 일반 객체로 받은 경우 FormData로 변환 (기존 방식 유지)
-         console.log('일반 객체로 받음 - FormData로 변환')
          const formData = new FormData()
 
          if (rentalItemData.rentalItemNm !== undefined) formData.append('rentalItemNm', rentalItemData.rentalItemNm)
