@@ -14,11 +14,14 @@ import { deleteUserInfoThunk, getUserInfoThunk, suspendUserInfoThunk } from '../
 import { Box, Pagination } from '@mui/material'
 import { useState } from 'react'
 import { dayLeft, datePass } from '../../utils/dateSet'
+import { ModalPrompt, ModalAlert, ModalConfirm } from './ManagerModal'
+import { openModal, showModalThunk } from '../../features/modalSlice'
 
 function ManagerUser() {
    const dispatch = useDispatch()
    const info = useSelector((state) => state.info.userInfo.users)
    const pageInfo = useSelector((state) => state.info.userInfo.pagination)
+   const modal = useSelector((state) => state.modal)
    const [rows, setRows] = useState([])
    const [pagination, setPagination] = useState(1)
 
@@ -65,12 +68,13 @@ function ManagerUser() {
       }
    }
 
-   const onClickEdit = (row) => {
+   const onClickEdit = async (row) => {
       const id = row.id
-      let day = prompt('정지 일 수의 증감값을 입력해주세요')
+      let day = await dispatch(showModalThunk({ type: 'prompt', placeholder: '정지 일 수의 증갑값을 입력해주세요' }))
+      day = day.payload
 
       if (isNaN(day)) {
-         alert('숫자가 아닙니다')
+         dispatch(showModalThunk({ type: 'alert', placeholder: '숫자가 아닙니다' }))
          return
       } else if (!day) {
          return
@@ -78,7 +82,8 @@ function ManagerUser() {
          day = dayLeft(row.suspend) * -1
       }
 
-      if (confirm(`정말로 수정하시겠습니까? ${row.nick}, ${Number(day)}일`)) {
+      const confirm = await dispatch(showModalThunk({ type: 'confirm', placeholder: `정말로 수정하시겠습니까? ${row.nick}, ${Number(day)}일` }))
+      if (confirm.payload) {
          const date = new Date(row.suspend)
          date.setDate(date.getDate() + Number(day))
          dispatch(suspendUserInfoThunk({ id, date })).then(() => {
@@ -87,9 +92,11 @@ function ManagerUser() {
       }
    }
 
-   const onClickDelete = (row) => {
-      if (confirm(`정말로 삭제하시겠습니까? ${row.nick}`)) {
-         if (prompt('사용자 닉네임을 입력해주세요') === row.nick) {
+   const onClickDelete = async (row) => {
+      const confirm = await dispatch(showModalThunk({ type: 'confirm', placeholder: `정말로 삭제하시겠습니까? ${row.nick}` }))
+      if (confirm.payload) {
+         const prompt = await dispatch(showModalThunk({ type: 'prompt', placeholder: '사용자 닉네임을 입력해주세요' }))
+         if (prompt.payload === row.nick) {
             dispatch(deleteUserInfoThunk(row.id)).then(() => {
                dispatch(getUserInfoThunk(pagination))
             })
@@ -165,7 +172,7 @@ function ManagerUser() {
                   ) : (
                      <>
                         {column.dataKey === 'userDelete' ? (
-                           <a style={{ fontSize: '13px' }} onClick={() => onClickDelete(row)} className="managerUserLink managerUserButton">
+                           <a onClick={() => onClickDelete(row)} className="managerUserLink managerUserButton">
                               delete
                            </a>
                         ) : (
@@ -194,6 +201,9 @@ function ManagerUser() {
          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
             <Pagination onChange={onChangePage} count={pageInfo?.pageCount || 1} page={pagination} color="primary" />
          </Box>
+         {modal.type === 'confirm' ? <ModalConfirm /> : <></>}
+         {modal.type === 'alert' ? <ModalAlert /> : <></>}
+         {modal.type === 'prompt' ? <ModalPrompt /> : <></>}
       </>
    )
 }
