@@ -33,7 +33,6 @@ const ChatForm = ({ chatId, currentUserId }) => {
       socketRef.current = socket
 
       socket.on('connect', () => {
-         console.log('Socket connected:', socket.id)
          socket.emit('joinChat', chatId) // 🔑 방 입장
       })
 
@@ -41,8 +40,6 @@ const ChatForm = ({ chatId, currentUserId }) => {
          setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]))
          dispatch(addLocalMessage({ chatId, message: msg }))
       })
-
-      socket.on('disconnect', () => console.log('Socket disconnected'))
 
       return () => socket.disconnect()
    }, [chatId, currentUserId, dispatch])
