@@ -101,7 +101,7 @@ const ItemCreate = ({ onCreateSubmit }) => {
       }
       try {
          await onCreateSubmit(formData)
-         alert('상품이 성공적으로 등록되었습니다.')
+         // alert 제거됨
       } catch (error) {
          console.error('상품 등록 실패:', error)
       }
