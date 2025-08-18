@@ -27,6 +27,28 @@ const MyRental = () => {
       })
    }, [myRentalItems, user?.id])
 
+   const getStatusText = (status, quantity = 0) => {
+      switch (status) {
+         case 'Y':
+            return quantity > 0 ? '렌탈가능' : '렌탈중'
+         case 'N':
+            return '렌탈중'
+         default:
+            return '알 수 없음'
+      }
+   }
+
+   const getStatusClass = (status, quantity = 0) => {
+      switch (status) {
+         case 'Y':
+            return quantity > 0 ? 'status-available' : 'status-sold'
+         case 'N':
+            return 'status-unavailable'
+         default:
+            return 'status-unknown'
+      }
+   }
+
    const loading = myRentalItemsLoading
    const error = myRentalItemsError
 
@@ -79,7 +101,7 @@ const MyRental = () => {
                   >
                      {/* 렌탈 상태 라벨 */}
                      <Box
-                        className="my-items-section product-status-label"
+                        className={`my-items-section product-status-label ${getStatusClass(item?.rentalStatus, item?.quantity)}`}
                         sx={{
                            position: 'absolute !important',
                            top: '8px !important',
@@ -89,11 +111,11 @@ const MyRental = () => {
                            fontWeight: 600,
                            padding: '7px 10px !important',
                            borderRadius: '10px !important',
-                           backgroundColor: item.rentalStatus === 'Y' ? 'rgba(196, 240, 197, 1)' : 'rgba(240, 144, 127, 1)',
+                           backgroundColor: item.rentalStatus === 'Y' && item?.quantity > 0 ? 'rgba(196, 240, 197, 1)' : 'rgba(240, 144, 127, 1)',
                            color: '#2d3436',
                         }}
                      >
-                        {item.rentalStatus === 'Y' ? '렌탈가능' : '렌탈불가'}
+                        {getStatusText(item?.rentalStatus, item?.quantity)}
                      </Box>
                      {/* 대표이미지 */}
                      <CardMedia
@@ -147,7 +169,7 @@ const MyRental = () => {
                            일일 {item.oneDayPrice?.toLocaleString()}원
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                           상태: {item.rentalStatus === 'Y' ? '렌탈가능' : '렌탈불가'}
+                           상태: {getStatusText(item?.rentalStatus, item?.quantity)}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                            {item.updatedAt ? new Date(item.updatedAt).toLocaleString() : '정보 없음'}
