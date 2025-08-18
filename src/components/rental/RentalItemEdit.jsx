@@ -149,6 +149,46 @@ const RentalItemEdit = ({ onUpdateSubmit }) => {
       return Object.keys(errors).length === 0
    }
 
+   // const handleSubmit = async (e) => {
+   //    e.preventDefault()
+   //    if (!validateForm()) return
+
+   //    setLoading(true)
+   //    setError('')
+
+   //    try {
+   //       const formDataToSend = new FormData()
+
+   //       formDataToSend.append('rentalItemNm', formData.rentalItemNm)
+   //       formDataToSend.append('oneDayPrice', formData.oneDayPrice)
+   //       formDataToSend.append('quantity', formData.quantity)
+   //       formDataToSend.append('rentalDetail', formData.rentalDetail)
+   //       formDataToSend.append('rentalStatus', formData.rentalStatus)
+   //       formDataToSend.append('keywords', formData.keywords.join(','))
+   //       formDataToSend.append('deleteImages', JSON.stringify(deleteImages))
+
+   //       // 새로 추가된 이미지만 FormData에 추가
+   //       const newImagesToUpload = imageList.filter((img) => !img.isExisting).map((img) => img.file)
+   //       if (newImagesToUpload.length > 0) {
+   //          newImagesToUpload.forEach((file) => {
+   //             formDataToSend.append('img', file)
+   //          })
+   //       }
+
+   //       if (onUpdateSubmit) {
+   //          await onUpdateSubmit(formDataToSend)
+   //       } else {
+   //          await dispatch(updateRentalItem({ id, rentalItemData: formDataToSend })).unwrap()
+   //          await dispatch(fetchRentalItem(id))
+   //          navigate('/rental/list')
+   //       }
+   //    } catch (error) {
+   //       setError('렌탈 상품 수정에 실패했습니다.')
+   //       console.error('수정 오류:', error)
+   //    } finally {
+   //       setLoading(false)
+   //    }
+   // }
    const handleSubmit = async (e) => {
       e.preventDefault()
       if (!validateForm()) return
@@ -179,6 +219,8 @@ const RentalItemEdit = ({ onUpdateSubmit }) => {
             await onUpdateSubmit(formDataToSend)
          } else {
             await dispatch(updateRentalItem({ id, rentalItemData: formDataToSend })).unwrap()
+            await dispatch(fetchRentalItem(id)).unwrap()
+
             navigate('/rental/list')
          }
       } catch (error) {

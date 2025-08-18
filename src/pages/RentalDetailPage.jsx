@@ -14,9 +14,6 @@ function RentalDetailPage() {
       if (id) {
          dispatch(fetchRentalItem(id))
             .unwrap()
-            .then((result) => {
-               console.log('성공:', result)
-            })
             .catch((error) => {
                console.error('렌탈상품 조회 에러:', error)
             })
