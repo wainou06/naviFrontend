@@ -23,11 +23,11 @@ function Login() {
    const { loading, error } = useSelector((state) => state.auth)
 
    const [rememberMe, setRememberMe] = useState(false)
-   const [modalState, setModalState] = useState('') // '', 'choice', 'email', 'phone', 'tempPassword'
+   const [modalState, setModalState] = useState('')
    const [emailInput, setEmailInput] = useState('')
    const [phoneInput, setPhoneInput] = useState('')
    const [tempPasswordMsg, setTempPasswordMsg] = useState('')
-   const [errors, setErrors] = useState({}) // 에러객체 추가
+   const [errors, setErrors] = useState({})
 
    const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
