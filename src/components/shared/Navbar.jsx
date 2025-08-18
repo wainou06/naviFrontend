@@ -61,7 +61,6 @@ function Navbar({ isAuthenticated, user, onSearch }) {
                sellerId: 3,
             })
          ).unwrap()
-         // 팝업 열기
 
          setNewChatId(chatRoom.id)
          setIsChatOpen(true)

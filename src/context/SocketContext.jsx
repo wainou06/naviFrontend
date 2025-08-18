@@ -13,8 +13,6 @@ export const SocketProvider = ({ userId, children }) => {
       if (!socketRef.current) {
          socketRef.current = io(SOCKET_SERVER_URL)
          socketRef.current.emit('user_connected', userId)
-         socketRef.current.on('connect', () => console.log('Socket connected:', socketRef.current.id))
-         socketRef.current.on('disconnect', () => console.log('Socket disconnected'))
       }
 
       return () => {
