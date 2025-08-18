@@ -376,46 +376,33 @@ const RentalDetail = ({ onDeleteSubmit }) => {
 
          {/* 삭제 확인 Modal */}
          <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-            <div style={{ padding: '20px', textAlign: 'center' }}>
-               <h3 style={{ marginBottom: '20px' }}>{isManager && !isOwner ? '관리자 권한으로 삭제' : '삭제 확인'}</h3>
-               <p style={{ marginBottom: '30px', lineHeight: '1.5' }}>{isManager && !isOwner ? '다른 사용자의 렌탈 상품을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.' : '정말로 이 렌탈 상품을 삭제하시겠습니까?'}</p>
-               <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                  <button
-                     onClick={handleConfirmDelete}
-                     style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#ff4444',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                     }}
-                  >
-                     삭제
-                  </button>
-                  <button
-                     onClick={() => setShowDeleteModal(false)}
-                     style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#f5f5f5',
-                        border: '1px solid #ddd',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                     }}
-                  >
-                     취소
-                  </button>
-               </div>
+            <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600' }}>
+               {isManager && !isOwner ? '관리자 권한으로 삭제' : '삭제 확인'}
+            </div>
+            <div className="popup-message" style={{ height: 'auto', minHeight: '88px', padding: '20px', whiteSpace: 'pre-line', lineHeight: '1.5' }}>
+               {isManager && !isOwner ? '다른 사용자의 렌탈 상품을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.' : '정말로 이 렌탈 상품을 삭제하시겠습니까?'}
+            </div>
+            <div style={{ display: 'flex', gap: '14px', width: '690px' }}>
+               <button className="popup-btn" onClick={handleConfirmDelete} style={{ backgroundColor: '#ff4444', color: 'white' }}>
+                  삭제
+               </button>
+               <button className="popup-btn" onClick={() => setShowDeleteModal(false)} style={{ backgroundColor: '#f5f5f5', border: '1px solid #ddd', color: 'black' }}>
+                  취소
+               </button>
             </div>
          </Modal>
 
          {/* 성공 알림 Modal */}
          <Modal isOpen={showSuccessModal} onClose={handleSuccessModalClose}>
-            <div style={{ padding: '20px', textAlign: 'center' }}>
-               <h3>렌탈 주문 완료</h3>
-               <p style={{ marginBottom: '30px', lineHeight: '1.5' }}>렌탈 주문이 성공적으로 생성되었습니다!</p>
-               <button>확인</button>
+            <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600' }}>
+               렌탈 주문 완료
             </div>
+            <div className="popup-message" style={{ height: 'auto', minHeight: '88px', padding: '20px', lineHeight: '1.5' }}>
+               렌탈 주문이 성공적으로 생성되었습니다!
+            </div>
+            <button className="popup-btn" onClick={handleSuccessModalClose} style={{ backgroundColor: '#f5f5f5', border: '1px solid #ddd', color: 'black', width: '200px' }}>
+               확인
+            </button>
          </Modal>
       </div>
    )
