@@ -6,6 +6,7 @@ export const showModalThunk = createAsyncThunk('modal/showModal', async ({ type,
    try {
       const input = await new Promise((resolve) => {
          modalPromiseResolve = resolve
+         if (!type) type = 'alert'
          dispatch(openModal({ type, placeholder }))
       })
 

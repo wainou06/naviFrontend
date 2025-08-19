@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteKeywordThunk, getKeywordThunk, postKeywordThunk, putKeywordThunk } from '../../features/keywordSlice'
 import '../../styles/managerKeywords.css'
+import { showModalThunk } from '../../features/modalSlice'
+import { ModalPrompt, ModalAlert, ModalConfirm } from './ManagerModal'
 
 const ManagerKeywords = () => {
    const [keyword, setKeyword] = useState('')
    const [selected, setSelected] = useState('')
    const dispatch = useDispatch()
    const { keywords, loading } = useSelector((state) => state.keywords)
+   const modal = useSelector((state) => state.modal)
 
    useEffect(() => {
       dispatch(getKeywordThunk())
@@ -15,7 +18,7 @@ const ManagerKeywords = () => {
 
    const onClickAdd = () => {
       if (!keyword.trim()) {
-         alert('키워드가 비어있어요.')
+         dispatch(showModalThunk({ placeholder: '키워드가 비어있어요' }))
          return
       }
 
@@ -25,7 +28,7 @@ const ManagerKeywords = () => {
             dispatch(getKeywordThunk())
          })
          .catch((error) => {
-            alert(`키워드 등록 실패: ${error}`)
+            dispatch(showModalThunk({ placeholder: `키워드 등록 실패: ${error}` }))
          })
       setKeyword('')
    }
@@ -45,7 +48,7 @@ const ManagerKeywords = () => {
 
    const onClickEdit = () => {
       if (!keyword.trim()) {
-         alert('비어있어요')
+         dispatch(showModalThunk({ placeholder: '비어있어요' }))
          return
       }
       const id = selected
@@ -59,7 +62,7 @@ const ManagerKeywords = () => {
             setSelected('')
          })
          .catch((error) => {
-            alert(`키워드 수정 실패: ${error}`)
+            dispatch(showModalThunk({ placeholder: `키워드 수정 실패: ${error}` }))
          })
    }
 
@@ -74,7 +77,7 @@ const ManagerKeywords = () => {
             setSelected('')
          })
          .catch((error) => {
-            alert('키워드 수정 실패: ', error)
+            dispatch(showModalThunk({ placeholder: `키워드 수정 실패: ${error}` }))
          })
    }
 
@@ -129,6 +132,9 @@ const ManagerKeywords = () => {
                      </button>
                   </>
                )}
+               {modal.type === 'confirm' ? <ModalConfirm></ModalConfirm> : <></>}
+               {modal.type === 'alert' ? <ModalAlert></ModalAlert> : <></>}
+               {modal.type === 'prompt' ? <ModalPrompt></ModalPrompt> : <></>}
             </>
          ) : (
             <>로딩중</>

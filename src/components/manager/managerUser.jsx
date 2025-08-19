@@ -15,7 +15,7 @@ import { Box, Pagination } from '@mui/material'
 import { useState } from 'react'
 import { dayLeft, datePass } from '../../utils/dateSet'
 import { ModalPrompt, ModalAlert, ModalConfirm } from './ManagerModal'
-import { openModal, showModalThunk } from '../../features/modalSlice'
+import { showModalThunk } from '../../features/modalSlice'
 
 function ManagerUser() {
    const dispatch = useDispatch()
@@ -48,18 +48,21 @@ function ManagerUser() {
       setPagination(value)
    }
 
-   const onClickStop = (row) => {
+   const onClickStop = async (row) => {
       const id = row.id
-      const day = prompt('정지 일 수를 입력해주세요')
+      let day = await dispatch(showModalThunk({ type: 'prompt', placeholder: '정지 일 수를 입력해주세요' }))
+      day = day.payload
 
       if (isNaN(day)) {
-         alert('숫자가 아니에요')
+         dispatch(showModalThunk({ type: 'alert', placeholder: '숫자가 아니에요' }))
          return
       } else if (!day) {
          return
       }
 
-      if (confirm(`정말로 정지하시겠습니까? ${row.nick}, ${day}일`)) {
+      const confirm = await dispatch(showModalThunk({ type: 'confirm', placeholder: `정말로 정지하시겠습니까? ${row.nick}, ${day}일` }))
+
+      if (confirm.payload) {
          const date = new Date()
          date.setDate(date.getDate() + Number(day))
          dispatch(suspendUserInfoThunk({ id, date })).then(() => {
