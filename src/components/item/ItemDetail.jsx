@@ -8,6 +8,8 @@ import Popup from '../chat/Popup'
 import ChatRoomList from '../chat/ChatRoomList'
 import Modal from '../shared/Modal'
 import { getBuyerRatingThunk } from '../../features/ratingSlice'
+import { ModalAlert, ModalRating } from '../manager/ManagerModal'
+import { showModalThunk } from '../../features/modalSlice'
 
 const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
    const dispatch = useDispatch()
@@ -59,6 +61,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
 
    let isBuyer = false
    if (rating.buyer.priceProposal && user) isBuyer = true
+   const modal = useSelector((state) => state.modal)
 
    const handleDelete = () => {
       let confirmMessage = '정말로 이 아이템을 삭제하시겠습니까?'
@@ -339,7 +342,6 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
             <>
                <div className="price-proposals-section">
                   <h2>별점 남기기 Rating</h2>
-                  {isManager && !isOwner && <p className="manager-notice">관리자 권한으로 조회 중입니다.</p>}
 
                   <div className="proposals-list">
                      {proposals.filter((p) => p.status !== 'rejected').length === 0 ? (
@@ -348,7 +350,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                         proposals
                            .filter((p) => p.status !== 'rejected')
                            .map((proposal) => (
-                              <div key={proposal.id} className="proposal-card">
+                              <div onClick={() => dispatch(showModalThunk({ type: 'rating' }))} key={proposal.id} className="proposal-card" style={{ cursor: 'pointer' }}>
                                  <div className="proposal-price">{proposal.price ? proposal.price.toLocaleString() : '-'}원</div>
 
                                  <div className="proposal-user">
@@ -446,6 +448,8 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                확인
             </button>
          </Modal>
+         {modal.type === 'alert' && <ModalAlert></ModalAlert>}
+         {modal.type === 'rating' && <ModalRating></ModalRating>}
       </div>
    )
 }
