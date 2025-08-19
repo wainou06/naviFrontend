@@ -8,8 +8,9 @@ import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 
 import '../../styles/userParts.css'
+
 import MyProfile from '../user/MyProfile'
-import MySecret from '../user/mySecret'
+import MySecret from '../user/MySecret'
 import MyItems from '../my/MyItems'
 import MyRental from '../my/MyRental'
 import MyDeal from '../my/Mydeal'
@@ -82,17 +83,17 @@ export default function UserParts({ user }) {
                   label={
                      <div className="profile">
                         <img src="/images/로그아웃상태.png" alt="프로필" />
-                        <p style={{ fontSize: '40px', margin: '20px 0px 10px' }}>{user?.nick}님</p>
-                        <p style={{ fontSize: '24px', color: '#757575', fontFamily: 'Arial, sans-serif', textTransform: 'none' }}>{user?.email}</p>
+                        <p className='nick'>{user?.nick}님</p>
+                        <p className='email'>{user?.email}</p>
                      </div>
                   }
                   {...a11yProps(0)}
                />
-               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>내 프로필</div>} {...a11yProps(1)} />
-               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>보안설정</div>} {...a11yProps(2)} />
-               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>나의 상품</div>} {...a11yProps(3)} />
-               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>렌탈 내역</div>} {...a11yProps(4)} />
-               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>거래 내역</div>} {...a11yProps(5)} />
+               <Tab label={<div className='list'>내 프로필</div>} {...a11yProps(1)} />
+               <Tab label={<div className='list'>보안설정</div>} {...a11yProps(2)} />
+               <Tab label={<div className='list'>나의 상품</div>} {...a11yProps(3)} />
+               <Tab label={<div className='list'>렌탈 내역</div>} {...a11yProps(4)} />
+               <Tab label={<div className='list'>거래 내역</div>} {...a11yProps(5)} />
             </Tabs>
 
             <TabPanel value={value} index={0} className="form">

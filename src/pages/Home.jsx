@@ -30,31 +30,29 @@ function Home({ searchTerm }) {
                </SwiperSlide>
             </Swiper>
          </div>
-         <div className="togo">
-            <Link to="/items/list">
-               <div style={{ backgroundColor: '#AEE9F5', color: '#016CFF' }}>
-                  <img src="/images/상품.png" alt="상품 리스트 페이지로" />
+         <div className="homesession">
+            <div className="togo">
+               <Link to="/items/list">
+                  <div className="navi">나누GO, 비우Go! &gt;</div>
+               </Link>
+               <div>
+                  <img src="/images/S&R.png" alt="나비" />
                </div>
-            </Link>
-            <div>
-               <img src="/images/S&R.png" alt="" />
+               <Link to="/rental/list">
+                  <div className="rentalitem">물건 렌탈하러 가기 &gt;</div>
+               </Link>
             </div>
-            <Link to="/rental/list">
-               <div style={{ backgroundColor: '#FFD1BA', color: '#AA3900' }}>
-                  <img src="/images/렌탈.png" alt="렌탈 리스트 페이지로" />
+            <div className="itemsession">
+               <h1>나누는 중…</h1>
+               <div className="item">
+                  <ItemSellList searchTerm={searchTerm} />
                </div>
-            </Link>
-         </div>
-         <div>
-            <h1 style={{ fontFamily: 'Ghanachocolate, sans-serif' }}>나누는 중…</h1>
-            <div className="item">
-               <ItemSellList searchTerm={searchTerm} />
             </div>
-         </div>
-         <div>
-            <h1 style={{ fontFamily: 'Ghanachocolate, sans-serif' }}>빌려주는 중…</h1>
-            <div className="rental">
-               <RentalSellList searchTerm={searchTerm} />
+            <div className="rentalsession">
+               <h1>빌려주는 중…</h1>
+               <div className="rental">
+                  <RentalSellList searchTerm={searchTerm} />
+               </div>
             </div>
          </div>
       </div>

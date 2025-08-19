@@ -318,11 +318,11 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                                  {/* 소유자만 제안 상태 변경 가능 */}
                                  {proposal.status === 'pending' && isOwner && (
                                     <>
-                                       <button onClick={() => handleProposalStatusChange(proposal.id, 'accepted', proposal.userId, user.id)} className="btn-accept">
-                                          수락
-                                       </button>
                                        <button onClick={() => handleProposalStatusChange(proposal.id, 'rejected')} className="btn-reject">
                                           거절
+                                       </button>
+                                       <button onClick={() => handleProposalStatusChange(proposal.id, 'accepted', proposal.userId, user.id)} className="btn-accept">
+                                          수락
                                        </button>
                                     </>
                                  )}

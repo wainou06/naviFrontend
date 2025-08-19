@@ -1,3 +1,11 @@
+@font-face {
+   font-family: 'Ghanachocolate';
+   src: url('/fonts/ghanachoco.woff2') format('woff2'), url('/fonts/ghanachoco.woff') format('woff');
+   font-weight: normal;
+   font-style: normal;
+   font-display: swap;
+}
+
 * {
    box-sizing: border-box;
    margin: 0;
@@ -88,6 +96,11 @@ nav {
 
 /* 메인 */
 
+.homesession {
+   margin: 0 auto;
+   width: 1620px;
+}
+
 div.main .togo {
    display: flex;
 }
@@ -101,6 +114,21 @@ div.main .togo {
    text-align: center;
    line-height: 147px;
    border-radius: 70px;
+}
+
+.togo .navi {
+   background-color: #aee9f5;
+   color: #016cff;
+}
+
+.togo .rentalitem {
+   background-color: #ffd1ba;
+   color: #aa3900;
+}
+
+.itemsession h1,
+.rentalsession h1 {
+   font-family: 'Ghanachocolate', sans-serif;
 }
 
 .item {
