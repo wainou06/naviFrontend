@@ -37,7 +37,13 @@ const MyDeal = () => {
    // 구매한 아이템 (내가 보낸 제안이 수락된 것들)
    const purchasedItems = useMemo(() => {
       if (!Array.isArray(myProposals)) return []
-      return myProposals.filter((proposal) => proposal.status === 'accepted')
+
+      return myProposals.filter((proposal) => {
+         if (proposal.status !== 'accepted') return false
+         if (!proposal.item || !proposal.item.itemNm) return false
+
+         return true
+      })
    }, [myProposals])
 
    const handleTabChange = (event, newValue) => {
