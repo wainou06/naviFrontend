@@ -137,10 +137,17 @@ function Navbar({ isAuthenticated, user, onSearch }) {
                   </form>
 
                   <ul className="nav_menu">
-                     <li onClick={handleCustomerServiceClick}>
-                        <img src="/images/고객센터.png" alt="고객센터" height="50" />
-                        <span>고객센터</span>
-                     </li>
+                     {isAuthenticated ? (
+                        <li onClick={handleCustomerServiceClick}>
+                           <img src="/images/고객센터.png" alt="고객센터" height="50" />
+                           <span>고객센터</span>
+                        </li>
+                     ) : (
+                        <li>
+                           <img src="/images/고객센터.png" alt="고객센터" height="50" />
+                           <span>환영합니다</span>
+                        </li>
+                     )}
 
                      <li>
                         {isAuthenticated ? (
