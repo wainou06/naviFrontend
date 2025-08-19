@@ -3,7 +3,6 @@ import { getBuyerRating, postRating } from '../api/ratingApi'
 
 export const getBuyerRatingThunk = createAsyncThunk('rating/getBuyer', async (data, { rejectedWithValue }) => {
    try {
-      console.log(data)
       const response = await getBuyerRating(data)
       return response.data
    } catch (error) {

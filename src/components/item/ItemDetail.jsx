@@ -54,7 +54,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
    const isOwner = user && localItem && user.id === localItem.userId
    const isManager = user && user.access === 'MANAGER'
    useEffect(() => {
-      dispatch(getBuyerRatingThunk({ userId: user?.id, itemId: localItem?.id }))
+      if (user?.id && localItem?.id) dispatch(getBuyerRatingThunk({ userId: user?.id, itemId: localItem?.id }))
    }, [dispatch, user?.id, localItem?.id])
 
    const rating = useSelector((state) => state.rating)
