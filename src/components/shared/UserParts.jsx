@@ -9,7 +9,7 @@ import Box from '@mui/material/Box'
 
 import '../../styles/userParts.css'
 import MyProfile from '../user/MyProfile'
-import MySecret from '../user/mySecret'
+import MySecret from '../user/MySecret'
 import MyItems from '../my/MyItems'
 import MyRental from '../my/MyRental'
 import MyDeal from '../my/Mydeal'

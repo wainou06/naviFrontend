@@ -229,6 +229,32 @@
    transform: none;
 }
 
+/* 가격 제안 */
+.proposal-user {
+   margin-bottom: 15px;
+}
+
+.proposal-actions .btn-reject {
+   border: none;
+   border-radius: 15px;
+   background-color: #c82333;
+   padding: 15px;
+   margin-right: 10px;
+   font-size: 15px;
+   cursor: pointer;
+   color: white;
+}
+
+.proposal-actions .btn-accept {
+   border: none;
+   border-radius: 15px;
+   background-color: #28a745;
+   padding: 15px;
+   font-size: 15px;
+   cursor: pointer;
+   color: white;
+}
+
 /* 모달 */
 .modal-overlay {
    position: fixed;

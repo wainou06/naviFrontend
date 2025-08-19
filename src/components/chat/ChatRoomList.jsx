@@ -25,15 +25,15 @@ const ChatRoomList = ({ initialSelectedChatId = null }) => {
       if (!selectedChatId && chats.length > 0) setSelectedChatId(chats[0].id)
    }, [chats, selectedChatId])
 
-   if (!user) return <div style={{ padding: 20, textAlign: 'center', color: '#555' }}>로그인이 필요합니다.</div>
-   if (chats.length === 0) return <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.2rem', color: '#999', fontStyle: 'italic', height: '100%' }}>채팅방이 없습니다.</div>
+   if (!user) return <div className="loginchat">로그인이 필요합니다.</div>
+   if (chats.length === 0) return <div className="nonechat">채팅방이 없습니다.</div>
 
    return (
-      <div style={{ display: 'flex', height: '600px', border: '1px solid #ddd', borderRadius: '6px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+      <div className="mychat">
          {/* 채팅방 리스트 */}
-         <div style={{ width: '250px', borderRight: '1px solid #ddd', overflowY: 'auto', backgroundColor: '#fafafa' }}>
-            <h3 style={{ padding: '12px', borderBottom: '1px solid #ddd', fontWeight: '600', backgroundColor: '#f5f5f5', margin: 0 }}>내 채팅방</h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+         <div className="chatlist">
+            <h3>내 채팅방</h3>
+            <ul>
                {chats.map((chat) => {
                   const participants = chat.participants || []
                   const isSelected = chat.id === selectedChatId
@@ -41,8 +41,8 @@ const ChatRoomList = ({ initialSelectedChatId = null }) => {
                      <li
                         key={chat.id}
                         onClick={() => setSelectedChatId(chat.id)}
-                        style={{ padding: '12px', cursor: 'pointer', backgroundColor: isSelected ? '#e5e7eb' : 'transparent', fontWeight: isSelected ? '700' : 'normal', transition: 'background-color 0.2s' }}
-                        onMouseEnter={(e) => !isSelected && (e.currentTarget.style.backgroundColor = '#f3f4f6')}
+                        style={{ backgroundColor: isSelected ? '#f0907f' : 'transparent', fontWeight: isSelected ? '700' : 'normal' }}
+                        onMouseEnter={(e) => !isSelected && (e.currentTarget.style.backgroundColor = '#fff9f6')}
                         onMouseLeave={(e) => !isSelected && (e.currentTarget.style.backgroundColor = 'transparent')}
                      >
                         {participants
@@ -56,7 +56,7 @@ const ChatRoomList = ({ initialSelectedChatId = null }) => {
          </div>
 
          {/* 채팅 메시지 영역 */}
-         <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>{selectedChatId ? <ChatForm chatId={selectedChatId} currentUserId={user.id} /> : <div style={{ margin: 'auto', color: '#6b7280' }}>채팅방을 선택하세요.</div>}</div>
+         <div className='chatform'>{selectedChatId ? <ChatForm chatId={selectedChatId} currentUserId={user.id} /> : <div className='choosechat'>채팅방을 선택하세요.</div>}</div>
       </div>
    )
 }
