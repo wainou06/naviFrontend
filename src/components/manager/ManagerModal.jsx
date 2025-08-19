@@ -103,7 +103,6 @@ export const ModalPrompt = () => {
 
 export const ModalRating = () => {
    const dispatch = useDispatch()
-   const modal = useSelector((state) => state.modal)
    const [input, setInput] = useState('')
 
    const onClickConfirm = () => {
@@ -114,6 +113,7 @@ export const ModalRating = () => {
       dispatch(getInput(null))
       dispatch(closeModal())
    }
+   const onClickStar = () => {}
 
    return (
       <div className="overlay">
@@ -122,7 +122,25 @@ export const ModalRating = () => {
                <CloseIcon />
             </button>
             <div className="popup-content">
-               <input onChange={(e) => setInput(e.target.value)} value={input} className="popup-message" placeholder={modal.placeholder}></input>
+               <p className="popup-message">별점 남기기</p>
+               <ul className="popup-message">
+                  <li className="popup-message-list" onClick={onClickStar}>
+                     ✨
+                  </li>
+                  <li className="popup-message-list" onClick={onClickStar}>
+                     ✨
+                  </li>
+                  <li className="popup-message-list" onClick={onClickStar}>
+                     ✨
+                  </li>
+                  <li className="popup-message-list" onClick={onClickStar}>
+                     ✨
+                  </li>
+                  <li className="popup-message-list" onClick={onClickStar}>
+                     ✨
+                  </li>
+               </ul>
+               <input className="popup-message-long" placeholder="평가를 남길거에요"></input>
                <p onClick={onClickConfirm} style={{ cursor: 'pointer' }} className="popup-message">
                   {'확인>'}
                </p>
