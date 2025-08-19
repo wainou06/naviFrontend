@@ -65,7 +65,9 @@ export default function ManagerParts({ user }) {
 
    return (
       <>
-         <div className="linktab">
+         {user?.access === 'MANAGER' ? (
+            <>
+               <div className="linktab">
             <Tabs
                orientation="vertical"
                variant="scrollable"
@@ -78,7 +80,7 @@ export default function ManagerParts({ user }) {
                   },
                }}
             >
-               <Tab
+                     <Tab
                   disabled
                   label={
                      <div className="profile">
@@ -95,27 +97,31 @@ export default function ManagerParts({ user }) {
                <Tab label={<div className='list'>통계</div>} {...a11yProps(4)} />
             </Tabs>
 
-            <TabPanel value={value} index={0} className="form">
-               비활성화 상태
-            </TabPanel>
-            <TabPanel value={value} index={1} className="form itemform">
-               <h1>상품관리</h1>
-               <ItemSellList columns={2} cardWidth="420px" cardHeight="480px" imgHeight="320px" />
-            </TabPanel>
+                  <TabPanel value={value} index={0} className="form">
+                     비활성화 상태
+                  </TabPanel>
+                  <TabPanel value={value} index={1} className="form itemform">
+                     <h1>상품관리</h1>
+                     <ItemSellList columns={2} cardWidth="420px" cardHeight="480px" imgHeight="320px" />
+                  </TabPanel>
 
-            <TabPanel value={value} index={2} className="form">
-               <h1>키워드관리</h1>
-               <ManagerKeywords />
-            </TabPanel>
-            <TabPanel value={value} index={3} className="form">
-               <h1>사용자관리</h1>
-               <ManagerUser />
-            </TabPanel>
-            <TabPanel value={value} index={4} className="form">
-               <h1>통계</h1>
-               <ManagerUserRating />
-            </TabPanel>
-         </div>
+                  <TabPanel value={value} index={2} className="form">
+                     <h1>키워드관리</h1>
+                     <ManagerKeywords />
+                  </TabPanel>
+                  <TabPanel value={value} index={3} className="form">
+                     <h1>사용자관리</h1>
+                     <ManagerUser />
+                  </TabPanel>
+                  <TabPanel value={value} index={4} className="form">
+                     <h1>통계</h1>
+                     <ManagerUserRating />
+                  </TabPanel>
+               </div>
+            </>
+         ) : (
+            <h1>관리자가 아니에요</h1>
+         )}
       </>
    )
 }

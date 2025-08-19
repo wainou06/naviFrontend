@@ -7,6 +7,7 @@ import '../../styles/itemDetail.css'
 import Popup from '../chat/Popup'
 import ChatRoomList from '../chat/ChatRoomList'
 import Modal from '../shared/Modal'
+import { getBuyerRatingThunk } from '../../features/ratingSlice'
 
 const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
    const dispatch = useDispatch()
@@ -50,6 +51,14 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
 
    const isOwner = user && localItem && user.id === localItem.userId
    const isManager = user && user.access === 'MANAGER'
+   useEffect(() => {
+      dispatch(getBuyerRatingThunk({ userId: user?.id, itemId: localItem?.id }))
+   }, [dispatch, user?.id, localItem?.id])
+
+   const rating = useSelector((state) => state.rating)
+
+   let isBuyer = false
+   if (rating.buyer.priceProposal && user) isBuyer = true
 
    const handleDelete = () => {
       let confirmMessage = '정말로 이 아이템을 삭제하시겠습니까?'
@@ -157,6 +166,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                      })}
                   </div>
                )}
+               <br></br>
             </div>
 
             {/* 상품 정보 섹션 */}
@@ -280,7 +290,6 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                )}
             </div>
          </div>
-
          {/* 가격 제안 현황 (판매자나 매니저만 볼 수 있음) */}
          {(isOwner || isManager) && (
             <div className="price-proposals-section">
@@ -326,6 +335,52 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
             </div>
          )}
 
+         {isBuyer && (
+            <>
+               <div className="price-proposals-section">
+                  <h2>별점 남기기 Rating</h2>
+                  {isManager && !isOwner && <p className="manager-notice">관리자 권한으로 조회 중입니다.</p>}
+
+                  <div className="proposals-list">
+                     {proposals.filter((p) => p.status !== 'rejected').length === 0 ? (
+                        <p>제안된 가격이 없습니다.</p>
+                     ) : (
+                        proposals
+                           .filter((p) => p.status !== 'rejected')
+                           .map((proposal) => (
+                              <div key={proposal.id} className="proposal-card">
+                                 <div className="proposal-price">{proposal.price ? proposal.price.toLocaleString() : '-'}원</div>
+
+                                 <div className="proposal-user">
+                                    <img src={proposal.userAvatar || '/default-avatar.png'} alt={proposal.userName || '사용자'} className="user-avatar" />
+                                    <span>{proposal.userName || '익명'}</span>
+                                 </div>
+
+                                 <div className="proposal-actions">
+                                    {/* 소유자만 제안 상태 변경 가능 */}
+                                    {proposal.status === 'pending' && isOwner && (
+                                       <>
+                                          <button onClick={() => handleProposalStatusChange(proposal.id, 'accepted', proposal.userId, user.id)} className="btn-accept">
+                                             수락
+                                          </button>
+                                          <button onClick={() => handleProposalStatusChange(proposal.id, 'rejected')} className="btn-reject">
+                                             거절
+                                          </button>
+                                       </>
+                                    )}
+
+                                    {proposal.status === 'accepted' && <span className="status accepted">수락됨</span>}
+                                    {proposal.status === 'rejected' && <span className="status rejected">거절됨</span>}
+                                    {proposal.status === 'pending' && !isOwner && <span className="status pending">대기중</span>}
+                                 </div>
+                              </div>
+                           ))
+                     )}
+                  </div>
+               </div>
+            </>
+         )}
+
          {/* 상품 이미지 갤러리 */}
          {localItem.imgs && localItem.imgs.length > 0 && (
             <div className="item-gallery-section">
@@ -345,7 +400,6 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                </div>
             </div>
          )}
-
          {/* 상품 상세 설명 */}
          {localItem.itemDetail && (
             <div className="item-description-section">
@@ -359,12 +413,10 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                </div>
             </div>
          )}
-
          {/* 채팅 */}
          <Popup isOpen={isChatOpen} onClose={handleChatClose}>
             <ChatRoomList initialSelectedChatId={newChatId} />
          </Popup>
-
          {/* 삭제 확인 Modal */}
          <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
             <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600' }}>
@@ -382,7 +434,6 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                </button>
             </div>
          </Modal>
-
          {/* 에러 Modal */}
          <Modal isOpen={showErrorModal} onClose={() => setShowErrorModal(false)}>
             <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600', color: '#dc3545' }}>

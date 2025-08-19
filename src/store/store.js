@@ -9,6 +9,7 @@ import chatReducer from '../features/chatSlice'
 import infoReducer from '../features/infoSlice'
 import rentalOrderReducer from '../features/rentalOrderSlice'
 import modalReducer from '../features/modalSlice'
+import ratingReducer from '../features/ratingSlice'
 
 const store = configureStore({
    reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
       info: infoReducer,
       rentalOrder: rentalOrderReducer,
       modal: modalReducer,
+      rating: ratingReducer,
    },
 })
 

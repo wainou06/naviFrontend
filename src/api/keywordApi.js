@@ -53,3 +53,15 @@ export const deleteKeyword = async (id) => {
       console.error(`API Request 오류: ${error}`)
    }
 }
+
+//키워드 별 아이템 조회
+export const getKeywordItems = async (id) => {
+   try {
+      const response = await api.get(`/keyword/keywordItems/${id}`)
+      return response
+   } catch (error) {
+      console.error(`API Request 오류: ${error}`)
+   }
+}
+// const items = useSelector((state) => state.keywords.items)
+// dispatch(getKeywordItemsThunk(?))
