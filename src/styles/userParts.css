@@ -17,6 +17,22 @@ div.profile {
    padding: 95px 0px 50px;
 }
 
+div.profile .nick {
+   font-size: 40px;
+   margin: 20px 0px 10px;
+}
+
+div.profile .email {
+   font-size: 24px;
+   color: #757575;
+   text-transform: none;
+}
+
+.userlinktab div.list {
+   width: 100%;
+   text-align: left;
+}
+
 .userlinktab button.css-1usuzwp-MuiButtonBase-root-MuiTab-root:first-of-type {
    color: black;
    max-width: none;
