@@ -88,6 +88,11 @@ nav {
 
 /* 메인 */
 
+.homesession {
+   margin: 0 auto;
+   width: 1620px;
+}
+
 div.main .togo {
    display: flex;
 }

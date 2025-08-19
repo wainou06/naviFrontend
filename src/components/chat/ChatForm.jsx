@@ -1,4 +1,6 @@
 // ChatForm.jsx
+import SendIcon from '@mui/icons-material/Send'
+
 import { useEffect, useRef, useState, useLayoutEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { io } from 'socket.io-client'
@@ -75,46 +77,34 @@ const ChatForm = ({ chatId, currentUserId }) => {
    }
 
    return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-         <div style={{ flexGrow: 1, overflowY: 'auto', padding: '12px' }}>
+      <div className="messageroom">
+         <div className="messagelist">
             {messages.map((msg) => (
                <div
                   key={msg.id}
+                  className="messagebox"
                   style={{
-                     display: 'flex',
-                     justifyContent: msg.senderId === currentUserId ? 'flex-end' : 'flex-start',
-                     marginBottom: '8px',
+                     alignItems: msg.senderId === currentUserId ? 'flex-end' : 'flex-start',
                   }}
                >
                   <div
                      style={{
-                        backgroundColor: msg.senderId === currentUserId ? '#3b82f6' : '#e5e7eb',
-                        color: msg.senderId === currentUserId ? '#fff' : '#000',
-                        padding: '8px 12px',
-                        borderRadius: '12px',
-                        maxWidth: '70%',
-                        wordBreak: 'break-word',
+                        backgroundColor: msg.senderId === currentUserId ? '#FFD1BA' : '#FAF0E6',
                      }}
+                     className="messagetext"
                   >
                      {msg.content}
                   </div>
+                  <div className="messagetime">{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                </div>
             ))}
             <div ref={messagesEndRef} />
          </div>
 
-         <div style={{ display: 'flex', borderTop: '1px solid #ddd', padding: '8px' }}>
-            <input
-               type="text"
-               value={newMessage}
-               onChange={(e) => setNewMessage(e.target.value)}
-               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-               placeholder="메시지를 입력하세요..."
-               style={{ flexGrow: 1, padding: '8px', borderRadius: '6px', border: '1px solid #ccc' }}
-               aria-label="메시지 입력"
-            />
-            <button onClick={handleSend} style={{ marginLeft: '8px', padding: '8px 12px', borderRadius: '6px', backgroundColor: '#3b82f6', color: '#fff', border: 'none' }} aria-label="메시지 전송">
-               전송
+         <div className="entermessage">
+            <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()} placeholder="메시지를 입력하세요..." aria-label="메시지 입력" />
+            <button onClick={handleSend} aria-label="메시지 전송">
+               <SendIcon />
             </button>
          </div>
       </div>
