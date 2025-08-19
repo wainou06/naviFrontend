@@ -15,7 +15,6 @@ export const fetchMyChatsThunk = createAsyncThunk('chat/fetchMyChats', async (_,
 export const createChatRoomThunk = createAsyncThunk('chat/createRoom', async ({ itemId, buyerId, sellerId }, { rejectWithValue }) => {
    try {
       const res = await chatApi.createChatRoom({ itemId, buyerId, sellerId })
-      console.log('채팅방 생성: ', res.chat)
       return res.chat
    } catch (error) {
       return rejectWithValue(error.response?.data || error.message)

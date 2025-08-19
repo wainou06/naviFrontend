@@ -58,7 +58,7 @@ function Navbar({ isAuthenticated, user, onSearch }) {
             createChatRoomThunk({
                itemId: null,
                buyerId: user.id,
-               sellerId: 3,
+               sellerId: 1, // manager id
             })
          ).unwrap()
 

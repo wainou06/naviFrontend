@@ -92,6 +92,7 @@ nav {
 .nav_menu a {
    display: flex;
    align-items: center;
+   cursor: pointer;
 }
 
 /* 메인 */
