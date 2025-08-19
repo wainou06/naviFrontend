@@ -20,6 +20,16 @@
    padding: 24px;
 }
 
+.star-icon {
+   width: 24px;
+   height: 24px;
+   background-image: url('star-sparkle.svg');
+   background-size: cover;
+   display: inline-block;
+
+   fill: blue;
+}
+
 .close-btn,
 .back-btn {
    position: absolute;
@@ -94,6 +104,11 @@
    transform: translate(-50%, -50%);
 }
 
+textarea {
+   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+   resize: none;
+}
+
 .popup-content {
    display: flex;
    flex-direction: column;
@@ -105,6 +120,19 @@
    background-color: white;
    width: 690px;
    height: 88px;
+   border-radius: 8px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 23.55px;
+   font-weight: 500;
+   text-align: center;
+}
+
+.popup-message-long {
+   height: 176px;
+   background-color: white;
+   width: 690px;
    border-radius: 8px;
    display: flex;
    align-items: center;

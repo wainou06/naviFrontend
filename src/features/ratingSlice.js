@@ -25,7 +25,6 @@ const slice = createSlice({
    initialState: {
       loading: true,
       error: null,
-      nadomolla: [],
       buyer: [],
    },
    reducers: {
@@ -41,7 +40,6 @@ const slice = createSlice({
          })
          .addCase(postRatingThunk.fulfilled, (state, action) => {
             state.loading = false
-            state.nadomolla = action.payload
          })
          .addCase(postRatingThunk.rejected, (state, action) => {
             state.loading = false

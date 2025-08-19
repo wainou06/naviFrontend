@@ -7,8 +7,8 @@ import '../../styles/itemDetail.css'
 import Popup from '../chat/Popup'
 import ChatRoomList from '../chat/ChatRoomList'
 import Modal from '../shared/Modal'
-import { getBuyerRatingThunk } from '../../features/ratingSlice'
-import { ModalAlert, ModalRating } from '../manager/ManagerModal'
+import { getBuyerRatingThunk, postRatingThunk } from '../../features/ratingSlice'
+import { ModalAlert, ModalConfirm, ModalRating } from '../manager/ManagerModal'
 import { showModalThunk } from '../../features/modalSlice'
 
 const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
@@ -62,6 +62,29 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
    let isBuyer = false
    if (rating.buyer.priceProposal && user) isBuyer = true
    const modal = useSelector((state) => state.modal)
+
+   const onClickBuyer = async () => {
+      const ratingModal = await dispatch(showModalThunk({ type: 'rating' }))
+
+      if (ratingModal.payload.score <= 0) return
+
+      const confirm = await dispatch(showModalThunk({ type: 'confirm', placeholder: '별점을 남길까요?' }))
+      console.log(localItem)
+
+      if (!confirm.payload) return
+      const data = {
+         toUserId: localItem.userId,
+         fromUserId: user.id,
+         rating: ratingModal.payload.score,
+         comment: ratingModal.payload.input,
+         userId: user.id,
+         orderId: null,
+         rentalOrderId: null,
+      }
+      dispatch(postRatingThunk(data))
+
+      dispatch(showModalThunk({ placeholder: '별점을 남겼어요' }))
+   }
 
    const handleDelete = () => {
       let confirmMessage = '정말로 이 아이템을 삭제하시겠습니까?'
@@ -350,7 +373,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                         proposals
                            .filter((p) => p.status !== 'rejected')
                            .map((proposal) => (
-                              <div onClick={() => dispatch(showModalThunk({ type: 'rating' }))} key={proposal.id} className="proposal-card" style={{ cursor: 'pointer' }}>
+                              <div onClick={onClickBuyer} key={proposal.id} className="proposal-card" style={{ cursor: 'pointer' }}>
                                  <div className="proposal-price">{proposal.price ? proposal.price.toLocaleString() : '-'}원</div>
 
                                  <div className="proposal-user">
@@ -359,18 +382,6 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                                  </div>
 
                                  <div className="proposal-actions">
-                                    {/* 소유자만 제안 상태 변경 가능 */}
-                                    {proposal.status === 'pending' && isOwner && (
-                                       <>
-                                          <button onClick={() => handleProposalStatusChange(proposal.id, 'accepted', proposal.userId, user.id)} className="btn-accept">
-                                             수락
-                                          </button>
-                                          <button onClick={() => handleProposalStatusChange(proposal.id, 'rejected')} className="btn-reject">
-                                             거절
-                                          </button>
-                                       </>
-                                    )}
-
                                     {proposal.status === 'accepted' && <span className="status accepted">수락됨</span>}
                                     {proposal.status === 'rejected' && <span className="status rejected">거절됨</span>}
                                     {proposal.status === 'pending' && !isOwner && <span className="status pending">대기중</span>}
@@ -450,6 +461,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
          </Modal>
          {modal.type === 'alert' && <ModalAlert></ModalAlert>}
          {modal.type === 'rating' && <ModalRating></ModalRating>}
+         {modal.type === 'confirm' && <ModalConfirm></ModalConfirm>}
       </div>
    )
 }
