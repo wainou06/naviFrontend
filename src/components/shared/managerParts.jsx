@@ -65,57 +65,63 @@ export default function ManagerParts({ user }) {
 
    return (
       <>
-         <div className="linktab">
-            <Tabs
-               orientation="vertical"
-               variant="scrollable"
-               value={value}
-               onChange={handleChange}
-               aria-label="Vertical tabs example"
-               TabIndicatorProps={{
-                  sx: {
-                     backgroundColor: 'transparent',
-                  },
-               }}
-            >
-               <Tab
-                  disabled
-                  label={
-                     <div className="profile">
-                        <img src="/images/로그아웃상태.png" alt="프로필" />
-                        <p style={{ fontSize: '40px', margin: '20px 0px 10px' }}>관리자 {user?.nick}님</p>
-                        <p style={{ fontSize: '24px', color: '#757575', fontFamily: 'Arial, sans-serif', textTransform: 'none' }}>{user?.email}</p>
-                     </div>
-                  }
-                  {...a11yProps(0)}
-               />
-               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>상품관리</div>} {...a11yProps(1)} />
-               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>키워드관리</div>} {...a11yProps(2)} />
-               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>사용자관리</div>} {...a11yProps(3)} />
-               <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>통계</div>} {...a11yProps(4)} />
-            </Tabs>
+         {user?.access === 'MANAGER' ? (
+            <>
+               <div className="linktab">
+                  <Tabs
+                     orientation="vertical"
+                     variant="scrollable"
+                     value={value}
+                     onChange={handleChange}
+                     aria-label="Vertical tabs example"
+                     TabIndicatorProps={{
+                        sx: {
+                           backgroundColor: 'transparent',
+                        },
+                     }}
+                  >
+                     <Tab
+                        disabled
+                        label={
+                           <div className="profile">
+                              <img src="/images/로그아웃상태.png" alt="프로필" />
+                              <p style={{ fontSize: '40px', margin: '20px 0px 10px' }}>관리자 {user?.nick}님</p>
+                              <p style={{ fontSize: '24px', color: '#757575', fontFamily: 'Arial, sans-serif', textTransform: 'none' }}>{user?.email}</p>
+                           </div>
+                        }
+                        {...a11yProps(0)}
+                     />
+                     <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>상품관리</div>} {...a11yProps(1)} />
+                     <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>키워드관리</div>} {...a11yProps(2)} />
+                     <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>사용자관리</div>} {...a11yProps(3)} />
+                     <Tab label={<div style={{ width: '100%', textAlign: 'left' /* left, right, center */ }}>통계</div>} {...a11yProps(4)} />
+                  </Tabs>
 
-            <TabPanel value={value} index={0} className="form">
-               비활성화 상태
-            </TabPanel>
-            <TabPanel value={value} index={1} className="form itemform">
-               <h1>상품관리</h1>
-               <ItemSellList columns={2} cardWidth="420px" cardHeight="480px" imgHeight="320px" />
-            </TabPanel>
+                  <TabPanel value={value} index={0} className="form">
+                     비활성화 상태
+                  </TabPanel>
+                  <TabPanel value={value} index={1} className="form itemform">
+                     <h1>상품관리</h1>
+                     <ItemSellList columns={2} cardWidth="420px" cardHeight="480px" imgHeight="320px" />
+                  </TabPanel>
 
-            <TabPanel value={value} index={2} className="form">
-               <h1>키워드관리</h1>
-               <ManagerKeywords />
-            </TabPanel>
-            <TabPanel value={value} index={3} className="form">
-               <h1>사용자관리</h1>
-               <ManagerUser />
-            </TabPanel>
-            <TabPanel value={value} index={4} className="form">
-               <h1>통계</h1>
-               <ManagerUserRating />
-            </TabPanel>
-         </div>
+                  <TabPanel value={value} index={2} className="form">
+                     <h1>키워드관리</h1>
+                     <ManagerKeywords />
+                  </TabPanel>
+                  <TabPanel value={value} index={3} className="form">
+                     <h1>사용자관리</h1>
+                     <ManagerUser />
+                  </TabPanel>
+                  <TabPanel value={value} index={4} className="form">
+                     <h1>통계</h1>
+                     <ManagerUserRating />
+                  </TabPanel>
+               </div>
+            </>
+         ) : (
+            <h1>관리자가 아니에요</h1>
+         )}
       </>
    )
 }

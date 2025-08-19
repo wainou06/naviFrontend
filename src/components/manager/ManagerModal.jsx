@@ -100,3 +100,34 @@ export const ModalPrompt = () => {
       </div>
    )
 }
+
+export const ModalRating = () => {
+   const dispatch = useDispatch()
+   const modal = useSelector((state) => state.modal)
+   const [input, setInput] = useState('')
+
+   const onClickConfirm = () => {
+      dispatch(getInput(input))
+      dispatch(closeModal())
+   }
+   const onClickClose = () => {
+      dispatch(getInput(null))
+      dispatch(closeModal())
+   }
+
+   return (
+      <div className="overlay">
+         <div className="popup">
+            <button onClick={onClickClose} className="close-btn">
+               <CloseIcon />
+            </button>
+            <div className="popup-content">
+               <input onChange={(e) => setInput(e.target.value)} value={input} className="popup-message" placeholder={modal.placeholder}></input>
+               <p onClick={onClickConfirm} style={{ cursor: 'pointer' }} className="popup-message">
+                  {'확인>'}
+               </p>
+            </div>
+         </div>
+      </div>
+   )
+}

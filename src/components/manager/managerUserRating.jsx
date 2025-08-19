@@ -1,4 +1,6 @@
 import { LineChart } from '@mui/x-charts/LineChart'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 function ManagerUserRating() {
    function BasicLineChart() {

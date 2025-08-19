@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { deleteKeyword, getKeyword, postKeyword, putKeyword } from '../api/keywordApi'
+import { deleteKeyword, getKeyword, getKeywordItems, postKeyword, putKeyword } from '../api/keywordApi'
 
 export const postKeywordThunk = createAsyncThunk('keyword/postKeyword', async (name, { rejectWithValue }) => {
    try {
@@ -41,12 +41,23 @@ export const deleteKeywordThunk = createAsyncThunk('keyword/deleteKeyword', asyn
    }
 })
 
+export const getKeywordItemsThunk = createAsyncThunk('keyword/getKeywordItems', async (data, { rejectWithValue }) => {
+   try {
+      const id = data
+      const response = await getKeywordItems(id)
+      return response.data
+   } catch (error) {
+      return rejectWithValue(error.response?.data?.message)
+   }
+})
+
 const slice = createSlice({
    name: 'keywords',
    initialState: {
       loading: true,
       error: null,
       keywords: [],
+      items: [],
    },
    reducers: {
       clearKeywordError: (state) => {
@@ -97,6 +108,17 @@ const slice = createSlice({
             state.loading = false
          })
          .addCase(deleteKeywordThunk.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+         })
+         .addCase(getKeywordItemsThunk.pending, (state) => {
+            state.loading = true
+         })
+         .addCase(getKeywordItemsThunk.fulfilled, (state, action) => {
+            state.loading = false
+            state.items = action.payload
+         })
+         .addCase(getKeywordItemsThunk.rejected, (state, action) => {
             state.loading = false
             state.error = action.payload
          })
