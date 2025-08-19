@@ -26,7 +26,6 @@ export async function fetchChatMessages(chatId) {
 export async function createChatRoom(chatData) {
    try {
       const response = await naviApi.post('/chats/create', chatData, { withCredentials: true })
-      console.log('채팅방 생성:', response.data)
       return response.data
    } catch (error) {
       console.error('채팅방 생성 실패:', error.response?.data || error.message)
