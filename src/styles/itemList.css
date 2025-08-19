@@ -322,28 +322,6 @@
    margin: 32px 0;
 }
 
-.items-list-container .MuiPagination-root {
-   background: white;
-   border-radius: 8px;
-   padding: 8px 16px;
-   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.items-list-container .MuiPaginationItem-root {
-   border-radius: 6px;
-   font-weight: 500;
-   margin: 0 2px;
-}
-
-.items-list-container .MuiPaginationItem-root.Mui-selected {
-   background: #74b9ff;
-   color: white;
-}
-
-.items-list-container .MuiPaginationItem-root:hover {
-   background: rgba(116, 185, 255, 0.1);
-}
-
 /* 빈 상태 */
 .empty-state {
    text-align: center;
