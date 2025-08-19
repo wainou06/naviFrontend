@@ -211,7 +211,7 @@ const ItemsList = () => {
                   {/* 페이지네이션 */}
                   {pagination.totalPages > 1 && (
                      <div className="pagination-section">
-                        <Pagination count={pagination.totalPages} page={pagination.currentPage} onChange={handlePageChange} color="primary" size="large" />
+                        <Pagination count={pagination.totalPages} page={pagination.currentPage} onChange={handlePageChange} color="primary" />
                      </div>
                   )}
                </>
