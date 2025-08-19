@@ -269,17 +269,4 @@
    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* 반응형 */
-@media (max-width: 768px) {
-   .image-grid-container {
-      grid-template-columns: repeat(3, 1fr) !important;
-   }
 
-   .item-create-title {
-      font-size: 24px !important;
-   }
-
-   .section-content {
-      padding: 16px !important;
-   }
-}

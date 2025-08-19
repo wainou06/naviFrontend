@@ -125,20 +125,7 @@ const RentalList = () => {
             <div className="register-button-section">
                <div className="togo" style={{ width: '350px', height: '80px', marginLeft: '0' }}>
                   <Link to="/items/list">
-                     <div
-                        style={{
-                           backgroundColor: '#AEE9F5',
-                           color: '#016CFF',
-                           width: '100%',
-                           height: '100%',
-                           display: 'flex',
-                           alignItems: 'center',
-                           justifyContent: 'center',
-                           borderRadius: '70px',
-                        }}
-                     >
-                        <img src="/images/상품.png" alt="상품 리스트 페이지로" style={{ width: '320px', height: '90px' }} />
-                     </div>
+                     <div style={{ backgroundColor: '#AEE9F5', color: '#016CFF', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '70px', fontSize: '32px' }}>나누GO, 비우GO! &gt; </div>
                   </Link>
                </div>
             </div>

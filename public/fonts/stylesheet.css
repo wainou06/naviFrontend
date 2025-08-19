@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Ghanachocolate';
+    src: url('ghanachoco.woff2') format('woff2'),
+        url('ghanachoco.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
