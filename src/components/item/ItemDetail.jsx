@@ -53,23 +53,30 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
 
    const isOwner = user && localItem && user.id === localItem.userId
    const isManager = user && user.access === 'MANAGER'
+
+   //별점 매기기
+
    useEffect(() => {
-      if (user?.id && localItem?.id) dispatch(getBuyerRatingThunk({ userId: user?.id, itemId: localItem?.id }))
+      if (user?.id && localItem?.id) {
+         dispatch(getBuyerRatingThunk({ userId: user?.id, itemId: localItem?.id }))
+      }
    }, [dispatch, user?.id, localItem?.id])
 
    const rating = useSelector((state) => state.rating)
 
    let isBuyer = false
    if (rating.buyer.priceProposal && user) isBuyer = true
+   let isWriteRating = false
+   if (rating.buyer.rating) isWriteRating = true
+
    const modal = useSelector((state) => state.modal)
 
    const onClickBuyer = async () => {
       const ratingModal = await dispatch(showModalThunk({ type: 'rating' }))
 
-      if (ratingModal.payload.score <= 0) return
+      if (ratingModal.payload.score <= 0 || ratingModal.payload.score == undefined) return
 
       const confirm = await dispatch(showModalThunk({ type: 'confirm', placeholder: '별점을 남길까요?' }))
-      console.log(localItem)
 
       if (!confirm.payload) return
       const data = {
@@ -78,12 +85,12 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
          rating: ratingModal.payload.score,
          comment: ratingModal.payload.input,
          userId: user.id,
-         orderId: null,
+         orderId: rating.buyer.priceProposal.id,
          rentalOrderId: null,
       }
-      dispatch(postRatingThunk(data))
+      const postRating = await dispatch(postRatingThunk(data))
 
-      dispatch(showModalThunk({ placeholder: '별점을 남겼어요' }))
+      dispatch(showModalThunk({ placeholder: '별점을 남겼어요' })).then(dispatch(getBuyerRatingThunk({ userId: user?.id, itemId: localItem?.id })))
    }
 
    const handleDelete = () => {
@@ -361,36 +368,65 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
             </div>
          )}
 
+         {/* 별점 남기기 */}
          {isBuyer && (
             <>
-               <div className="price-proposals-section">
-                  <h2>별점 남기기 Rating</h2>
+               {isWriteRating ? (
+                  <>
+                     <div className="price-proposals-section">
+                        <h2>별점 확인하기 Rating</h2>
 
-                  <div className="proposals-list">
-                     {proposals.filter((p) => p.status !== 'rejected').length === 0 ? (
-                        <p>제안된 가격이 없습니다.</p>
-                     ) : (
-                        proposals
-                           .filter((p) => p.status !== 'rejected')
-                           .map((proposal) => (
-                              <div onClick={onClickBuyer} key={proposal.id} className="proposal-card" style={{ cursor: 'pointer' }}>
-                                 <div className="proposal-price">{proposal.price ? proposal.price.toLocaleString() : '-'}원</div>
+                        <div className="proposals-list">
+                           {proposals.filter((p) => p.status !== 'rejected').length === 0 ? (
+                              <p>제안된 가격이 없습니다.</p>
+                           ) : (
+                              proposals
+                                 .filter((p) => p.status !== 'rejected')
+                                 .map((proposal) => (
+                                    <div key={proposal.id} className="proposal-card">
+                                       <div className="proposal-price">{proposal.price ? proposal.price.toLocaleString() : '-'}원</div>
 
-                                 <div className="proposal-user">
-                                    <img src={proposal.userAvatar || '/default-avatar.png'} alt={proposal.userName || '사용자'} className="user-avatar" />
-                                    <span>{proposal.userName || '익명'}</span>
-                                 </div>
+                                       <div className="proposal-user">
+                                          <img src={proposal.userAvatar || '/default-avatar.png'} alt={proposal.userName || '사용자'} className="user-avatar" />
+                                          <span>{proposal.userName || '익명'}</span>
+                                       </div>
+                                       {rating.buyer.rating.rating > 0 && <span>🌸</span>}
+                                       {rating.buyer.rating.rating > 1 && <span>🌸</span>}
+                                       {rating.buyer.rating.rating > 2 && <span>🌸</span>}
+                                       {rating.buyer.rating.rating > 3 && <span>🌸</span>}
+                                       {rating.buyer.rating.rating > 4 && <span>🌸</span>}
+                                    </div>
+                                 ))
+                           )}
+                        </div>
+                     </div>
+                  </>
+               ) : (
+                  <>
+                     <div className="price-proposals-section">
+                        <h2>별점 남기기 Rating</h2>
 
-                                 <div className="proposal-actions">
-                                    {proposal.status === 'accepted' && <span className="status accepted">수락됨</span>}
-                                    {proposal.status === 'rejected' && <span className="status rejected">거절됨</span>}
-                                    {proposal.status === 'pending' && !isOwner && <span className="status pending">대기중</span>}
-                                 </div>
-                              </div>
-                           ))
-                     )}
-                  </div>
-               </div>
+                        <div className="proposals-list">
+                           {proposals.filter((p) => p.status !== 'rejected').length === 0 ? (
+                              <p>제안된 가격이 없습니다.</p>
+                           ) : (
+                              proposals
+                                 .filter((p) => p.status !== 'rejected')
+                                 .map((proposal) => (
+                                    <div onClick={onClickBuyer} key={proposal.id} className="proposal-card" style={{ cursor: 'pointer' }}>
+                                       <div className="proposal-price">{proposal.price ? proposal.price.toLocaleString() : '-'}원</div>
+
+                                       <div className="proposal-user">
+                                          <img src={proposal.userAvatar || '/default-avatar.png'} alt={proposal.userName || '사용자'} className="user-avatar" />
+                                          <span>{proposal.userName || '익명'}</span>
+                                       </div>
+                                    </div>
+                                 ))
+                           )}
+                        </div>
+                     </div>
+                  </>
+               )}
             </>
          )}
 

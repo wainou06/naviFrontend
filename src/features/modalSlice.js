@@ -32,7 +32,7 @@ const slice = createSlice({
          state.input = ''
 
          if (modalPromiseResolve) {
-            modalPromiseResolve(new Error('Modal was cancled'))
+            // modalPromiseResolve(new Error('Modal was cancled'))
             modalPromiseResolve = null
          }
       },
