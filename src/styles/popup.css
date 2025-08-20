@@ -20,14 +20,9 @@
    padding: 24px;
 }
 
-.star-icon {
-   width: 24px;
-   height: 24px;
-   background-image: url('star-sparkle.svg');
-   background-size: cover;
-   display: inline-block;
-
-   fill: blue;
+.unflower-icon {
+   cursor: pointer;
+   width: 60px;
 }
 
 .close-btn,

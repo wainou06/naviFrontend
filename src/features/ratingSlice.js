@@ -37,7 +37,7 @@ const slice = createSlice({
             state.loading = true
             state.error = null
          })
-         .addCase(postRatingThunk.fulfilled, (state, action) => {
+         .addCase(postRatingThunk.fulfilled, (state) => {
             state.loading = false
          })
          .addCase(postRatingThunk.rejected, (state, action) => {

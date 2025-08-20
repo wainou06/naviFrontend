@@ -112,7 +112,7 @@ export const ModalRating = () => {
       dispatch(closeModal())
    }
    const onClickClose = () => {
-      dispatch(getInput(null))
+      dispatch(getInput({}))
       dispatch(closeModal())
    }
    const onClickStar = (e) => {
@@ -129,19 +129,19 @@ export const ModalRating = () => {
                <p className="popup-message">별점 남기기</p>
                <ul className="popup-message">
                   <li className="popup-message-list" onClick={() => onClickStar(1)}>
-                     {score >= 1 ? <>🌸</> : <>🎃</>}
+                     {score >= 1 ? <>🌸</> : <>🥀</>}
                   </li>
                   <li className="popup-message-list" onClick={() => onClickStar(2)}>
-                     {score >= 2 ? <>🌸</> : <>🎃</>}
+                     {score >= 2 ? <>🌸</> : <>🥀</>}
                   </li>
                   <li className="popup-message-list" onClick={() => onClickStar(3)}>
-                     {score >= 3 ? <>🌸</> : <>🎃</>}
+                     {score >= 3 ? <>🌸</> : <>🥀</>}
                   </li>
                   <li className="popup-message-list" onClick={() => onClickStar(4)}>
-                     {score >= 4 ? <>🌸</> : <>🎃</>}
+                     {score >= 4 ? <>🌸</> : <>🥀</>}
                   </li>
                   <li className="popup-message-list" onClick={() => onClickStar(5)}>
-                     {score >= 5 ? <>🌸</> : <>🎃</>}
+                     {score >= 5 ? <>🌸</> : <>🥀</>}
                   </li>
                </ul>
                <textarea value={input} onChange={(e) => setInput(e.target.value)} className="popup-message-long" placeholder="평가를 남길거에요"></textarea>
