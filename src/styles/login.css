@@ -46,7 +46,6 @@
 }
 
 .login-checkbox {
-   position: absolute;
    opacity: 0;
    width: 31px;
    height: 31px;
