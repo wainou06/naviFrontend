@@ -5,7 +5,7 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   z-index: 1400; /* AppBar 등 위로 */
+   z-index: 1400;
 }
 
 .popup {
@@ -32,7 +32,6 @@
 
 .close-btn,
 .back-btn {
-   position: absolute;
    top: 35px;
    border: none;
    border-radius: 50%;
@@ -98,7 +97,6 @@
 }
 
 .centered-spinner {
-   position: absolute !important;
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
