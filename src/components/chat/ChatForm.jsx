@@ -57,7 +57,7 @@ const ChatForm = ({ chatId, currentUserId }) => {
       if (!trimmed || !chatId) return
 
       const tempId = `temp-${Date.now()}`
-      const tempMessage = { id: tempId, content: trimmed, senderId: currentUserId, chatId }
+      const tempMessage = { id: tempId, content: trimmed, senderId: currentUserId, chatId, createdAt: new Date().toISOString() }
 
       setMessages((prev) => [...prev, tempMessage])
       setNewMessage('')
@@ -95,7 +95,7 @@ const ChatForm = ({ chatId, currentUserId }) => {
                   >
                      {msg.content}
                   </div>
-                  <div className="messagetime">{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                  <div className="messagetime">{msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</div>
                </div>
             ))}
             <div ref={messagesEndRef} />
