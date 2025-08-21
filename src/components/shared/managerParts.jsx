@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 
 import PropTypes from 'prop-types'
@@ -43,6 +43,7 @@ function a11yProps(index) {
 
 export default function ManagerParts({ user }) {
    const location = useLocation()
+   const navigate = useNavigate()
 
    // 기본값은 상품관리(1)
    const [value, setValue] = React.useState(1)
@@ -54,13 +55,32 @@ export default function ManagerParts({ user }) {
          setValue(2) // 키워드관리
       } else if (location.pathname === '/manager/user') {
          setValue(3) // 사용자관리
-      } else if (location.pathname.includes('/manager/user/') && location.pathname.endsWith('/rating')) {
+      } else if (location.pathname.includes('/manager/rating')) {
          setValue(4) // 통계
       }
-   }, [location.pathname])
+
+      if (window.location.search && value === 3) {
+         setValue(4)
+      }
+   }, [location.pathname, window.location.search])
 
    const handleChange = (event, newValue) => {
       setValue(newValue)
+
+      switch (newValue) {
+         case 1:
+            navigate('/manager')
+            break
+         case 2:
+            navigate('/manager/keywords')
+            break
+         case 3:
+            navigate('/manager/user')
+            break
+         case 4:
+            navigate('/manager/rating')
+            break
+      }
    }
 
    return (
@@ -68,34 +88,34 @@ export default function ManagerParts({ user }) {
          {user?.access === 'MANAGER' ? (
             <>
                <div className="linktab">
-            <Tabs
-               orientation="vertical"
-               variant="scrollable"
-               value={value}
-               onChange={handleChange}
-               aria-label="Vertical tabs example"
-               TabIndicatorProps={{
-                  sx: {
-                     backgroundColor: 'transparent',
-                  },
-               }}
-            >
+                  <Tabs
+                     orientation="vertical"
+                     variant="scrollable"
+                     value={value}
+                     onChange={handleChange}
+                     aria-label="Vertical tabs example"
+                     TabIndicatorProps={{
+                        sx: {
+                           backgroundColor: 'transparent',
+                        },
+                     }}
+                  >
                      <Tab
-                  disabled
-                  label={
-                     <div className="profile">
-                        <img src="/images/로그아웃상태.png" alt="프로필" />
-                        <p className='nick'>관리자 {user?.nick}님</p>
-                        <p className='email'>{user?.email}</p>
-                     </div>
-                  }
-                  {...a11yProps(0)}
-               />
-               <Tab label={<div className='list'>상품관리</div>} {...a11yProps(1)} />
-               <Tab label={<div className='list'>키워드관리</div>} {...a11yProps(2)} />
-               <Tab label={<div className='list'>사용자관리</div>} {...a11yProps(3)} />
-               <Tab label={<div className='list'>통계</div>} {...a11yProps(4)} />
-            </Tabs>
+                        disabled
+                        label={
+                           <div className="profile">
+                              <img src="/images/로그아웃상태.png" alt="프로필" />
+                              <p className="nick">관리자 {user?.nick}님</p>
+                              <p className="email">{user?.email}</p>
+                           </div>
+                        }
+                        {...a11yProps(0)}
+                     />
+                     <Tab label={<div className="list">상품관리</div>} {...a11yProps(1)} />
+                     <Tab label={<div className="list">키워드관리</div>} {...a11yProps(2)} />
+                     <Tab label={<div className="list">사용자관리</div>} {...a11yProps(3)} />
+                     <Tab label={<div className="list">통계</div>} {...a11yProps(4)} />
+                  </Tabs>
 
                   <TabPanel value={value} index={0} className="form">
                      비활성화 상태
