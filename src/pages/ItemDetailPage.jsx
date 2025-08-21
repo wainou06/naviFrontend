@@ -40,12 +40,10 @@ function ItemDetailPage() {
    }
 
    const onPriceProposal = (proposalData) => {
-      const purchaseMethod = proposalData.deliveryMethod === '택배' ? 'shipping' : proposalData.deliveryMethod === '직거래' ? 'meetup' : 'other'
-
       const proposalPayload = {
          itemId: proposalData.itemId,
          proposedPrice: proposalData.proposedPrice,
-         purchaseMethod,
+         deliveryMethod: proposalData.deliveryMethod,
          message: proposalData.message || '',
       }
 

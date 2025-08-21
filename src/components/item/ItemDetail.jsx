@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { updateProposalStatusThunk } from '../../features/priceProposalSlice'
+import { updateProposalStatusThunk, fetchPriceProposalsThunk } from '../../features/priceProposalSlice'
 import { createChatRoomThunk } from '../../features/chatSlice'
 import '../../styles/itemDetail.css'
 
@@ -167,6 +167,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                itemSellStatus: updatedItemSellStatus || prevItemSellStatus,
             }))
          }
+         dispatch(fetchPriceProposalsThunk(localItem.id))
       } catch (error) {
          setErrorMessage('상태 변경 실패: ' + (error.message || error))
          setShowErrorModal(true)
