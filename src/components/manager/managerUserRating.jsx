@@ -14,18 +14,16 @@ function ManagerUserRating() {
       }
    }, [dispatch, query])
 
-   const data = []
-   for (let i = 0; i < rating?.length; i++) {
-      data.push(rating[i].rating)
-   }
+   const xAxisLabels = rating?.map((_, index) => `${index + 1}번째 `)
+   const yAxisData = rating?.map((item) => item.rating)
 
    function BasicLineChart() {
       return (
          <LineChart
-            xAxis={[{ data: data }]}
+            xAxis={[{ scaleType: 'point', data: xAxisLabels }]}
             series={[
                {
-                  data: [0, 1, 2, 3, 4, 5],
+                  data: yAxisData,
                },
             ]}
             height={600}
