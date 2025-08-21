@@ -89,8 +89,9 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
          rentalOrderId: null,
       }
       const postRating = await dispatch(postRatingThunk(data))
-
-      dispatch(showModalThunk({ placeholder: '별점을 남겼어요' })).then(dispatch(getBuyerRatingThunk({ userId: user?.id, itemId: localItem?.id })))
+      if (postRating.payload) {
+         dispatch(showModalThunk({ placeholder: '별점을 남겼어요' })).then(dispatch(getBuyerRatingThunk({ userId: user?.id, itemId: localItem?.id })))
+      }
    }
 
    const handleDelete = () => {

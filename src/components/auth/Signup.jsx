@@ -25,7 +25,7 @@ function Signup() {
    })
 
    const dispatch = useDispatch()
-   const { loading, error } = useSelector((state) => state.auth)
+   const { loading } = useSelector((state) => state.auth)
    const validatePassword = (password) => /^(?=.*[A-Za-z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(password)
 
    const checkEmail = async (email) => {

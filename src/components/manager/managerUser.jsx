@@ -16,6 +16,7 @@ import { useState } from 'react'
 import { dayLeft, datePass } from '../../utils/dateSet'
 import { ModalPrompt, ModalAlert, ModalConfirm } from './ManagerModal'
 import { showModalThunk } from '../../features/modalSlice'
+import { useNavigate } from 'react-router-dom'
 
 function ManagerUser() {
    const dispatch = useDispatch()
@@ -24,6 +25,7 @@ function ManagerUser() {
    const modal = useSelector((state) => state.modal)
    const [rows, setRows] = useState([])
    const [pagination, setPagination] = useState(1)
+   const navigate = useNavigate()
 
    useEffect(() => {
       dispatch(getUserInfoThunk(pagination))
@@ -107,6 +109,10 @@ function ManagerUser() {
       }
    }
 
+   const onClickRating = (row) => {
+      navigate(`/manager/rating?${row.id}`)
+   }
+
    const columns = [
       {
          width: 100,
@@ -180,7 +186,9 @@ function ManagerUser() {
                            </a>
                         ) : (
                            <>
-                              <a className="managerUserLink">{row[column.dataKey]}</a>
+                              <a onClick={() => onClickRating(row)} className="managerUserLink">
+                                 {row[column.dataKey]}
+                              </a>
                            </>
                         )}
                      </>

@@ -74,7 +74,7 @@ function Navbar({ isAuthenticated, user, onSearch }) {
       { to: '/manager', label: '상품관리' },
       { to: '/manager/keywords', label: '키워드관리' },
       { to: '/manager/user', label: '사용자관리' },
-      { to: `/manager/user/${user?.id}/rating`, label: '통계' },
+      { to: `/manager/rating?${user?.id}`, label: '통계' },
       { label: '1:1 채팅', action: handleChatOpen },
       { label: '로그아웃', action: handleLogout },
    ]
