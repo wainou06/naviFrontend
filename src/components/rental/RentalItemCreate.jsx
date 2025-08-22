@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getKeywordThunk } from '../../features/keywordSlice' // 키워드 가져오는 액션
 import { Container, Box, IconButton, Typography, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress, Chip } from '@mui/material'
 import '../../styles/rentalItemCreate.css'
+import { formatWithComma, stripComma } from '../../utils/priceSet'
 
 const RentalItemCreate = ({ onCreateSubmit }) => {
    const dispatch = useDispatch()
@@ -30,6 +31,24 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
       // 컴포넌트가 마운트되면 키워드 목록을 가져옵니다.
       dispatch(getKeywordThunk())
    }, [dispatch])
+
+   const handlePriceChange = (e) => {
+      const { name, value } = e.target
+      const numericValue = value.replace(/[^0-9,]/g, '')
+      const plainNumber = stripComma(numericValue)
+
+      setFormData((prev) => ({
+         ...prev,
+         [name]: plainNumber,
+      }))
+
+      if (formErrors[name]) {
+         setFormErrors((prev) => ({
+            ...prev,
+            [name]: '',
+         }))
+      }
+   }
 
    const handleInputChange = (e) => {
       const { name, value } = e.target
@@ -175,13 +194,15 @@ const RentalItemCreate = ({ onCreateSubmit }) => {
                                  fullWidth
                                  label="일일 렌탈가격"
                                  name="oneDayPrice"
-                                 type="number"
-                                 value={formData.oneDayPrice}
-                                 onChange={handleInputChange}
+                                 value={formatWithComma(formData.oneDayPrice)}
+                                 onChange={handlePriceChange}
                                  error={!!formErrors.oneDayPrice}
                                  helperText={formErrors.oneDayPrice}
                                  InputProps={{
                                     endAdornment: '원',
+                                 }}
+                                 inputProps={{
+                                    inputMode: 'numeric',
                                  }}
                               />
                            </Grid>
