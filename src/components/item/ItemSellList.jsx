@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchItems } from '../../features/itemsSlice'
 import { formatWithComma } from '../../utils/priceSet'
 import { Link } from 'react-router-dom'
+import { recommendOrderCountUserThunk } from '../../features/recommendSlice'
 
 function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight = cardWidth, imgHeight = 140 }) {
    const dispatch = useDispatch()
@@ -14,6 +15,14 @@ function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight
    useEffect(() => {
       dispatch(fetchItems({ page, limit: 10, searchTerm }))
    }, [dispatch, page, searchTerm])
+
+   const recommend = useSelector((state) => state.recommend)
+
+   useEffect(() => {
+      dispatch(recommendOrderCountUserThunk(1))
+   }, [dispatch])
+
+   console.log(recommend)
 
    if (loading) {
       return null

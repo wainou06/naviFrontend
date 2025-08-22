@@ -10,6 +10,7 @@ import infoReducer from '../features/infoSlice'
 import rentalOrderReducer from '../features/rentalOrderSlice'
 import modalReducer from '../features/modalSlice'
 import ratingReducer from '../features/ratingSlice'
+import recommendReducer from '../features/recommendSlice'
 
 const store = configureStore({
    reducer: {
@@ -24,6 +25,7 @@ const store = configureStore({
       rentalOrder: rentalOrderReducer,
       modal: modalReducer,
       rating: ratingReducer,
+      recommend: recommendReducer,
    },
 })
 

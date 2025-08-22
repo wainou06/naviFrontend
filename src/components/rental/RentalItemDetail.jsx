@@ -133,6 +133,10 @@ const RentalDetail = ({ onDeleteSubmit }) => {
 
    const today = new Date().toISOString().split('T')[0]
 
+   //별점 매기기
+
+   console.log(user)
+
    return (
       <div className="rental-detail-container">
          <div className="rental-detail-content">
