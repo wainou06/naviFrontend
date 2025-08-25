@@ -121,7 +121,10 @@ export default function ManagerParts({ user }) {
                      비활성화 상태
                   </TabPanel>
                   <TabPanel value={value} index={1} className="form itemform">
-                     <h1>상품관리</h1>
+                     <div className="itemfrom__title">
+                        <h1>상품관리</h1>
+                        <button onClick={() => navigate('/items/create')}>+ 상품등록</button>
+                     </div>
                      <ItemSellList columns={2} cardWidth="420px" cardHeight="480px" imgHeight="320px" />
                   </TabPanel>
 

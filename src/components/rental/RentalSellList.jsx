@@ -70,12 +70,12 @@ function RentalSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeig
          ) : (
             <Box sx={{ textAlign: 'center' }}>
                <Typography variant="h6" component="h6">
-                  검색된 상품이 없습니다.
+                  등록된 상품이 없습니다.
                </Typography>
             </Box>
          )}
 
-         {pagination && (
+         {rentalItems.length > 0 && pagination && (
             <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                <Pagination count={pagination.totalPages} page={page} onChange={(event, value) => setPage(value)} color="primary" />
             </Box>

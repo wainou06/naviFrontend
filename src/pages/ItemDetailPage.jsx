@@ -66,26 +66,8 @@ function ItemDetailPage() {
          <ItemDetail onDeleteSubmit={onDeleteSubmit} onEditSubmit={onEditSubmit} onPriceProposal={onPriceProposal} />
 
          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-            <div
-               className="popup-message"
-               style={{
-                  height: 'auto',
-                  minHeight: '88px',
-                  padding: '20px',
-               }}
-            >
-               {modalMessage}
-            </div>
-            <button
-               className="popup-btn"
-               onClick={() => setShowModal(false)}
-               style={{
-                  backgroundColor: '#f5f5f5',
-                  border: '1px solid #ddd',
-                  color: 'black',
-                  width: '200px',
-               }}
-            >
+            <div className="popup-message">{modalMessage}</div>
+            <button className="popup-btn" onClick={() => setShowModal(false)}>
                확인
             </button>
          </Modal>

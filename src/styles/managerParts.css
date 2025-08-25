@@ -65,6 +65,23 @@ div.form.itemform {
    overflow-y: scroll;
 }
 
+.itemfrom__title {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.itemfrom__title button {
+   width: 120px;
+   height: 50px;
+   border: none;
+   border-radius: 20px;
+   background-color: #FFD1BA;
+   font-size: 18px;
+   margin-right: 40px;
+   cursor: pointer;
+}
+
 div.form div.css-19kzrtu {
    padding: 0;
    width: 920px;

@@ -41,6 +41,16 @@ export const sendMessageThunk = createAsyncThunk('chat/sendMessage', async ({ ch
    }
 })
 
+// 5. 채팅방 삭제
+export const deleteChatRoomThunk = createAsyncThunk('chat/deleteRoom', async (chatId, { rejectWithValue }) => {
+   try {
+      const res = await chatApi.deleteChatRoom(chatId)
+      return { chatId, message: res.message }
+   } catch (error) {
+      return rejectWithValue(error.response?.data || error.message)
+   }
+})
+
 const chatSlice = createSlice({
    name: 'chat',
    initialState: {
@@ -55,6 +65,7 @@ const chatSlice = createSlice({
       loadingMessagesError: null,
       sendMessageError: null,
       createChatError: null,
+      deleteChatError: null,
       unreadCountByChatId: {},
    },
    reducers: {
@@ -69,6 +80,9 @@ const chatSlice = createSlice({
       },
       clearCreateChatError(state) {
          state.createChatError = null
+      },
+      clearDeleteChatError(state) {
+         state.deleteChatError = null
       },
 
       addLocalMessage(state, { payload: { chatId, message } }) {
@@ -162,9 +176,33 @@ const chatSlice = createSlice({
             state.sendingMessage = false
             state.sendMessageError = payload
          })
+
+         // 채팅방 삭제
+         .addCase(deleteChatRoomThunk.pending, (state) => {
+            state.deleteChatError = null
+         })
+         .addCase(deleteChatRoomThunk.fulfilled, (state, { payload }) => {
+            // chats 배열에서 제거
+            state.chats = state.chats.filter((c) => c.id !== payload.chatId)
+
+            // messagesByChatId에서 제거
+            delete state.messagesByChatId[payload.chatId]
+
+            // unreadCount 제거
+            delete state.unreadCountByChatId[payload.chatId]
+
+            // 현재 열려있던 채팅이면 팝업 닫기
+            if (state.currentChatId === payload.chatId) {
+               state.currentChatId = null
+               state.isChatOpen = false
+            }
+         })
+         .addCase(deleteChatRoomThunk.rejected, (state, { payload }) => {
+            state.deleteChatError = payload
+         })
    },
 })
 
-export const { clearLoadingChatsError, clearLoadingMessagesError, clearSendMessageError, clearCreateChatError, addLocalMessage, removeLocalMessage, incrementUnreadCount, openChatPopup, closeChatPopup } = chatSlice.actions
+export const { clearLoadingChatsError, clearLoadingMessagesError, clearSendMessageError, clearCreateChatError, clearDeleteChatError, addLocalMessage, removeLocalMessage, incrementUnreadCount, openChatPopup, closeChatPopup } = chatSlice.actions
 
 export default chatSlice.reducer
