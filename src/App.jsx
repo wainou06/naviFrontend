@@ -42,7 +42,7 @@ function App() {
       <SocketProvider userId={isAuthenticated ? user?.id : null}>
          <Navbar isAuthenticated={isAuthenticated} user={user} onSearch={onSearch} />
          <Routes>
-            <Route path="/" element={<Home searchTerm={searchTerm} />} />
+            <Route path="/" element={<Home user={user} isAuthenticated={isAuthenticated} searchTerm={searchTerm} />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
 
