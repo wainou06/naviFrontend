@@ -134,7 +134,7 @@ function Signup() {
             fullWidth
             className="google-login-btn"
             onClick={() => {
-               window.location.href = 'http://localhost:8000/auth/google'
+               window.location.href = `${import.meta.env.VITE_APP_API_URL}/auth/google`
             }}
          >
             <span className="google-login-content">

@@ -74,7 +74,7 @@ function Login() {
 
    const handleSendEmail = async () => {
       try {
-         const res = await axios.post('http://localhost:8000/auth/forgot-password-email', { email: emailInput })
+         const res = await axios.post(`${import.meta.env.VITE_APP_API_URL}/auth/forgot-password-email`, { email: emailInput })
          setTempPasswordMsg(`임시 비밀번호: ${res.data.tempPassword}`)
          setEmailInput('')
          setModalState('tempPassword')
@@ -85,7 +85,7 @@ function Login() {
 
    const handleSendPhone = async () => {
       try {
-         const res = await axios.post('http://localhost:8000/auth/forgot-password-phone', { phone: phoneInput })
+         const res = await axios.post(`${import.meta.env.VITE_APP_API_URL}/auth/forgot-password-phone`, { phone: phoneInput })
          setTempPasswordMsg(`임시 비밀번호: ${res.data.tempPassword}`)
          setPhoneInput('')
          setModalState('tempPassword')
@@ -205,7 +205,7 @@ function Login() {
             fullWidth
             className="google-login-btn"
             onClick={() => {
-               window.location.href = 'http://localhost:8000/auth/google'
+               window.location.href = `${import.meta.env.VITE_APP_API_URL}/auth/google`
             }}
          >
             <span className="google-login-content">

@@ -45,7 +45,7 @@ export const checkAuthStatusThunk = createAsyncThunk('auth/checkAuthStatus', asy
 // 유저 정보 수정
 export const updateUser = createAsyncThunk('auth/updateUser', async (userData, { rejectWithValue }) => {
    try {
-      const res = await axios.put('http://localhost:8000/auth/my', userData, { withCredentials: true })
+      const res = await axios.put(`${import.meta.env.VITE_APP_API_URL}/auth/my`, userData, { withCredentials: true })
       return res.data
    } catch (error) {
       return rejectWithValue(error.response?.data?.message)
