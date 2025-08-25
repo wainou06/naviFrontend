@@ -14,7 +14,10 @@ import { Link } from 'react-router-dom'
 import ItemSellList from '../components/item/ItemSellList'
 import RentalSellList from '../components/rental/RentalSellList'
 
-function Home({ searchTerm }) {
+//상품 추천
+import RecommendList from '../components/item/recommendList'
+
+function Home({ user, isAuthenticated, searchTerm }) {
    return (
       <div className="main">
          <div>
@@ -42,6 +45,15 @@ function Home({ searchTerm }) {
                   <div className="rentalitem">물건 렌탈하러 가기 &gt;</div>
                </Link>
             </div>
+            {isAuthenticated && (
+               <div className="itemsession">
+                  <h1>추천 상품</h1>
+                  <div className="item">
+                     <RecommendList user={user} />
+                  </div>
+               </div>
+            )}
+
             <div className="itemsession">
                <h1>나누는 중…</h1>
                <div className="item">
