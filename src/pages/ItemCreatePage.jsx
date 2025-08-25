@@ -41,26 +41,8 @@ function ItemCreatePage() {
          <ItemCreate onCreateSubmit={onCreateSubmit} />
 
          <Modal isOpen={showModal} onClose={handleModalClose}>
-            <div
-               className="popup-message"
-               style={{
-                  height: 'auto',
-                  minHeight: '88px',
-                  padding: '20px',
-               }}
-            >
-               {modalMessage}
-            </div>
-            <button
-               className="popup-btn"
-               onClick={handleModalClose}
-               style={{
-                  backgroundColor: '#f5f5f5',
-                  border: '1px solid #ddd',
-                  color: 'black',
-                  width: '200px',
-               }}
-            >
+            <div className="popup-message">{modalMessage}</div>
+            <button className="popup-btn" onClick={handleModalClose}>
                확인
             </button>
          </Modal>

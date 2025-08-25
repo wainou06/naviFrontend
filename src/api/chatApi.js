@@ -43,3 +43,14 @@ export async function sendMessage(chatId, content) {
       throw error
    }
 }
+
+// 5. 채팅방 삭제
+export async function deleteChatRoom(chatId) {
+   try {
+      const response = await naviApi.delete(`/chats/${chatId}`, { withCredentials: true })
+      return response.data
+   } catch (error) {
+      console.error('채팅방 삭제 실패:', error.response?.data || error.message)
+      throw error
+   }
+}

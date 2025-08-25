@@ -39,43 +39,45 @@ function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight
                   justifyItems: 'center',
                }}
             >
-               {items.map((item) => (
-                  <Link to={`/items/detail/${item.id}`} key={item.id}>
-                     <Card sx={{ width: cardWidth, height: cardHeight }}>
-                        {/* 대표이미지만 가져오기 */}
-                        <CardMedia
-                           component="img"
-                           height={imgHeight}
-                           image={(() => {
-                              const baseUrl = import.meta.env.VITE_APP_API_URL || ''
-                              const foundImg = item?.imgs?.find((img) => img.field === 'Y')?.imgUrl
-                              return foundImg ? `${baseUrl}${foundImg}` : '/images/no-image.png'
-                           })()}
-                           alt={item?.itemNm || '상품 이미지'}
-                        />
+               {items
+                  .filter((i) => i.itemSellStatus !== 'SOLD_OUT')
+                  .map((item) => (
+                     <Link to={`/items/detail/${item.id}`} key={item.id}>
+                        <Card sx={{ width: cardWidth, height: cardHeight }}>
+                           {/* 대표이미지만 가져오기 */}
+                           <CardMedia
+                              component="img"
+                              height={imgHeight}
+                              image={(() => {
+                                 const baseUrl = import.meta.env.VITE_APP_API_URL || ''
+                                 const foundImg = item?.imgs?.find((img) => img.field === 'Y')?.imgUrl
+                                 return foundImg ? `${baseUrl}${foundImg}` : '/images/no-image.png'
+                              })()}
+                              alt={item?.itemNm || '상품 이미지'}
+                           />
 
-                        <CardContent>
-                           <Typography variant="h6" component="div">
-                              {item.itemNm}
-                           </Typography>
-                           <Typography variant="body2" color="text.secondary">
-                              {formatWithComma(String(item.price))}
-                           </Typography>
-                           <span>{item.updatedAt ? new Date(item.updatedAt).toLocaleString() : '정보 없음'}</span>
-                        </CardContent>
-                     </Card>
-                  </Link>
-               ))}
+                           <CardContent>
+                              <Typography variant="h6" component="div">
+                                 {item.itemNm}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                 {formatWithComma(String(item.price))}
+                              </Typography>
+                              <span>{item.updatedAt ? new Date(item.updatedAt).toLocaleString() : '정보 없음'}</span>
+                           </CardContent>
+                        </Card>
+                     </Link>
+                  ))}
             </Box>
          ) : (
             <Box sx={{ textAlign: 'center' }}>
                <Typography variant="h6" component="h6">
-                  검색된 상품이 없습니다.
+                  등록된 상품이 없습니다.
                </Typography>
             </Box>
          )}
 
-         {pagination && (
+         {items.length > 0 && pagination && (
             <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                <Pagination count={pagination.totalPages} page={page} onChange={(event, value) => setPage(value)} color="primary" />
             </Box>
