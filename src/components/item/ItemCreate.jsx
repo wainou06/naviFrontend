@@ -5,6 +5,7 @@ import { ArrowLeft, CloudUpload, Save, X } from 'lucide-react'
 import { getKeywordThunk } from '../../features/keywordSlice'
 import { Container, Box, IconButton, Alert, Paper, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Button, CircularProgress, Chip, Typography } from '@mui/material'
 import styles from '../../styles/itemCreate.module.css'
+import { formatWithComma, stripComma } from '../../utils/priceSet'
 
 const ItemCreate = ({ onCreateSubmit }) => {
    const dispatch = useDispatch()
@@ -28,6 +29,24 @@ const ItemCreate = ({ onCreateSubmit }) => {
    useEffect(() => {
       dispatch(getKeywordThunk())
    }, [dispatch])
+
+   const handlePriceChange = (e) => {
+      const { name, value } = e.target
+      const numericValue = value.replace(/[^0-9,]/g, '')
+      const plainNumber = stripComma(numericValue)
+
+      setFormData((prev) => ({
+         ...prev,
+         [name]: plainNumber,
+      }))
+
+      if (formErrors[name]) {
+         setFormErrors((prev) => ({
+            ...prev,
+            [name]: '',
+         }))
+      }
+   }
 
    const handleInputChange = (e) => {
       const { name, value } = e.target
@@ -147,24 +166,27 @@ const ItemCreate = ({ onCreateSubmit }) => {
                      <div className={styles.sectionHeader}>가격</div>
                      <div className={styles.sectionContent}>
                         <Grid container spacing={2}>
-                           <Grid item xs={15} sm={6}>
+                           <Grid item xs={12} sm={6}>
                               <TextField
                                  fullWidth
                                  label="상품 가격을 입력해주세요."
                                  name="price"
-                                 type="number"
-                                 value={formData.price}
-                                 onChange={handleInputChange}
+                                 value={formatWithComma(formData.price)}
+                                 onChange={handlePriceChange}
                                  error={!!formErrors.price}
                                  helperText={formErrors.price}
                                  InputProps={{
                                     endAdornment: '원',
+                                 }}
+                                 inputProps={{
+                                    inputMode: 'numeric',
                                  }}
                               />
                            </Grid>
                         </Grid>
                      </div>
                   </div>
+
                   {/* 이미지 업로드 섹션 */}
                   <div className={styles.imageUploadContainer}>
                      <div className={styles.imageUploadHeader}>
