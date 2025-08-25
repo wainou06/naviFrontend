@@ -10,6 +10,7 @@ import Modal from '../shared/Modal'
 import { getBuyerRatingThunk, postRatingThunk } from '../../features/ratingSlice'
 import { ModalAlert, ModalConfirm, ModalRating } from '../manager/ManagerModal'
 import { showModalThunk } from '../../features/modalSlice'
+import { formatWithComma, stripComma } from '../../utils/priceSet'
 
 const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
    const dispatch = useDispatch()
@@ -114,8 +115,16 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
       onEditSubmit()
    }
 
+   const handlePriceInputChange = (e) => {
+      const value = e.target.value
+      const formattedValue = formatWithComma(value)
+      setPriceProposal(formattedValue)
+   }
+
    const handlePriceProposal = () => {
-      if (!priceProposal || Number(priceProposal) <= 0) {
+      const numericPrice = stripComma(priceProposal)
+
+      if (!priceProposal || Number(numericPrice) <= 0) {
          setErrorMessage('올바른 가격을 입력해주세요.')
          setShowErrorModal(true)
          return
@@ -129,7 +138,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
 
       const proposalData = {
          itemId: localItem.id,
-         proposedPrice: Number(priceProposal),
+         proposedPrice: Number(numericPrice),
          deliveryMethod,
       }
 
@@ -287,7 +296,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
                         <div className="modal-body">
                            <div className="price-input-section">
                               <label>제안 가격</label>
-                              <input type="number" value={priceProposal} onChange={(e) => setPriceProposal(e.target.value)} placeholder="가격을 입력하세요" className="price-input" min="1" />
+                              <input type="text" value={priceProposal} onChange={handlePriceInputChange} placeholder="가격을 입력하세요" className="price-input" />
                               <span className="currency">원</span>
                            </div>
                            <div className="delivery-info">
@@ -488,7 +497,7 @@ const ItemDetail = ({ onDeleteSubmit, onPriceProposal, onEditSubmit }) => {
          {/* 에러 Modal */}
          <Modal isOpen={showErrorModal} onClose={() => setShowErrorModal(false)}>
             <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600', color: '#dc3545' }}>
-               ⚠️ 오류
+               오류
             </div>
             <div className="popup-message" style={{ height: 'auto', minHeight: '88px', padding: '20px' }}>
                {errorMessage}
