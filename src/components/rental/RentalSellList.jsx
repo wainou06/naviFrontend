@@ -56,7 +56,7 @@ function RentalSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeig
 
                         <CardContent>
                            <Typography variant="h6" component="div">
-                              {rentalItem.rentalItemNm}
+                              <p className="selllist__title">{rentalItem.rentalItemNm}</p>
                            </Typography>
                            <Typography variant="body2" color="text.secondary">
                               {formatWithComma(String(rentalItem.oneDayPrice))}

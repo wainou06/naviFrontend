@@ -45,7 +45,7 @@ const RecommendList = ({ user, columns = 5, cardWidth = '250px', cardHeight = ca
 
                         <CardContent>
                            <Typography variant="h6" component="div">
-                              {recommend.itemNm}
+                              <p className='selllist__title'>{recommend.itemNm}</p>
                            </Typography>
                            <Typography variant="body2" color="text.secondary">
                               {formatWithComma(String(recommend.price))}
