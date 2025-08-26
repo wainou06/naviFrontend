@@ -1,4 +1,4 @@
-   <img src="image/나비-로고.jpg" alt="로고" width="100%"/>
+   <img src="./public/images/나비-로고.jpg" alt="로고" width="100%"/>
 
 ## S&R, 나비: 나누고, 비우고
 
