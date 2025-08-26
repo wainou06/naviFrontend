@@ -78,7 +78,7 @@ function Login() {
          setTempPasswordMsg(`임시 비밀번호: ${res.data.tempPassword}`)
          setEmailInput('')
          setModalState('tempPassword')
-      } catch (err) {
+      } catch {
          setModalState('modalEmailErr')
       }
    }
@@ -89,7 +89,7 @@ function Login() {
          setTempPasswordMsg(`임시 비밀번호: ${res.data.tempPassword}`)
          setPhoneInput('')
          setModalState('tempPassword')
-      } catch (err) {
+      } catch {
          setModalState('modalPhoneErr')
       }
    }
