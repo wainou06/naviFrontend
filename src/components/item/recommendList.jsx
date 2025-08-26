@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { checkAuthStatusThunk } from '../../features/authSlice'
 import { recommendOrderCountUserThunk } from '../../features/recommendSlice'
-import { Card, CardMedia, CardContent, Typography, Pagination, Box } from '@mui/material'
+import { Card, CardMedia, CardContent, Typography, Box } from '@mui/material'
 import { formatWithComma } from '../../utils/priceSet'
 import { Link } from 'react-router-dom'
 

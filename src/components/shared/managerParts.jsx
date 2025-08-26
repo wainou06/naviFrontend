@@ -58,11 +58,13 @@ export default function ManagerParts({ user }) {
       } else if (location.pathname.includes('/manager/rating')) {
          setValue(4) // 통계
       }
+   }, [location.pathname])
 
-      if (window.location.search && value === 3) {
+   useEffect(() => {
+      if (location.search && value === 3) {
          setValue(4)
       }
-   }, [location.pathname, window.location.search])
+   }, [location.search, value])
 
    const handleChange = (event, newValue) => {
       setValue(newValue)
