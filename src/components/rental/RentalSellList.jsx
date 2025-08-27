@@ -15,6 +15,30 @@ function RentalSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeig
       dispatch(fetchRentalItems({ page, limit: 10, searchTerm }))
    }, [dispatch, page, searchTerm])
 
+   // 상태 텍스트 반환
+   const getStatusText = (status, quantity = 0) => {
+      switch (status) {
+         case 'Y':
+            return quantity > 0 ? '렌탈가능' : '렌탈중'
+         case 'N':
+            return '렌탈중'
+         default:
+            return '알 수 없음'
+      }
+   }
+
+   // 상태 클래스 반환
+   const getStatusClass = (status, quantity = 0) => {
+      switch (status) {
+         case 'Y':
+            return quantity > 0 ? 'status-available' : 'status-sold'
+         case 'N':
+            return 'status-unavailable'
+         default:
+            return 'status-unknown'
+      }
+   }
+
    if (loading) {
       return null
    }
@@ -41,7 +65,8 @@ function RentalSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeig
             >
                {rentalItems.map((rentalItem) => (
                   <Link to={`/rental/detail/${rentalItem.id}`} key={rentalItem.id}>
-                     <Card sx={{ width: cardWidth, height: cardHeight }}>
+                     <Card sx={{ width: cardWidth, height: cardHeight }} className='rentalcard'>
+                         <div className={`product-status-label ${getStatusClass(rentalItem?.rentalStatus, rentalItem?.quantity)}`}>{getStatusText(rentalItem?.rentalStatus, rentalItem?.quantity)}</div>
                         {/* 대표이미지만 가져오기 */}
                         <CardMedia
                            component="img"
