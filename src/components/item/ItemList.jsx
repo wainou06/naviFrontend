@@ -53,7 +53,7 @@ const ItemsList = () => {
       let status = ''
       if (filterType === '판매중') status = 'SELL'
       if (filterType === '품절') status = 'SOLD_OUT'
-      if (filterType === '할인중') status = 'ON_SALE'
+      if (filterType === '예약중') status = 'RESERVATION'
 
       const newFilters = { ...localFilters, status, page: 1 }
       setLocalFilters(newFilters)

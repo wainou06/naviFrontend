@@ -7,17 +7,14 @@ import { Link } from 'react-router-dom'
 
 function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight = cardWidth, imgHeight = 140 }) {
    const dispatch = useDispatch()
-   const { items, loading, error } = useSelector((state) => state.items)
+   const { items, pagination, loading, error } = useSelector((state) => state.items)
    const [page, setPage] = useState(1)
 
-   // ✅ 페이지 사이즈 (5*2=10개)
-   const rows = 2
-   const pageSize = columns * rows
+   const pageSize = 10
 
    useEffect(() => {
-      // ✅ limit 제거 → 전체 아이템 불러오기
-      dispatch(fetchItems({ searchTerm }))
-   }, [dispatch, searchTerm])
+      dispatch(fetchItems({ searchTerm, page, limit: pageSize }))
+   }, [dispatch, searchTerm, page])
 
    if (loading) return null
 
@@ -29,14 +26,35 @@ function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight
       )
    }
 
-   // ✅ 프론트에서 필터 후 페이지 나누기
-   const filteredItems = items.filter((i) => i.itemSellStatus !== 'SOLD_OUT')
-   const pagedItems = filteredItems.slice((page - 1) * pageSize, page * pageSize)
-   const totalPages = Math.ceil(filteredItems.length / pageSize)
+   const getStatusClass = (status) => {
+      switch (status) {
+         case 'SELL':
+            return 'status-available'
+         case 'SOLD_OUT':
+            return 'status-sold'
+         case 'RESERVATION':
+            return 'status-on-sale'
+         default:
+            return 'status-unknown'
+      }
+   }
+
+   const getStatusText = (status) => {
+      switch (status) {
+         case 'SELL':
+            return '판매중'
+         case 'SOLD_OUT':
+            return '품절'
+         case 'RESERVATION':
+            return '예약중'
+         default:
+            return '알 수 없음'
+      }
+   }
 
    return (
       <div>
-         {pagedItems.length > 0 ? (
+         {items.length > 0 ? (
             <Box
                sx={{
                   display: 'grid',
@@ -46,9 +64,10 @@ function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight
                   justifyItems: 'center',
                }}
             >
-               {pagedItems.map((item) => (
+               {items.map((item) => (
                   <Link to={`/items/detail/${item.id}`} key={item.id}>
-                     <Card sx={{ width: cardWidth, height: cardHeight }}>
+                     <Card sx={{ width: cardWidth, height: cardHeight }} className='itemcard'>
+                        <div className={`product-status-label ${getStatusClass(item.itemSellStatus)}`}>{getStatusText(item.itemSellStatus)}</div>
                         {/* 대표이미지만 가져오기 */}
                         <CardMedia
                            component="img"
@@ -82,10 +101,9 @@ function ItemSellList({ searchTerm, columns = 5, cardWidth = '250px', cardHeight
             </Box>
          )}
 
-         {/* ✅ 페이지네이션도 필터 기준 */}
-         {filteredItems.length > 0 && (
+         {pagination?.totalPages > 1 && (
             <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-               <Pagination count={totalPages} page={page} onChange={(event, value) => setPage(value)} color="primary" />
+               <Pagination count={pagination.totalPages} page={page} onChange={(event, value) => setPage(value)} color="primary" />
             </Box>
          )}
       </div>

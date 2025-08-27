@@ -187,6 +187,15 @@
    font-size: 16px;
 }
 
+.quantity-input-group {
+   display: flex;
+   flex-direction: column;
+}
+
+.quantity-input-group input {
+   padding: 10px;
+}
+
 /* 버튼 섹션 */
 .action-section {
    margin-bottom: 30px;
