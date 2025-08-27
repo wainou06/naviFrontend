@@ -1,4 +1,4 @@
-   <img src="./public/images/나비-로고.jpg" alt="로고" width="100%"/>
+   <img src="image/나비-로고.jpg" alt="로고" width="100%"/>
 
 ## S&R, 나비: 나누고, 비우고
 
@@ -160,6 +160,10 @@
 
    -  **통계**: 관리자가 사용자관리 창에서 유저를 클릭하여 해당 유저의 별점 추이를 확인합니다. Y축은 별점(1 ~ 5), X축은 받은 횟수(n번째)를 나타냅니다.
 
+###  **⭐추천 시스템**
+
+   -  **별점 기반**: 구매자가 직접 판매자의 점수/평점을 남길 수 있습니다. (Explicit Feedback) 별점(1~5점)을 주기 때문에, 선호도를 명시적으로 표현합니다. 모델은 데이터를 그대로 학습하여 별점이 높은 사용자가 올리는 상품을 추천해줍니다.
+
 ---
 
 ### **💬 실시간 채팅**
@@ -175,12 +179,14 @@
 ---
 
 ### 시스템 아키텍처
-   <img src="./public/images/아키텍쳐.png" alt="아키텍처" width="100%"/>
+   <img src="image/아키텍쳐.png" alt="아키텍처" width="100%"/>
 
 ### ERD
    <a href="https://www.erdcloud.com/d/rXxZ64qo8b2Y2PD9w">
-      <img src="./public/images/ERD.jpg" alt="ERD" width="100%"/>
+      <img src="image/ERD.jpg" alt="ERD" width="100%"/>
    </a>
 
 
 ---
+
+
