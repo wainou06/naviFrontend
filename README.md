@@ -1,4 +1,4 @@
-   <img src="image/나비-로고.jpg" alt="로고" width="100%"/>
+   <img src="./public/images/나비-로고.jpg" alt="로고" width="100%"/>
 
 ## S&R, 나비: 나누고, 비우고
 
@@ -179,11 +179,11 @@
 ---
 
 ### 시스템 아키텍처
-   <img src="image/아키텍쳐.png" alt="아키텍처" width="100%"/>
+   <img src="./public/images/아키텍쳐.png" alt="아키텍처" width="100%"/>
 
 ### ERD
    <a href="https://www.erdcloud.com/d/rXxZ64qo8b2Y2PD9w">
-      <img src="image/ERD.jpg" alt="ERD" width="100%"/>
+      <img src="./public/images/ERD.jpg" alt="ERD" width="100%"/>
    </a>
 
 
