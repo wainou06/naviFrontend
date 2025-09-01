@@ -13,7 +13,7 @@ import MyProfile from '../user/MyProfile'
 import MySecret from '../user/MySecret'
 import MyItems from '../my/MyItems'
 import MyRental from '../my/MyRental'
-import MyDeal from '../my/Mydeal'
+import MyDeal from '../my/MyDeal'
 
 function TabPanel(props) {
    const { children, value, index, ...other } = props
