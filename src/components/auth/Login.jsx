@@ -11,7 +11,7 @@ import GoogleIcon from '@mui/icons-material/Google'
 
 import Modal from '../shared/Modal'
 
-import '../../styles/Login.css'
+import '../../styles/login.css'
 import '../../styles/popup.css'
 
 function Login() {
