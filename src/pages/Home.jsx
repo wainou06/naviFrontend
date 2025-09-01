@@ -15,7 +15,7 @@ import ItemSellList from '../components/item/ItemSellList'
 import RentalSellList from '../components/rental/RentalSellList'
 
 //상품 추천
-import RecommendList from '../components/item/recommendList'
+import RecommendList from '../components/item/RecommendList'
 
 function Home({ user, isAuthenticated, searchTerm }) {
    return (

@@ -327,7 +327,10 @@ const RentalDetail = ({ onDeleteSubmit }) => {
                               <span>{order.user?.name || '익명'}</span>
                            </div>
                            <div className="rental-info">
-                              <div className="rental-quantity">수량: {order?.quantity || 1}개</div>
+                              <div className="rental-quantity">
+                                 수량:
+                                 {order?.quantity || 1}개
+                              </div>
                               <div className="rental-status-badge"></div>
                            </div>
                         </div>
@@ -394,13 +397,9 @@ const RentalDetail = ({ onDeleteSubmit }) => {
 
          {/* 성공 알림 Modal */}
          <Modal isOpen={showSuccessModal} onClose={handleSuccessModalClose}>
-            <div className="popup-message" style={{ marginBottom: '20px', fontSize: '21px', fontWeight: '600' }}>
-               렌탈 주문 완료
-            </div>
-            <div className="popup-message" style={{ height: 'auto', minHeight: '88px', padding: '20px', lineHeight: '1.5' }}>
-               렌탈 주문이 성공적으로 생성되었습니다!
-            </div>
-            <button className="popup-btn" onClick={handleSuccessModalClose} style={{ backgroundColor: '#f5f5f5', border: '1px solid #ddd', color: 'black', width: '200px' }}>
+            <div className="popup-message">렌탈 주문 완료</div>
+            <div className="popup-message">렌탈 주문이 성공적으로 생성되었습니다!</div>
+            <button className="popup-btn" onClick={handleSuccessModalClose}>
                확인
             </button>
          </Modal>

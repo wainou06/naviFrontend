@@ -139,7 +139,7 @@ export default function ManagerParts({ user }) {
                      <ManagerUser />
                   </TabPanel>
                   <TabPanel value={value} index={4} className="form">
-                     <h1>통계</h1>
+                     <h1>사용자 별점 통계</h1>
                      <ManagerUserRating />
                   </TabPanel>
                </div>
