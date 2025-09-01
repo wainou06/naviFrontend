@@ -9,7 +9,7 @@ import Box from '@mui/material/Box'
 
 import '../../styles/managerParts.css'
 
-import ItemSellList from '../../components/item/ItemSellList'
+import ItemSellList from '../item/ItemSellList'
 import ManagerKeywords from '../manager/ManagerKeywords'
 import ManagerUser from '../manager/ManagerUser'
 import ManagerUserRating from '../manager/ManagerUserRating'
