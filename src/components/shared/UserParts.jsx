@@ -83,17 +83,17 @@ export default function UserParts({ user }) {
                   label={
                      <div className="profile">
                         <img src="/images/로그아웃상태.png" alt="프로필" />
-                        <p className='nick'>{user?.nick}님</p>
-                        <p className='email'>{user?.email}</p>
+                        <p className="nick">{user?.nick}님</p>
+                        <p className="email">{user?.email}</p>
                      </div>
                   }
                   {...a11yProps(0)}
                />
-               <Tab label={<div className='list'>내 프로필</div>} {...a11yProps(1)} />
-               <Tab label={<div className='list'>보안설정</div>} {...a11yProps(2)} />
-               <Tab label={<div className='list'>나의 상품</div>} {...a11yProps(3)} />
-               <Tab label={<div className='list'>렌탈 내역</div>} {...a11yProps(4)} />
-               <Tab label={<div className='list'>거래 내역</div>} {...a11yProps(5)} />
+               <Tab label={<div className="list">내 프로필</div>} {...a11yProps(1)} />
+               <Tab label={<div className="list">보안설정</div>} {...a11yProps(2)} />
+               <Tab label={<div className="list">나의 상품</div>} {...a11yProps(3)} />
+               <Tab label={<div className="list">렌탈 내역</div>} {...a11yProps(4)} />
+               <Tab label={<div className="list">거래 내역</div>} {...a11yProps(5)} />
             </Tabs>
 
             <TabPanel value={value} index={0} className="form">
